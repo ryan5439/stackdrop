@@ -1,0 +1,275 @@
+:root {
+    --primary-color: #0066cc;
+    --background-color: #f5f5f5;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--background-color);
+}
+
+.top-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.nav-links a {
+    color: #666;
+    text-decoration: none;
+    margin-left: 1.5rem;
+}
+
+.features {
+    max-width: 1200px;
+    margin: 2rem auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    padding: 0 2rem;
+}
+
+.feature {
+    text-align: left;
+}
+
+.feature h2 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.app-categories {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.category {
+    background: white;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.category h3 {
+    color: #333;
+    font-size: 1.25rem;
+    margin: 0;
+    padding: 1rem 0;
+    border-bottom: 2px solid #eee;
+    position: relative;
+}
+
+.category h3::before {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 50px;
+    height: 2px;
+    background: #0066cc;
+}
+
+.app-category {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.app-category h3 {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.app-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.app-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    margin-bottom: 5px;
+}
+
+.app-item:hover {
+    background: #f8f9fa;
+    border-color: #e9ecef;
+}
+
+.app-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-right: 12px;
+    cursor: pointer;
+}
+
+.app-item label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: #495057;
+}
+
+.app-item label i {
+    margin-right: 5px;
+    font-size: 1.2em;
+    color: #555;
+}
+
+.app-item:hover label {
+    color: #0066cc;
+}
+
+.app-checkbox {
+    width: 18px; /* Added */
+    height: 18px; /* Added */
+    margin-right: 8px;
+    cursor: pointer; /* Added */
+    vertical-align: middle; /* Added for better alignment */
+}
+
+.selection-instruction {
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: 500;
+    color: #333;
+}
+
+.generate-btn {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #999;
+    background-color: #ccc;
+    border: none;
+    border-radius: 4px;
+    cursor: not-allowed;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.generate-btn:disabled {
+    color: #999;
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.generate-btn:enabled {
+    color: white;
+    background-color: #4CAF50;
+    cursor: pointer;
+}
+
+.generate-btn:enabled:hover {
+    background: #009e3f;
+    transform: translateY(-1px);
+}
+
+
+
+/* Responsive styles for mobile */
+@media (max-width: 900px) {
+    .features {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 0 1rem;
+    }
+    .app-categories {
+        padding: 1rem;
+        margin-bottom: 80px; /* Space for fixed bottom button */
+    }
+}
+
+@media (max-width: 600px) {
+    .top-nav {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .nav-links {
+        margin-top: 0.5rem;
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .features {
+        grid-template-columns: 1fr;
+        padding: 0 0.5rem;
+        margin-top: 1rem;
+    }
+    .feature h2 {
+        font-size: 1rem;
+        text-align: center;
+    }
+    .feature p {
+        text-align: center;
+    }
+    .app-categories {
+        padding: 0.5rem;
+        margin-bottom: 100px; /* Extra space for fixed bottom button */
+    }
+    .app-category h3 {
+        text-align: center;
+    }
+    .app-list {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    .app-item {
+        padding: 0.5rem;
+        font-size: 1rem;
+    }
+    .generate-btn {
+        width: 100%;
+        font-size: 1.1rem;
+        padding: 14px 0;
+    }
+    
+    /* Fixed bottom button on mobile */
+    #generate-btn-bottom {
+        position: fixed;
+        bottom: 10px;
+        left: 10px;
+        right: 10px;
+        z-index: 50;
+        margin: 0;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    
+    /* Ensure body has enough padding for fixed elements */
+    body {
+        padding-bottom: 0;
+    }
+}

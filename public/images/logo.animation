@@ -1,0 +1,44 @@
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+import matplotlib.animation as animation
+
+# Number of stacks (layers)
+num_stacks = 5
+
+# Colors
+inactive_color = '#888888'  # grey for "installing"
+active_color = '#4CAF50'    # green for "installed"
+
+fig, ax = plt.subplots(figsize=(4, 5))
+plt.axis('off')
+
+# Draw the drop (static)
+drop = patches.Ellipse((2, 0.7), 0.3, 0.45, color='black')
+ax.add_patch(drop)
+
+# Draw the text (static)
+plt.text(2, -0.2, "StackDrop", fontsize=28, fontweight='bold', ha='center', va='top', fontname='Arial')
+
+# Prepare stack rectangles (from bottom to top)
+stack_patches = []
+for i in range(num_stacks):
+    # Each stack is a rectangle, higher stacks are higher up
+    y = 1.1 + i * 0.5
+    rect = patches.Rectangle((1.2, y), 1.6, 0.4, linewidth=2, edgecolor='black', facecolor=inactive_color)
+    ax.add_patch(rect)
+    stack_patches.append(rect)
+
+ax.set_xlim(0, 4)
+ax.set_ylim(0, 4)
+
+def animate(i):
+    # Light up stacks up to i
+    for idx, rect in enumerate(stack_patches):
+        rect.set_facecolor(active_color if idx < i else inactive_color)
+    return stack_patches
+
+ani = animation.FuncAnimation(
+    fig, animate, frames=num_stacks+1, interval=800, blit=False, repeat=True
+)
+
+plt.show()

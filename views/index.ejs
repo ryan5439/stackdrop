@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stackdrop - Silent App Installer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <header>
+        <nav class="top-nav">
+            <div class="logo">Stackdrop</div>
+            <div class="nav-links">
+                <a href="#help">Help</a>
+                <a href="#feedback">Feedback</a>
+                <a href="#pro">Stackdrop Pro</a>
+                <a href="#signin">Sign into Pro</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="features">
+            <div class="feature">
+                <h2>Dowload your entire software stack with 1 click</h2>
+                <p>No toolbars. No clicking next. Just pick your apps and go.</p>
+            </div>
+            <div class="feature">
+                <h2>Thank you for your patience while we finish up the website!</h2>
+                <p>We are apply finishing touches to the core of stackdrop and will be finalized within the next few months!</p>
+            </div>
+            <div class="feature">
+                <h2>Trusted by everyone!</h2>
+                <p>We install and update apps every day for our normal users and Pro subscribers.</p>
+            </div>
+        </div>
+        
+        <div class="selection-instruction">Select your apps then...</div>
+        <div class="button-container">
+            <button id="generate-btn-top" class="generate-btn" disabled>Generate Silent Installer</button>
+        </div>
+        <div class="app-categories">
+            <% Object.keys(apps).forEach(category => { %>
+                <div class="app-category">
+                    <h3><%= apps[category].title %></h3>
+                    <div class="app-list">
+                        <% apps[category].items.forEach(app => { %>
+                            <div class="app-item">
+                                <label>
+                                    <input type="checkbox" name="app" value="<%= app.id %>" class="app-checkbox">
+                                    <% if (app.id === 'chrome') { %>
+                                        <img src="/images/icons/chromeicon.png" alt="Chrome Icon" style="width: 1.2em; height: 1.2em; margin-right: 5px;">
+                                    <% } else if (app.id === 'firefox') { %>
+                                        <img src="/images/icons/fficon.png" alt="Firefox Icon" style="width: 1.2em; height: 1.2em; margin-right: 5px;">
+                                    <% } else if (app.id === 'edge') { %>
+                                        <img src="/images/icons/edgeicon.png" alt="Edge Icon" style="width: 1.2em; height: 1.2em; margin-right: 5px;">
+                                    <% } else if (app.id === 'brave') { %>
+                                        <i class="fab fa-brave" style="color:#fb542b"></i>
+                                    <% } else if (app.id === 'opera') { %>
+                                        <i class="fab fa-opera" style="color:#ff1b2d"></i>
+                                    <% } else if (app.id === 'zoom') { %>
+                                        <i class="fas fa-video" style="color:#2D8CFF"></i>
+                                    <% } else if (app.id === 'skype') { %>
+                                        <i class="fab fa-skype" style="color:#00aff0"></i>
+                                    <% } else if (app.id === 'discord') { %>
+                                        <i class="fab fa-discord" style="color:#5865F2"></i>
+                                    <% } else if (app.id === 'teams') { %>
+                                        <i class="fas fa-users" style="color:#6264A7"></i>
+                                    <% } else if (app.id === 'slack') { %>
+                                        <i class="fab fa-slack" style="color:#E01E5A"></i>
+                                    <% } else if (app.id === 'vlc') { %>
+                                        <i class="fas fa-video" style="color:#FF8A00"></i>
+                                    <% } else if (app.id === 'itunes') { %>
+                                        <i class="fab fa-itunes" style="color:#FB5BC5"></i>
+                                    <% } else if (app.id === 'spotify') { %>
+                                        <i class="fab fa-spotify" style="color:#1DB954"></i>
+                                    <% } else if (app.id === 'winamp') { %>
+                                        <i class="fas fa-music" style="color:#0066CC"></i>
+                                    <% } else if (app.id === 'ccleaner') { %>
+                                        <i class="fas fa-broom" style="color:#66BB6A"></i>
+                                    <% } else if (app.id === 'teamviewer') { %>
+                                        <i class="fas fa-desktop" style="color:#0E8EE9"></i>
+                                    <% } else if (app.id === 'anydesk') { %>
+                                        <i class="fas fa-laptop" style="color:#EF443B"></i>
+                                    <% } else if (app.id === 'imgburn') { %>
+                                        <i class="fas fa-compact-disc" style="color:#FF9900"></i>
+                                    <% } else if (app.id === 'notepadplusplus') { %>
+                                        <i class="fas fa-code" style="color:#795548"></i>
+                                    <% } else if (app.id === 'python') { %>
+                                        <i class="fab fa-python" style="color:#3776AB"></i>
+                                    <% } else if (app.id === 'filezilla') { %>
+                                        <i class="fas fa-cloud-upload-alt" style="color:#BF0000"></i>
+                                    <% } else if (app.id === 'vscode') { %>
+                                        <i class="fas fa-code" style="color:#007ACC"></i>
+                                    <% } else if (app.id === 'avast') { %>
+                                        <i class="fas fa-shield-alt" style="color:#7CB342"></i>
+                                    <% } else if (app.id === 'malwarebytes') { %>
+                                        <i class="fas fa-shield-alt" style="color:#7CB342"></i>
+                                    <% } else if (app.id === 'avg') { %>
+                                        <i class="fas fa-shield-alt" style="color:#00A651"></i>
+                                    <% } else if (app.id === 'dropbox') { %>
+                                        <i class="fab fa-dropbox" style="color:#0061FF"></i>
+                                    <% } else if (app.id === 'googledrive') { %>
+                                        <i class="fab fa-google-drive" style="color:#FBBC05"></i>
+                                    <% } else if (app.id === 'onedrive') { %>
+                                        <i class="fab fa-microsoft" style="color:#0078D4"></i>
+                                    <% } else if (app.id === 'libreoffice') { %>
+                                        <i class="far fa-file-alt" style="color:#18A303"></i>
+                                    <% } else if (app.id === 'foxitreader') { %>
+                                        <i class="far fa-file-pdf" style="color:#EC1C24"></i>
+                                    <% } else if (app.id === 'openoffice') { %>
+                                        <i class="far fa-file-alt" style="color:#0E85CD"></i>
+                                    <% } else if (app.id === 'gimp') { %>
+                                        <i class="fas fa-paint-brush" style="color:#5C5543"></i>
+                                    <% } else if (app.id === 'blender') { %>
+                                        <i class="fas fa-cube" style="color:#F5792A"></i>
+                                    <% } else if (app.id === 'krita') { %>
+                                        <i class="fas fa-palette" style="color:#3BABFF"></i>
+                                    <% } else { %>
+                                        <i class="fas fa-box" style="color:#666"></i>
+                                    <% } %>
+                                    <%= app.name %>
+                                </label>
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+
+        <div class="button-container">
+            <button id="generate-btn-bottom" class="generate-btn" disabled>Generate Silent Installer</button>
+        </div>
+
+        <script src="/js/mainbutton.js"></script>
+    </main>
+</body>
+</html>

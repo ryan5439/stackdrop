@@ -1,0 +1,43 @@
+{
+  "name": "stackdrop",
+  "version": "1.0.0",
+  "description": "Silent App Installer - Select multiple software applications and generate a single silent installer",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "silent-installer",
+    "app-installer", 
+    "software-deployment",
+    "automation",
+    "web-app",
+    "nodejs",
+    "express"
+  ],
+  "author": "Ryan",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ryan5439/stackdrop.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ryan5439/stackdrop/issues"
+  },
+  "homepage": "https://github.com/ryan5439/stackdrop#readme",
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "fs-extra": "^11.3.0",
+    "body-parser": "^1.20.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
