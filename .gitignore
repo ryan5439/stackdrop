@@ -4,6 +4,9 @@
 silentinstallers/
 *.exe
 *.msi
+*.bin
+*.iso
+installers/
 
 # Node.js dependencies
 node_modules/
