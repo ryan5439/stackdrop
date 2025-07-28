@@ -14,7 +14,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 2rem;
+    padding: 0.5rem 1rem;
     background: white;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
@@ -33,11 +33,11 @@ body {
 
 .features {
     max-width: 1200px;
-    margin: 2rem auto;
+    margin: 1rem auto;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
-    padding: 0 2rem;
+    gap: 1rem;
+    padding: 0 1rem;
 }
 
 .feature {
@@ -50,9 +50,13 @@ body {
 }
 
 .app-categories {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 2rem;
+    padding: 0.5rem;
+    text-align: center;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 0.5rem;
 }
 
 .category {
@@ -83,36 +87,90 @@ body {
 }
 
 .app-category {
-    margin-bottom: 20px;
-    border-bottom: 1px solid #eee;
+    background: white;
+    padding: 1rem;
+    margin-bottom: 0;
+    border-bottom: none;
+    border-right: 1px solid #eee;
+    padding-right: 0.5rem;
+    text-align: center;
+    min-width: 0;
+}
+
+.app-category:last-child {
+    border-right: none;
+}
+
+
+
+/* Extra wide screens - 10 columns */
+@media (min-width: 1600px) {
+    .app-categories {
+        max-width: 2400px;
+        gap: 0.25rem;
+    }
+    
+    .app-category {
+        padding-right: 0.25rem;
+    }
+    
+    .app-item label {
+        font-size: 0.6rem;
+    }
+}
+
+/* Ultra wide screens - 11 columns */
+@media (min-width: 2000px) {
+    .app-categories {
+        max-width: 2800px;
+        gap: 0.2rem;
+    }
+    
+    .app-category {
+        padding-right: 0.2rem;
+    }
+    
+    .app-item label {
+        font-size: 0.55rem;
+    }
 }
 
 .app-category h3 {
-    font-size: 1.2rem;
     color: #333;
-    margin-bottom: 10px;
+    font-size: 1.25rem;
+    margin: 0;
+    padding: 1rem 0;
+    border-bottom: 2px solid #eee;
+    position: relative;
+    text-align: center;
+}
+
+.app-category h3::before {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 2px;
+    background: #0066cc;
 }
 
 .app-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 10px;
-    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+    justify-content: flex-start;
 }
 
 .app-item {
     display: flex;
     align-items: center;
-    padding: 0.75rem;
-    border-radius: 6px;
-    transition: all 0.2s ease;
-    border: 1px solid transparent;
-    margin-bottom: 5px;
-}
-
-.app-item:hover {
-    background: #f8f9fa;
-    border-color: #e9ecef;
+    justify-content: flex-start;
+    margin-bottom: 0;
+    text-align: left;
+    padding: 0;
 }
 
 .app-item input[type="checkbox"] {
@@ -125,9 +183,12 @@ body {
 .app-item label {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     cursor: pointer;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     color: #495057;
+    text-align: left;
+    line-height: 1.2;
 }
 
 .app-item label i {
@@ -157,6 +218,22 @@ body {
     color: #333;
 }
 
+/* Show desktop text by default, hide mobile text */
+.mobile-text {
+    display: none;
+}
+
+.desktop-text {
+    display: inline;
+}
+
+.button-container {
+    text-align: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
 .generate-btn {
     display: block;
     margin: 20px auto;
@@ -173,6 +250,28 @@ body {
     transition: all 0.2s ease;
 }
 
+/* Make the top button sticky */
+/* Make the top button container sticky */
+.button-container:first-of-type {
+    position: sticky;
+    top: 20px;
+    z-index: 100;
+    background: white;
+    padding: 10px 0;
+    margin: 0 auto;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    text-align: center;
+    width: 100%;
+    max-width: 1200px;
+    transition: all 0.3s ease;
+}
+
+#generate-btn-top {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    background-color: #ccc;
+}
+
 .generate-btn:disabled {
     color: #999;
     background-color: #ccc;
@@ -185,6 +284,11 @@ body {
     cursor: pointer;
 }
 
+#generate-btn-top:enabled {
+    background-color: #4CAF50;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
 .generate-btn:enabled:hover {
     background: #009e3f;
     transform: translateY(-1px);
@@ -193,7 +297,7 @@ body {
 
 
 /* Responsive styles for mobile */
-@media (max-width: 900px) {
+@media (max-width: 1200px) {
     .features {
         grid-template-columns: 1fr;
         gap: 1rem;
@@ -202,10 +306,54 @@ body {
     .app-categories {
         padding: 1rem;
         margin-bottom: 80px; /* Space for fixed bottom button */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 1rem;
+        grid-template-columns: 1fr;
+    }
+    
+    .app-category {
+        margin-bottom: 20px;
+        border-bottom: 1px solid #eee;
+        border-right: none;
+        padding-right: 0;
+        text-align: center;
+        width: 100%;
+        flex: none;
+    }
+    
+    .app-category h3 {
+        text-align: center;
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+        white-space: normal;
+    }
+    
+    .app-list {
+        justify-content: center;
+        gap: 24px;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    
+    .app-item {
+        margin-bottom: 0;
+        text-align: center;
+        justify-content: center;
+    }
+    
+    .app-item label {
+        text-align: center;
+        justify-content: center;
+        font-size: 0.95rem;
+        white-space: normal;
     }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 900px) {
     .top-nav {
         flex-direction: column;
         align-items: flex-start;
@@ -238,6 +386,7 @@ body {
     .app-categories {
         padding: 0.5rem;
         margin-bottom: 100px; /* Extra space for fixed bottom button */
+        grid-template-columns: 1fr;
     }
     .app-category h3 {
         text-align: center;
@@ -256,20 +405,40 @@ body {
         padding: 14px 0;
     }
     
-    /* Fixed bottom button on mobile */
+    /* Hide top button on mobile */
+    #generate-btn-top {
+        display: none;
+    }
+    
+    /* Show mobile text, hide desktop text */
+    .desktop-text {
+        display: none;
+    }
+    
+    .mobile-text {
+        display: inline;
+    }
+    
+    /* Fixed bottom button on mobile - truly fixed position */
     #generate-btn-bottom {
-        position: fixed;
-        bottom: 10px;
-        left: 10px;
-        right: 10px;
-        z-index: 50;
-        margin: 0;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        position: fixed !important;
+        bottom: 0px !important;
+        left: 0px !important;
+        right: 0px !important;
+        z-index: 999;
+        margin: 0 !important;
+        border-radius: 0;
+        box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+        width: 100% !important;
+        height: 60px;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        transform: none !important;
     }
     
     /* Ensure body has enough padding for fixed elements */
     body {
-        padding-bottom: 0;
+        padding-bottom: 70px;
     }
 }

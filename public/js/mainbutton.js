@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const appCheckboxes = document.querySelectorAll('.app-checkbox');
-    const generateBtns = document.querySelectorAll('.generate-btn');
+    const appCheckboxes = document.querySelectorAll('.js-homepage-app-checkbox');
+    const generateBtns = document.querySelectorAll('.js-homepage-get-installer');
     
     // Function to update button state
     function updateButtonState() {
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => {
             if (!response.ok) {
                 return response.json().then(errorData => {
-                    throw new Error(errorData.error || 'Network response was not ok');
+                    throw new Error(errorData.message || errorData.error || 'Network response was not ok');
                 });
             }
             return response.blob();
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Reset buttons
             generateBtns.forEach(btn => {
-                btn.textContent = 'Generate Silent Installer';
+                btn.textContent = 'Get Your Stackdrop Installer';
             });
             updateButtonState();
         })
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Reset buttons
             generateBtns.forEach(btn => {
-                btn.textContent = 'Generate Silent Installer';
+                btn.textContent = 'Get Your Stackdrop Installer';
             });
             updateButtonState();
         });

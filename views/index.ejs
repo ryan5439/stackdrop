@@ -1,139 +1,364 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Stackdrop - Silent App Installer</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Stackdrop - Install Multiple Apps at Once</title>
+    <meta name="description" content="The easiest, fastest way to install software. Stackdrop downloads and installs programs automatically in the background.">
+    <link rel="icon" type="image/png" href="https://ninite.com/static/favicon-50c60524c110e749f013a1ca48f80b80.png">
+    <link href="https://ninite.com/static/css/bootstrap.min-ce67dc5fdca0309111ecf0491515e7a7.css" rel="stylesheet">
+    <link href="https://ninite.com/static/css/ninite-08d598403b81d71f0982c129e7ba63b4.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .homepage-app-label {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            margin: 2px 0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .homepage-app-label:hover {
+            background-color: #f8f9fa;
+        }
+        .homepage-app-label input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        .homepage-app-label img {
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+        }
+        .homepage-app-section {
+            margin-bottom: 30px;
+        }
+        .homepage-app-section h4 {
+            color: #333;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #0066cc;
+        }
+        .btn-primary {
+            background-color: #4CAF50;
+            border-color: #4CAF50;
+        }
+        .btn-primary:hover {
+            background-color: #009e3f;
+            border-color: #009e3f;
+        }
+        .btn-primary:disabled {
+            background-color: #ccc;
+            border-color: #ccc;
+            cursor: not-allowed;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            color: #0066cc !important;
+        }
+        .homepage-introduction {
+            background: #f8f9fa;
+            padding: 40px 0;
+            margin-bottom: 30px;
+        }
+        .homepage-introduction h4 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .alert-warning {
+            background-color: #fff3cd;
+            border-color: #ffeaa7;
+            color: #856404;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <nav class="top-nav">
-            <div class="logo">Stackdrop</div>
-            <div class="nav-links">
-                <a href="#help">Help</a>
-                <a href="#feedback">Feedback</a>
-                <a href="#pro">Stackdrop Pro</a>
-                <a href="#signin">Sign into Pro</a>
-            </div>
-        </nav>
-    </header>
 
-    <main>
-        <div class="features">
-            <div class="feature">
-                <h2>Dowload your entire software stack with 1 click</h2>
-                <p>No toolbars. No clicking next. Just pick your apps and go.</p>
-            </div>
-            <div class="feature">
-                <h2>Thank you for your patience while we finish up the website!</h2>
-                <p>We are apply finishing touches to the core of stackdrop and will be finalized within the next few months!</p>
-            </div>
-            <div class="feature">
-                <h2>Trusted by everyone!</h2>
-                <p>We install and update apps every day for our normal users and Pro subscribers.</p>
-            </div>
-        </div>
-        
-        <div class="selection-instruction">Select your apps then...</div>
-        <div class="button-container">
-            <button id="generate-btn-top" class="generate-btn" disabled>Generate Silent Installer</button>
-        </div>
-        <div class="app-categories">
-            <% Object.keys(apps).forEach(category => { %>
-                <div class="app-category">
-                    <h3><%= apps[category].title %></h3>
-                    <div class="app-list">
-                        <% apps[category].items.forEach(app => { %>
-                            <div class="app-item">
-                                <label>
-                                    <input type="checkbox" name="app" value="<%= app.id %>" class="app-checkbox">
-                                    <% if (app.id === 'chrome') { %>
-                                        <img src="/images/icons/chromeicon.png" alt="Chrome Icon" style="width: 1.2em; height: 1.2em; margin-right: 5px;">
-                                    <% } else if (app.id === 'firefox') { %>
-                                        <img src="/images/icons/fficon.png" alt="Firefox Icon" style="width: 1.2em; height: 1.2em; margin-right: 5px;">
-                                    <% } else if (app.id === 'edge') { %>
-                                        <img src="/images/icons/edgeicon.png" alt="Edge Icon" style="width: 1.2em; height: 1.2em; margin-right: 5px;">
-                                    <% } else if (app.id === 'brave') { %>
-                                        <i class="fab fa-brave" style="color:#fb542b"></i>
-                                    <% } else if (app.id === 'opera') { %>
-                                        <i class="fab fa-opera" style="color:#ff1b2d"></i>
-                                    <% } else if (app.id === 'zoom') { %>
-                                        <i class="fas fa-video" style="color:#2D8CFF"></i>
-                                    <% } else if (app.id === 'skype') { %>
-                                        <i class="fab fa-skype" style="color:#00aff0"></i>
-                                    <% } else if (app.id === 'discord') { %>
-                                        <i class="fab fa-discord" style="color:#5865F2"></i>
-                                    <% } else if (app.id === 'teams') { %>
-                                        <i class="fas fa-users" style="color:#6264A7"></i>
-                                    <% } else if (app.id === 'slack') { %>
-                                        <i class="fab fa-slack" style="color:#E01E5A"></i>
-                                    <% } else if (app.id === 'vlc') { %>
-                                        <i class="fas fa-video" style="color:#FF8A00"></i>
-                                    <% } else if (app.id === 'itunes') { %>
-                                        <i class="fab fa-itunes" style="color:#FB5BC5"></i>
-                                    <% } else if (app.id === 'spotify') { %>
-                                        <i class="fab fa-spotify" style="color:#1DB954"></i>
-                                    <% } else if (app.id === 'winamp') { %>
-                                        <i class="fas fa-music" style="color:#0066CC"></i>
-                                    <% } else if (app.id === 'ccleaner') { %>
-                                        <i class="fas fa-broom" style="color:#66BB6A"></i>
-                                    <% } else if (app.id === 'teamviewer') { %>
-                                        <i class="fas fa-desktop" style="color:#0E8EE9"></i>
-                                    <% } else if (app.id === 'anydesk') { %>
-                                        <i class="fas fa-laptop" style="color:#EF443B"></i>
-                                    <% } else if (app.id === 'imgburn') { %>
-                                        <i class="fas fa-compact-disc" style="color:#FF9900"></i>
-                                    <% } else if (app.id === 'notepadplusplus') { %>
-                                        <i class="fas fa-code" style="color:#795548"></i>
-                                    <% } else if (app.id === 'python') { %>
-                                        <i class="fab fa-python" style="color:#3776AB"></i>
-                                    <% } else if (app.id === 'filezilla') { %>
-                                        <i class="fas fa-cloud-upload-alt" style="color:#BF0000"></i>
-                                    <% } else if (app.id === 'vscode') { %>
-                                        <i class="fas fa-code" style="color:#007ACC"></i>
-                                    <% } else if (app.id === 'avast') { %>
-                                        <i class="fas fa-shield-alt" style="color:#7CB342"></i>
-                                    <% } else if (app.id === 'malwarebytes') { %>
-                                        <i class="fas fa-shield-alt" style="color:#7CB342"></i>
-                                    <% } else if (app.id === 'avg') { %>
-                                        <i class="fas fa-shield-alt" style="color:#00A651"></i>
-                                    <% } else if (app.id === 'dropbox') { %>
-                                        <i class="fab fa-dropbox" style="color:#0061FF"></i>
-                                    <% } else if (app.id === 'googledrive') { %>
-                                        <i class="fab fa-google-drive" style="color:#FBBC05"></i>
-                                    <% } else if (app.id === 'onedrive') { %>
-                                        <i class="fab fa-microsoft" style="color:#0078D4"></i>
-                                    <% } else if (app.id === 'libreoffice') { %>
-                                        <i class="far fa-file-alt" style="color:#18A303"></i>
-                                    <% } else if (app.id === 'foxitreader') { %>
-                                        <i class="far fa-file-pdf" style="color:#EC1C24"></i>
-                                    <% } else if (app.id === 'openoffice') { %>
-                                        <i class="far fa-file-alt" style="color:#0E85CD"></i>
-                                    <% } else if (app.id === 'gimp') { %>
-                                        <i class="fas fa-paint-brush" style="color:#5C5543"></i>
-                                    <% } else if (app.id === 'blender') { %>
-                                        <i class="fas fa-cube" style="color:#F5792A"></i>
-                                    <% } else if (app.id === 'krita') { %>
-                                        <i class="fas fa-palette" style="color:#3BABFF"></i>
-                                    <% } else { %>
-                                        <i class="fas fa-box" style="color:#666"></i>
-                                    <% } %>
-                                    <%= app.name %>
-                                </label>
-                            </div>
-                        <% }); %>
-                    </div>
-                </div>
-            <% }); %>
-        </div>
+<div class="ninite-canvas">
 
-        <div class="button-container">
-            <button id="generate-btn-bottom" class="generate-btn" disabled>Generate Silent Installer</button>
-        </div>
+<nav class="navbar navbar-default navbar-static-top">
+<div class="container">
+<div class="navbar-header">
+<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".js-navbar-collapse" aria-expanded="false">
+<span class="sr-only">Toggle navigation</span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+</button>
+<a class="navbar-brand" href="/">
+Stackdrop.It
+</a>
+</div>
+<div class="collapse navbar-collapse js-navbar-collapse">
+<ul class="nav navbar-nav navbar-right">
+<li><a href="/help/">Help</a></li>
+<li><a href="/feedback">Feedback</a></li>
+<li><a href="/StackdropPro">Feedback</a></li>
+</ul>
+</div>
+</div>
+</nav>
 
-        <script src="/js/mainbutton.js"></script>
-    </main>
+<div class="homepage-introduction">
+<div class="container">
+<div class="row">
+<div class="col-sm-6">
+<h4>Install and Update All Your Programs at Once</h4>
+<p>
+No toolbars. No clicking next. Just pick your apps and go.
+</p>
+<p>
+<img src="/images/image.png" alt="Stackdrop Screenshot" class="img-responsive img-rounded">
+</p>
+<div class="alert alert-warning">
+<p><strong>New!</strong> Stackdrop now generates small, fast downloader EXEs that automatically download and install your selected applications. No more huge files!</p>
+</div>
+</div>
+<div class="col-sm-3">
+<h4>🔄 Latest Updates</h4>
+<p>Our system scans the internet every day for the latest versions of your apps and puts them all here for you!</p>
+<p>
+Chrome updated to latest version.<br>
+<span class="small">July 13, 2025</span>
+</p>
+<p>
+Firefox updated to latest version.<br>
+<span class="small">May 29, 2025</span>
+</p>
+<p>
+VLC updated to 3.0.20.<br>
+<span class="small">May 29, 2025</span>
+</p>
+<p>
+AnyDesk updated to latest version.<br>
+<span class="small">May 29, 2025</span>
+</p>
+<p>
+CCleaner updated to latest version.<br>
+<span class="small">May 29, 2025</span>
+</p>
+<p>
+Spotify updated to latest version.<br>
+<span class="small">May 29, 2025</span>
+</p>
+<p>
+Zoom updated to latest version.<br>
+<span class="small">May 29, 2025</span>
+</p>
+<p>
+Opera (needs manual update)<br>
+<span class="small">Last auto-update: June 2, 2025</span>
+</p>
+</div>
+<div class="col-sm-3">
+<h4>Fast and always up to date installers</h4>
+<p>
+Stackdrop generates small downloader EXEs that automatically fetch the latest versions from our server and install them silently.
+</p>
+<p>
+The system supports:
+</p>
+<ul>
+<li>Web Browsers</li>
+<li>Media Players</li>
+<li>Security Tools</li>
+<li>Development Tools</li>
+<li>And much more!</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+<form method="post" action="/generate-installer">
+<div class="container">
+<h3 class="text-center">1. Pick the apps you want then...</h3>
+</div>
+<div>
+<ul class="list-unstyled center-block js-masonry" data-masonry-options='{"isFitWidth": true}'>
+
+<% Object.keys(apps).forEach(function(category) { %>
+<li class="homepage-app-section">
+<h4><%= apps[category].title %></h4>
+<ul class="list-unstyled">
+<% apps[category].items.forEach(function(app) { %>
+<li>
+<label for="cb_<%= app.id %>" class="homepage-app-label" title="<%= app.name %>">
+<input type="checkbox" class="js-homepage-app-checkbox" name="apps" value="<%= app.id %>" id="cb_<%= app.id %>">
+<% if (app.id.includes('chrome')) { %>
+<i class="fab fa-chrome" style="color: #4285f4; font-size: 16px;"></i>
+<% } else if (app.id.includes('firefox')) { %>
+<i class="fab fa-firefox-browser" style="color: #ff7139; font-size: 16px;"></i>
+<% } else if (app.id.includes('edge')) { %>
+<i class="fab fa-edge" style="color: #0078d4; font-size: 16px;"></i>
+<% } else if (app.id.includes('opera')) { %>
+<i class="fab fa-opera" style="color: #ff1b2d; font-size: 16px;"></i>
+<% } else if (app.id.includes('zoom')) { %>
+<i class="fas fa-video" style="color: #2d8cff; font-size: 16px;"></i>
+<% } else if (app.id.includes('discord')) { %>
+<i class="fab fa-discord" style="color: #5865f2; font-size: 16px;"></i>
+<% } else if (app.id.includes('teams')) { %>
+<i class="fab fa-microsoft" style="color: #6264a7; font-size: 16px;"></i>
+<% } else if (app.id.includes('skype')) { %>
+<i class="fab fa-skype" style="color: #00aff0; font-size: 16px;"></i>
+<% } else if (app.id.includes('slack')) { %>
+<i class="fab fa-slack" style="color: #4a154b; font-size: 16px;"></i>
+<% } else if (app.id.includes('itunes')) { %>
+<i class="fab fa-apple" style="color: #000000; font-size: 16px;"></i>
+<% } else if (app.id.includes('vlc')) { %>
+<i class="fas fa-play" style="color: #ff8800; font-size: 16px;"></i>
+<% } else if (app.id.includes('aimp')) { %>
+<i class="fas fa-music" style="color: #ff6b35; font-size: 16px;"></i>
+<% } else if (app.id.includes('foobar2000')) { %>
+<i class="fas fa-music" style="color: #ff6b35; font-size: 16px;"></i>
+<% } else if (app.id.includes('winamp')) { %>
+<i class="fas fa-music" style="color: #f93822; font-size: 16px;"></i>
+<% } else if (app.id.includes('musicbee')) { %>
+<i class="fas fa-music" style="color: #ff6b35; font-size: 16px;"></i>
+<% } else if (app.id.includes('audacity')) { %>
+<i class="fas fa-microphone" style="color: #0000cc; font-size: 16px;"></i>
+<% } else if (app.id.includes('klitecodecs')) { %>
+<i class="fas fa-film" style="color: #ff6b35; font-size: 16px;"></i>
+<% } else if (app.id.includes('gom')) { %>
+<i class="fas fa-play" style="color: #ff8800; font-size: 16px;"></i>
+<% } else if (app.id.includes('spotify')) { %>
+<i class="fab fa-spotify" style="color: #1db954; font-size: 16px;"></i>
+<% } else if (app.id.includes('cccp')) { %>
+<i class="fas fa-film" style="color: #ff6b35; font-size: 16px;"></i>
+<% } else if (app.id.includes('mediamonkey')) { %>
+<i class="fas fa-music" style="color: #ff6b35; font-size: 16px;"></i>
+<% } else if (app.id.includes('handbrake')) { %>
+<i class="fas fa-film" style="color: #ff6b35; font-size: 16px;"></i>
+<% } else if (app.id.includes('malwarebytes')) { %>
+<i class="fas fa-shield-alt" style="color: #ff6b35; font-size: 16px;"></i>
+<% } else if (app.id.includes('avast')) { %>
+<i class="fas fa-shield-alt" style="color: #ff6b35; font-size: 16px;"></i>
+<% } else if (app.id.includes('avg')) { %>
+<i class="fas fa-shield-alt" style="color: #ff6b35; font-size: 16px;"></i>
+<% } else if (app.id.includes('spybot2')) { %>
+<i class="fas fa-shield-alt" style="color: #ff6b35; font-size: 16px;"></i>
+<% } else if (app.id.includes('avira')) { %>
+<i class="fas fa-shield-alt" style="color: #ff6b35; font-size: 16px;"></i>
+<% } else if (app.id.includes('superantispyware')) { %>
+<i class="fas fa-shield-alt" style="color: #ff6b35; font-size: 16px;"></i>
+<% } else if (app.id.includes('dropbox')) { %>
+<i class="fab fa-dropbox" style="color: #0061ff; font-size: 16px;"></i>
+<% } else if (app.id.includes('googledrive')) { %>
+<i class="fab fa-google-drive" style="color: #4285f4; font-size: 16px;"></i>
+<% } else if (app.id.includes('onedrive')) { %>
+<i class="fab fa-microsoft" style="color: #0078d4; font-size: 16px;"></i>
+<% } else if (app.id.includes('ccleaner')) { %>
+<i class="fas fa-broom" style="color: #ff6b35; font-size: 16px;"></i>
+<% } else if (app.id.includes('teamviewer')) { %>
+<i class="fas fa-desktop" style="color: #0e8ee9; font-size: 16px;"></i>
+<% } else if (app.id.includes('anydesk')) { %>
+<i class="fas fa-desktop" style="color: #ff6b35; font-size: 16px;"></i>
+<% } else if (app.id.includes('imgburn')) { %>
+<i class="fas fa-compact-disc" style="color: #ff6b35; font-size: 16px;"></i>
+<% } else if (app.id.includes('notepadplusplus')) { %>
+<i class="fas fa-edit" style="color: #90ee90; font-size: 16px;"></i>
+<% } else if (app.id.includes('filezilla')) { %>
+<i class="fas fa-server" style="color: #bf0000; font-size: 16px;"></i>
+<% } else if (app.id.includes('vscode')) { %>
+<i class="fas fa-code" style="color: #007acc; font-size: 16px;"></i>
+<% } else if (app.id.includes('dotnet')) { %>
+<i class="fab fa-microsoft" style="color: #512bd4; font-size: 16px;"></i>
+<% } else if (app.id.includes('jdk') || app.id.includes('java')) { %>
+<i class="fab fa-java" style="color: #ed8b00; font-size: 16px;"></i>
+<% } else if (app.id.includes('python')) { %>
+<i class="fab fa-python" style="color: #3776ab; font-size: 16px;"></i>
+<% } else { %>
+<i class="fas fa-cog" style="color: #666; font-size: 16px;"></i>
+<% } %>
+<%= app.name %>
+</label>
+</li>
+<% }); %>
+</ul>
+</li>
+<% }); %>
+
+</ul>
+</div>
+<div class="container">
+<h3 class="text-center">2. Click here to Get your Stackdrop installer</h3>
+<p class="text-center text-danger hidden js-homepage-no-apps">
+Please check off the apps you want above.
+</p>
+<p class="text-center">
+<button type="submit" class="btn btn-primary btn-lg js-homepage-get-installer" accesskey="g" id="generate-btn-top">Get Your Stackdrop Installer</button>
+</p>
+<p class="text-center">
+<small>Stackdrop works on Windows 11, 10, 8.x, 7, and equivalent Server versions.</small>
+</p>
+</div>
+</form>
+
+<div class="container">
+<hr>
+</div>
+
+<div class="container">
+<div class="row">
+<div class="col-sm-6">
+<h4>Stackdrop will</h4>
+<ul>
+<li>start working as soon as you run it</li>
+<li>not bother you with any choices or options</li>
+<li>install apps in their default location</li>
+<li>say no to toolbars or extra junk</li>
+<li>install 64-bit apps on 64-bit machines</li>
+<li>install apps in your PC's language</li>
+<li>do all its work in the background</li>
+<li>install the latest stable version of an app</li>
+<li>skip up-to-date apps</li>
+<li>skip any reboot requests from installers</li>
+<li>download apps from each publisher's official site</li>
+<li>verify digital signatures or hashes before running anything</li>
+<li>work best if you turn off any web filters or firewalls</li>
+<li>save you a lot of time!</li>
+</ul>
+</div>
+<div class="col-sm-6">
+<h4>About Stackdrop</h4>
+<p>
+Stackdrop generates silent installers for Windows applications, making deployment easy and efficient.
+</p>
+<p>
+Our system supports a wide range of applications including:
+</p>
+<ul>
+<li>Web Browsers (Chrome, Firefox, Edge, Opera)</li>
+<li>Media Players (VLC, iTunes, Spotify)</li>
+<li>Security Tools (Malwarebytes, Avast, AVG)</li>
+<li>Development Tools (Visual Studio Code, Python, Java)</li>
+<li>And many more!</li>
+</ul>
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="footer">
+<div class="container text-center">
+<ul class="list-inline">
+<li><a class="footer-link" href="/about">about</a></li>
+<li><a class="footer-link" href="/help">help</a></li>
+<li><a class="footer-link" href="/feedback">feedback</a></li>
+</ul>
+<p class="small">
+&copy; Stackdrop - Silent Installer Generator
+</p>
+</div>
+</div>
+
+<script src="https://ninite.com/static/js/jquery-3.6.4.min-9663b61e980ed29d7a6ce3726c3714e6.js"></script>
+<script src="https://ninite.com/static/js/collapse-efe73e03e8fffec0dacb5abe412f4d78.js"></script>
+<script src="https://ninite.com/static/js/dropdown-54e9cfe90f65ad9a867ff67615ccac74.js"></script>
+<script src="https://ninite.com/static/js/masonry.pkgd.min-04eaba070e1a2d535fb026e5e7b5b399.js"></script>
+<script src="/js/mainbutton.js"></script>
 </body>
 </html>

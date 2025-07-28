@@ -75,8 +75,8 @@ async function checkUpdates() {
                 continue;
             }
 
-            // Only update if status is 0 (not updated/missing)
-            if (storedStatus === '0') {
+            // Only update if status is 0 (not updated/missing) or 2 (manual update needed)
+            if (storedStatus === '0' || storedStatus === '2') {
                 let outputStatus = '0';
                 let outputEtag = storedEtag;
                 let outputLastModified = storedLastModified;
