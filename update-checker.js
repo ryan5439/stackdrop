@@ -6,6 +6,75 @@ const path = require('path');
 const serverListPath = path.join(__dirname, 'silentinstallers', 'serverlist.txt');
 const installersBaseDir = path.join(__dirname, 'silentinstallers'); // Directory to store downloaded EXEs
 
+// Helper function to get the correct installer filename (same as in app.js)
+function getInstallerFileName(appId) {
+    const installerMap = {
+        'chrome64': 'ChromeSetup64.exe',
+        'firefox64': 'firefox_installer.exe',
+        'edge': 'EdgeInstaller.msi',
+        'opera64': 'Opera_119.0.5497.56_Setup_x64.exe',
+        'zoom': 'zoom_installer.exe',
+        'discord': 'discord_installer.exe',
+        'teams': 'teams_installer.exe',
+        'skype': 'skype_installer.exe',
+        'slack': 'slack_installer.exe',
+        'vlc': 'vlc_installer.exe',
+        'itunes': 'itunes_installer.exe',
+        'winamp': 'winamp_installer.exe',
+        'spotify': 'spotify_installer.exe',
+        'aimp': 'aimp_installer.exe',
+        'foobar2000': 'foobar2000_installer.exe',
+        'musicbee': 'musicbee_installer.exe',
+        'audacity': 'audacity_installer.exe',
+        'klitecodecs': 'klitecodecs_installer.exe',
+        'gom': 'gom_installer.exe',
+        'cccp': 'cccp_installer.exe',
+        'mediamonkey': 'mediamonkey_installer.exe',
+        'handbrake': 'handbrake_installer.exe',
+        'malwarebytes': 'malwarebytes_installer.exe',
+        'avast': 'avast_installer.exe',
+        'avg': 'avg_installer.exe',
+        'spybot2': 'spybot2_installer.exe',
+        'avira': 'avira_installer.exe',
+        'superantispyware': 'superantispyware_installer.exe',
+        'dropbox': 'dropbox_installer.exe',
+        'googledrive': 'googledrive_installer.exe',
+        'onedrive': 'onedrive_installer.exe',
+        'ccleaner': 'ccleaner_installer.exe',
+        'teamviewer': 'teamviewer_installer.exe',
+        'anydesk': 'anydesk_installer.exe',
+        'imgburn': 'imgburn_installer.exe',
+        'notepadplusplus': 'npp.8.8.1.Installer.x64.exe',
+        'filezilla': 'filezilla_installer.exe',
+        'vscode': 'vscode_installer.exe',
+        'libreoffice': 'libreoffice_installer.exe',
+        'openoffice': 'openoffice_installer.exe',
+        'foxitreader': 'foxitreader_installer.exe',
+        'gimp': 'gimp_installer.exe',
+        'blender': 'blender_installer.exe',
+        'krita': 'krita_installer.exe',
+        // .NET Framework installer files
+        'dotnet481': 'dotnetfx481_x64.exe',
+        'dotnet481x86': 'dotnetfx481_x86.exe',
+        'dotnet9': 'dotnet-runtime-9.0-win-x64.exe',
+        'dotnet9x86': 'dotnet-runtime-9.0-win-x86.exe',
+        'dotnet9desktop': 'dotnet-desktop-runtime-9.0-win-x64.exe',
+        'dotnet9desktopx86': 'dotnet-desktop-runtime-9.0-win-x86.exe',
+        // Development tools installer files
+        'jdk24x64': 'jdk-24_windows-x64_bin.exe',
+        'jdk24x86': 'jdk-24_windows-x86_bin.exe',
+        'jdk21x64': 'jdk-21_windows-x64_bin.exe',
+        'jdk21x86': 'jdk-21_windows-x86_bin.exe',
+        'python311x64': 'python-3.11.9-amd64.exe',
+        'python311x86': 'python-3.11.9.exe',
+        'python312x64': 'python-3.12.7-amd64.exe',
+        'python312x86': 'python-3.12.7.exe',
+        'python313x64': 'python-3.13.0-amd64.exe',
+        'python313x86': 'python-3.13.0.exe'
+    };
+    return installerMap[appId] || `${appId}_installer.exe`;
+}
+
 async function checkUpdates() {
     try {
         await fs.promises.mkdir(installersBaseDir, { recursive: true }); // Ensure installer directory exists
@@ -98,7 +167,7 @@ async function checkUpdates() {
                     });
                     const liveEtag = headResponse.headers['etag'] || 'N/A';
                     const liveLastModified = headResponse.headers['last-modified'] || 'N/A';
-                    const installerFilename = `${appId}_installer.exe`;
+                    const installerFilename = getInstallerFileName(appId);
                     const installerPath = path.join(installersBaseDir, installerFilename);
                     let installerExists = false;
                     try {

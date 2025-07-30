@@ -245,20 +245,8 @@ app.get('/', (req, res) => {
 
 // Get server info for installer configuration
 app.get('/server-info', (req, res) => {
-    const os = require('os');
-    const networkInterfaces = os.networkInterfaces();
-    let serverIP = 'localhost';
-    
-    // Find the first non-internal IPv4 address
-    for (const name of Object.keys(networkInterfaces)) {
-        for (const interface of networkInterfaces[name]) {
-            if (interface.family === 'IPv4' && !interface.internal) {
-                serverIP = interface.address;
-                break;
-            }
-        }
-        if (serverIP !== 'localhost') break;
-    }
+    // Use the actual server IP address
+    const serverIP = '69.48.166.160';
     
     res.json({
         serverIP: serverIP,
@@ -267,7 +255,24 @@ app.get('/server-info', (req, res) => {
     });
 });
 
-
+// Serve EXE files for download by the installer
+app.get('/downloads/:filename', (req, res) => {
+    const filename = req.params.filename;
+    const filePath = path.join('/var/www/stackdrop/silentinstallers', filename);
+    
+    // Check if file exists
+    if (!fs.existsSync(filePath)) {
+        return res.status(404).json({ error: 'File not found' });
+    }
+    
+    // Serve the file for download
+    res.download(filePath, filename, (err) => {
+        if (err) {
+            console.error('Download error:', err);
+            res.status(500).json({ error: 'Download failed' });
+        }
+    });
+});
 
 // Generate installer endpoint (your existing route)
 app.post('/generate', async (req, res) => {
@@ -451,8 +456,8 @@ app.post('/generate', async (req, res) => {
 
 // Function to generate multi-app NSIS script
 function generateMultiAppNSIS(selectedApps, exePath) {
-    // Get server IP for downloads
-    const serverIP = process.env.SERVER_IP || 'localhost';
+    // Use the actual server IP address for downloads
+    const serverIP = '69.48.166.160';
     const serverPort = process.env.PORT || '3000';
     const serverUrl = `http://${serverIP}:${serverPort}`;
     
@@ -463,21 +468,37 @@ function generateMultiAppNSIS(selectedApps, exePath) {
         
         return `
 Section "Install${appName.replace(/\s+/g, '')}" SEC${index + 1}
-    DetailPrint "Downloading ${appName}... (${index + 1}/${selectedApps.length})"
+    DetailPrint "Downloading ${appName}..."
     DetailPrint "Downloading ${installerFileName}..."
-    NSISdl::download "${serverUrl}/downloads/${installerFileName}" "$$TEMP\\${installerFileName}"
+    
+    ; Test connection first
+    DetailPrint "Testing connection to server..."
+    NSISdl::download "${serverUrl}/server-info" "$$TEMP\\connection_test.txt"
     Pop $0
-    StrCmp $0 "success" download_ok_${index} download_fail_${index}
+    StrCmp $0 "success" connection_ok_${index} connection_fail_${index}
+    
+    connection_ok_${index}:
+        Delete "$$TEMP\\connection_test.txt"
+        DetailPrint "Connection test successful. Downloading ${installerFileName}..."
+        NSISdl::download "${serverUrl}/downloads/${installerFileName}" "$$TEMP\\${installerFileName}"
+        Pop $0
+        StrCmp $0 "success" download_ok_${index} download_fail_${index}
+    
+    connection_fail_${index}:
+        DetailPrint "Connection test failed. Error: $$0"
+        MessageBox MB_OK|MB_ICONSTOP "Cannot connect to server. Error code: $$0. Check firewall and antivirus settings."
+        Goto end_${index}
     
     download_ok_${index}:
         DetailPrint "Download successful. Installing ${appName}..."
         ExecWait '"$$TEMP\\${installerFileName}" ${silentFlag}'
         DetailPrint "${appName} installation complete."
+        Delete "$$TEMP\\${installerFileName}"
         Goto end_${index}
     
     download_fail_${index}:
         DetailPrint "Download failed for ${appName}. Error: $$0"
-        MessageBox MB_OK|MB_ICONSTOP "Failed to download ${appName}. Please check your internet connection."
+        MessageBox MB_OK|MB_ICONSTOP "Failed to download ${appName}. Error: $$0"
     
     end_${index}:
 SectionEnd`;
@@ -497,20 +518,33 @@ ShowInstDetails show
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_LANGUAGE "English"
 
+Function .onInit
+    DetailPrint "Checking internet connection..."
+    NSISdl::download "http://www.google.com" "$$TEMP\\internet_test.txt"
+    Pop $0
+    StrCmp $0 "success" internet_ok internet_fail
+    
+    internet_ok:
+        Delete "$$TEMP\\internet_test.txt"
+        DetailPrint "Internet connection verified."
+        Goto init_done
+        
+    internet_fail:
+        DetailPrint "Initial internet test failed, but will try server connection later."
+        DetailPrint "Internet test error code: $$0"
+        
+    init_done:
+FunctionEnd
+
 ${appInstallSections}
 
 Function .onInstSuccess
-    ; Clean up downloaded files
-    ${selectedApps.map(appId => {
-        const installerFileName = getInstallerFileName(appId);
-        return `Delete "$$TEMP\\${installerFileName}"`;
-    }).join('\n    ')}
     DetailPrint "All applications installed successfully!"
     MessageBox MB_OK|MB_ICONINFORMATION "Stackdrop installation complete! All selected applications have been installed."
 FunctionEnd
 
 Function .onInstFailed
-    MessageBox MB_OK|MB_ICONSTOP "Installation failed! Please check your internet connection and try again."
+    MessageBox MB_OK|MB_ICONSTOP "Installation failed! Please check your internet connection and firewall settings."
 FunctionEnd`;
 }
 
@@ -526,9 +560,9 @@ function getAppDisplayName(appId) {
 // Helper function to get installer filename
 function getInstallerFileName(appId) {
     const installerMap = {
-        'chrome64': 'chrome_installer.exe',
-        'firefox64': 'firefox_installer.exe',
-        'edge': 'Edgeinstaller.msi',
+        'chrome64': 'ChromeSetup64.exe',
+        'firefox64': 'FirefoxSetup141.0.exe',
+        'edge': 'EdgeInstaller.msi',
         'opera64': 'Opera_119.0.5497.56_Setup_x64.exe',
         'zoom': 'zoom_installer.exe',
         'discord': 'discord_installer.exe',
