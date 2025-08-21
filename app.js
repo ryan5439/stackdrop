@@ -7,6 +7,8 @@ const execCallback = require('child_process').exec;
 const exec = util.promisify(execCallback);
 const crypto = require('crypto');
 const { EventEmitter } = require('events');
+// Import update checker for scheduled runs
+const { checkUpdates } = require('./update-checker');
 const app = express();
 const port = 3000;
 
@@ -87,6 +89,8 @@ async function init() {
         
         app.listen(port, () => {
             console.log(`Stackdrop app listening at http://localhost:${port}`);
+            // Schedule daily update check at 3am server time
+            scheduleDailyUpdateCheck();
         });
     } catch (error) {
         console.error('Failed to initialize app:', error);
@@ -95,6 +99,31 @@ async function init() {
 }
 
 init();
+
+// Schedules the update checker to run once a day at 3am server local time
+function scheduleDailyUpdateCheck() {
+    const scheduleNextRun = () => {
+        const now = new Date();
+        const next = new Date(now);
+        next.setHours(3, 0, 0, 0);
+        if (next <= now) {
+            next.setDate(next.getDate() + 1);
+        }
+        const delayMs = next.getTime() - now.getTime();
+        console.log(`Next scheduled update check: ${next.toString()}`);
+        setTimeout(async () => {
+            try {
+                await checkUpdates();
+            } catch (e) {
+                console.error('Scheduled update check failed:', e);
+            } finally {
+                // Recalculate next run to handle DST/clock changes
+                scheduleNextRun();
+            }
+        }, delayMs);
+    };
+    scheduleNextRun();
+}
 
 // Set view engine and static files
 app.set('view engine', 'ejs');
@@ -233,13 +262,60 @@ const apps = {
         ]
     }
 };
+// Helper to map appId to display name
+function getDisplayNameById(appId) {
+    for (const category of Object.values(apps)) {
+        const app = category.items.find(item => item.id === appId);
+        if (app) return app.name;
+    }
+    return appId;
+}
+
+async function loadLatestUpdates() {
+    try {
+        const latestPath = path.join(__dirname, 'public', 'latest-updates.json');
+        const raw = await fsPromises.readFile(latestPath, 'utf8');
+        const parsed = JSON.parse(raw);
+        const items = Array.isArray(parsed.items) ? parsed.items : [];
+        // Map to display objects and sort by updatedAt desc
+        const mapped = items.map(it => ({
+            id: it.appId,
+            name: getDisplayNameById(it.appId),
+            updatedAt: it.updatedAt,
+            timeDisplay: new Date(it.updatedAt).toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+        })).sort((a, b) => (new Date(b.updatedAt)) - (new Date(a.updatedAt)));
+        return mapped.slice(0, 10);
+    } catch (_) {
+        return [];
+    }
+}
+
 // Routes - Place this section right after your apps object definition and before the /generate route
 
 // Main index route
-app.get('/', (req, res) => {
+// Simple in-memory view counter (persisted to file between restarts)
+const viewCounterFile = path.join(__dirname, 'public', 'view-counter.json');
+let viewCount = 0;
+(async () => {
+    try {
+        await fsPromises.mkdir(path.join(__dirname, 'public'), { recursive: true });
+        const raw = await fsPromises.readFile(viewCounterFile, 'utf8');
+        const parsed = JSON.parse(raw);
+        if (typeof parsed.count === 'number') viewCount = parsed.count;
+    } catch {}
+})();
+
+app.get('/', async (req, res) => {
+    // Increment and persist counter
+    viewCount += 1;
+    fsPromises.writeFile(viewCounterFile, JSON.stringify({ count: viewCount }), 'utf8').catch(() => {});
+
+    const latestUpdates = await loadLatestUpdates();
     res.render('index', { 
         title: 'Stackdrop - install and update your complete software stack with 1 click',
-        apps: apps
+        apps: apps,
+        latestUpdates,
+        viewCount
     });
 });
 
@@ -253,6 +329,80 @@ app.get('/server-info', (req, res) => {
         serverPort: process.env.PORT || '3000',
         serverUrl: `http://${serverIP}:${process.env.PORT || '3000'}`
     });
+});
+
+// Feedback page
+app.get('/feedback', (req, res) => {
+    res.render('feedback', { title: 'Feedback' });
+});
+
+// Feedback submission handler
+app.post('/feedback', async (req, res) => {
+    const { name = '', email = '', subject = '', message = '', website = '' } = req.body || {};
+
+    // Honeypot trap: if website is filled, silently accept
+    if (website && String(website).trim().length > 0) {
+        return res.status(200).json({ success: true });
+    }
+
+    const clean = (v) => String(v || '').toString().slice(0, 5000);
+    const payload = {
+        name: clean(name),
+        email: clean(email),
+        subject: clean(subject) || 'Stackdrop Feedback',
+        message: clean(message),
+        ip: req.headers['x-forwarded-for'] || req.socket.remoteAddress,
+        userAgent: req.get('user-agent') || '',
+        submittedAt: new Date().toISOString()
+    };
+
+    // Always append to a local log for backup
+    try {
+        const logLine = JSON.stringify(payload) + '\n';
+        await fsPromises.appendFile(path.join(__dirname, 'feedback-submissions.log'), logLine, 'utf8');
+    } catch (e) {
+        console.error('Failed to write feedback log:', e.message);
+    }
+
+    // Try to send email if SMTP env is configured and nodemailer is available
+    const smtpHost = process.env.SMTP_HOST;
+    const smtpPort = process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : undefined;
+    const smtpUser = process.env.SMTP_USER;
+    const smtpPass = process.env.SMTP_PASS;
+    const smtpSecure = String(process.env.SMTP_SECURE || '').toLowerCase() === 'true';
+    const toAddress = process.env.FEEDBACK_TO || smtpUser;
+    const fromAddress = process.env.FEEDBACK_FROM || smtpUser || 'no-reply@stackdrop.it';
+
+    if (smtpHost && smtpPort && smtpUser && smtpPass && toAddress) {
+        try {
+            // Lazy-require to avoid hard dependency if not installed
+            const nodemailer = require('nodemailer');
+            const transporter = nodemailer.createTransport({
+                host: smtpHost,
+                port: smtpPort,
+                secure: smtpSecure,
+                auth: { user: smtpUser, pass: smtpPass }
+            });
+            const textBody = `New feedback submitted\n\nName: ${payload.name}\nEmail: ${payload.email}\nSubject: ${payload.subject}\n\nMessage:\n${payload.message}\n\nIP: ${payload.ip}\nUser-Agent: ${payload.userAgent}\nSubmitted: ${payload.submittedAt}`;
+            await transporter.sendMail({
+                from: fromAddress,
+                to: toAddress,
+                subject: `[Stackdrop Feedback] ${payload.subject}`,
+                text: textBody
+            });
+        } catch (e) {
+            console.warn('Feedback email not sent:', e.message);
+            // Continue without failing the request
+        }
+    } else {
+        console.log('SMTP not configured; feedback saved to log only.');
+    }
+
+    // Respond success
+    if (req.accepts('html')) {
+        return res.render('feedback', { title: 'Feedback', submitted: true });
+    }
+    res.json({ success: true });
 });
 
 // Serve EXE files for download by the installer
@@ -390,10 +540,12 @@ const installerFileMap = {
 };
 
 // Routes
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
+    const latestUpdates = await loadLatestUpdates();
     res.render('index', { 
         title: 'Stackdrop - install and update your complete software stack with 1 click',
-        apps: apps
+        apps: apps,
+        latestUpdates
     });
 });
 
@@ -457,54 +609,80 @@ app.post('/generate', async (req, res) => {
 // Function to generate multi-app NSIS script
 function generateMultiAppNSIS(selectedApps, exePath) {
     // Use the actual server IP address for downloads
-    const serverIP = '69.48.166.160';
-    const serverPort = process.env.PORT || '3000';
-    const serverUrl = `http://${serverIP}:${serverPort}`;
+    // Public base URL used by client installers (must be reachable over HTTPS)
+    const serverUrl = 'https://stackdrop.it';
+    const downloadBases = [
+        'https://stackdrop.it/downloads',
+        'https://stackdrop.it/silentinstallers',
+        'http://stackdrop.it/silentinstallers'
+    ];
     
     const appInstallSections = selectedApps.map((appId, index) => {
         const appName = getAppDisplayName(appId);
         const installerFileName = getInstallerFileName(appId);
+        const installerCandidates = getInstallerCandidates(appId);
         const silentFlag = getSilentFlag(appId);
+        const localSaveName = installerFileName;
+
+        const buildAttempts = (list, labelPrefix) => {
+            let blocks = '';
+            list.forEach((fname, attemptIdx) => {
+                downloadBases.forEach((base, baseIdx) => {
+                    const label = `${labelPrefix}_next_${attemptIdx}_${baseIdx}`;
+                    blocks += `\n        DetailPrint "Trying ${fname} from ${base}..."\n        inetc::get /SILENT /NOCANCEL \"${base}/${fname}\" \"${'$'}TEMP\\${localSaveName}\"\n        Pop $0\n        StrCmp $0 \"OK\" download_ok_${index} ${label}\n        ${label}:\n`;
+                });
+            });
+            return blocks;
+        };
+
+        const x64Attempts = buildAttempts(installerCandidates.x64, `x64_${index}`);
+        let vendorFallback = '';
+        if (appId === 'chrome64') {
+            const vendorLabel = `vendor_${index}_next`;
+            vendorFallback = `\n        DetailPrint "Trying vendor URL for Chrome..."\n        inetc::get /SILENT /NOCANCEL \"http://dl.google.com/chrome/install/latest/chrome_installer.exe\" \"${'$'}TEMP\\${localSaveName}\"\n        Pop $0\n        StrCmp $0 \"OK\" download_ok_${index} ${vendorLabel}\n        ${vendorLabel}:\n`;
+        }
         
         return `
 Section "Install${appName.replace(/\s+/g, '')}" SEC${index + 1}
     DetailPrint "Downloading ${appName}..."
-    DetailPrint "Downloading ${installerFileName}..."
+    DetailPrint "Preparing download attempts..."
     
-    ; Test connection first
+    ; Test connection first (HTTPS capable)
     DetailPrint "Testing connection to server..."
-    NSISdl::download "${serverUrl}/server-info" "$$TEMP\\connection_test.txt"
+    inetc::get /SILENT "${serverUrl}/server-info" "${'$'}TEMP\\connection_test.txt"
     Pop $0
-    StrCmp $0 "success" connection_ok_${index} connection_fail_${index}
+    StrCmp $0 "OK" connection_ok_${index} connection_fail_${index}
     
     connection_ok_${index}:
-        Delete "$$TEMP\\connection_test.txt"
-        DetailPrint "Connection test successful. Downloading ${installerFileName}..."
-        NSISdl::download "${serverUrl}/downloads/${installerFileName}" "$$TEMP\\${installerFileName}"
-        Pop $0
-        StrCmp $0 "success" download_ok_${index} download_fail_${index}
+        Delete "${'$'}TEMP\\connection_test.txt"
+        DetailPrint "Connection test successful. Downloading 64-bit installer..."
+${x64Attempts}${vendorFallback}
+        Goto download_fail_${index}
     
     connection_fail_${index}:
-        DetailPrint "Connection test failed. Error: $$0"
-        MessageBox MB_OK|MB_ICONSTOP "Cannot connect to server. Error code: $$0. Check firewall and antivirus settings."
+        DetailPrint "Connection test failed. Error: $0"
+        MessageBox MB_OK|MB_ICONSTOP "Cannot connect to server. Error code: $0. Check firewall and antivirus settings."
         Goto end_${index}
     
     download_ok_${index}:
         DetailPrint "Download successful. Installing ${appName}..."
-        ExecWait '"$$TEMP\\${installerFileName}" ${silentFlag}'
+        ExecWait '"${'$'}TEMP\\${localSaveName}" ${silentFlag}'
         DetailPrint "${appName} installation complete."
-        Delete "$$TEMP\\${installerFileName}"
+        Delete "${'$'}TEMP\\${localSaveName}"
         Goto end_${index}
     
     download_fail_${index}:
-        DetailPrint "Download failed for ${appName}. Error: $$0"
-        MessageBox MB_OK|MB_ICONSTOP "Failed to download ${appName}. Error: $$0"
+        DetailPrint "Download failed for ${appName}. Error: $0"
+        MessageBox MB_OK|MB_ICONSTOP "Failed to download ${appName}. Error: $0"
     
     end_${index}:
 SectionEnd`;
     }).join('\n');
 
     return `!include "MUI2.nsh"
+!include "x64.nsh"
+
+Unicode true
 
 ; Multi-App Stackdrop Downloader & Installer
 Name "Stackdrop Multi-App Installer"
@@ -520,12 +698,12 @@ ShowInstDetails show
 
 Function .onInit
     DetailPrint "Checking internet connection..."
-    NSISdl::download "http://www.google.com" "$$TEMP\\internet_test.txt"
+    inetc::get /SILENT "https://www.google.com/generate_204" "${'$'}TEMP\\internet_test.txt"
     Pop $0
-    StrCmp $0 "success" internet_ok internet_fail
+    StrCmp $0 "OK" internet_ok internet_fail
     
     internet_ok:
-        Delete "$$TEMP\\internet_test.txt"
+        Delete "${'$'}TEMP\\internet_test.txt"
         DetailPrint "Internet connection verified."
         Goto init_done
         
@@ -561,9 +739,9 @@ function getAppDisplayName(appId) {
 function getInstallerFileName(appId) {
     const installerMap = {
         'chrome64': 'ChromeSetup64.exe',
-        'firefox64': 'FirefoxSetup141.0.exe',
+        'firefox64': 'firefox_installer.exe',
         'edge': 'EdgeInstaller.msi',
-        'opera64': 'Opera_119.0.5497.56_Setup_x64.exe',
+        'opera64': 'opera_installer.exe',
         'zoom': 'zoom_installer.exe',
         'discord': 'discord_installer.exe',
         'teams': 'teams_installer.exe',
@@ -595,7 +773,7 @@ function getInstallerFileName(appId) {
         'teamviewer': 'teamviewer_installer.exe',
         'anydesk': 'anydesk_installer.exe',
         'imgburn': 'imgburn_installer.exe',
-        'notepadplusplus': 'npp.8.8.1.Installer.x64.exe',
+        'notepadplusplus': 'notepadplusplus_installer.exe',
         'filezilla': 'filezilla_installer.exe',
         'vscode': 'vscode_installer.exe',
         'libreoffice': 'libreoffice_installer.exe',
@@ -624,6 +802,22 @@ function getInstallerFileName(appId) {
         'python313x86': 'python-3.13.0.exe'
     };
     return installerMap[appId] || `${appId}_installer.exe`;
+}
+
+// Return candidate filenames to try per architecture for each app
+function getInstallerCandidates(appId) {
+    const candidates = {
+        firefox64: {
+            x64: ['firefox_installer.exe', 'FirefoxSetup141.0.exe'],
+            x86: ['firefox_installer.exe', 'FirefoxSetup141.0.exe']
+        },
+        opera64: {
+            x64: ['opera_installer.exe', 'Opera_119.0.5497.56_Setup_x64.exe'],
+            x86: ['opera_installer.exe', 'Opera_119.0.5497.56_Setup.exe']
+        }
+    };
+    const single = getInstallerFileName(appId);
+    return candidates[appId] || { x64: [single], x86: [single] };
 }
 
 // Helper function to get silent install flags

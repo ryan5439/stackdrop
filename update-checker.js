@@ -44,7 +44,7 @@ function getInstallerFileName(appId) {
         'teamviewer': 'teamviewer_installer.exe',
         'anydesk': 'anydesk_installer.exe',
         'imgburn': 'imgburn_installer.exe',
-        'notepadplusplus': 'npp.8.8.1.Installer.x64.exe',
+        'notepadplusplus': 'notepadplusplus_installer.exe',
         'filezilla': 'filezilla_installer.exe',
         'vscode': 'vscode_installer.exe',
         'libreoffice': 'libreoffice_installer.exe',
@@ -75,13 +75,105 @@ function getInstallerFileName(appId) {
     return installerMap[appId] || `${appId}_installer.exe`;
 }
 
+// Helper to fetch text content with basic redirect handling
+async function fetchTextWithRedirects(url, maxRedirects = 10) {
+    return await new Promise((resolve, reject) => {
+        const visit = (currentUrl, remaining) => {
+            if (remaining <= 0) {
+                reject(new Error(`Too many redirects while fetching ${currentUrl}`));
+                return;
+            }
+            const protocol = currentUrl.startsWith('https') ? https : http;
+            const req = protocol.get(currentUrl, { timeout: 30000 }, (res) => {
+                if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+                    let redirectUrl = res.headers.location;
+                    if (redirectUrl.startsWith('/')) {
+                        const urlObj = new URL(currentUrl);
+                        redirectUrl = `${urlObj.protocol}//${urlObj.host}${redirectUrl}`;
+                    } else if (!redirectUrl.startsWith('http')) {
+                        const urlObj = new URL(currentUrl);
+                        const basePath = urlObj.pathname.substring(0, urlObj.pathname.lastIndexOf('/') + 1);
+                        redirectUrl = `${urlObj.protocol}//${urlObj.host}${basePath}${redirectUrl}`;
+                    }
+                    visit(redirectUrl, remaining - 1);
+                    return;
+                }
+                if (res.statusCode !== 200) {
+                    reject(new Error(`Failed to fetch ${currentUrl} (status ${res.statusCode})`));
+                    return;
+                }
+                res.setEncoding('utf8');
+                let data = '';
+                res.on('data', (chunk) => { data += chunk; });
+                res.on('end', () => resolve(data));
+            });
+            req.on('error', (e) => reject(new Error(`Request error for ${currentUrl}: ${e.message}`)));
+            req.on('timeout', () => { req.destroy(); reject(new Error(`Request timed out for ${currentUrl}`)); });
+        };
+        visit(url, maxRedirects);
+    });
+}
+
+// Special function to get latest Opera download URL
+async function getLatestOperaUrl() {
+    try {
+        const baseUrl = 'https://get.opera.com/ftp/pub/opera/desktop/';
+        const indexHtml = await fetchTextWithRedirects(baseUrl);
+        const versionMatches = [...indexHtml.matchAll(/href="(\d+\.\d+\.\d+\.\d+)\//g)].map(m => m[1]);
+        if (!versionMatches || versionMatches.length === 0) {
+            throw new Error('No Opera versions found in directory listing');
+        }
+        const parseVersion = (v) => v.split('.').map((n) => parseInt(n, 10));
+        versionMatches.sort((a, b) => {
+            const aa = parseVersion(a), bb = parseVersion(b);
+            for (let i = 0; i < Math.max(aa.length, bb.length); i += 1) {
+                const ai = aa[i] || 0;
+                const bi = bb[i] || 0;
+                if (ai !== bi) return bi - ai;
+            }
+            return 0;
+        });
+        // Try versions from latest to older until one has the expected x64 setup
+        for (const version of versionMatches) {
+            try {
+                const winDir = `${baseUrl}${version}/win/`;
+                const winHtml = await fetchTextWithRedirects(winDir);
+                const fileMatch = winHtml.match(new RegExp(`href="Opera_${version}_Setup_x64\\.exe"`));
+                if (fileMatch) {
+                    return `${winDir}Opera_${version}_Setup_x64.exe`;
+                }
+                // Fallback to non-suffixed Setup if x64 specifically not listed
+                const genericMatch = winHtml.match(new RegExp(`href="Opera_${version}_Setup\\.exe"`));
+                if (genericMatch) {
+                    return `${winDir}Opera_${version}_Setup.exe`;
+                }
+            } catch (innerError) {
+                // Continue to previous version
+            }
+        }
+        throw new Error('Could not resolve a valid Opera x64 installer URL');
+    } catch (error) {
+        throw new Error(`Failed to get latest Opera URL: ${error.message}`);
+    }
+}
+
+// Normalize legacy/mismatched app IDs to those used in the UI/app catalog
+function normalizeAppId(appId) {
+    if (appId === 'opera') return 'opera64';
+    return appId;
+}
+
 async function checkUpdates() {
     try {
         await fs.promises.mkdir(installersBaseDir, { recursive: true }); // Ensure installer directory exists
+        // Ensure public directory exists for latest updates
+        const publicDir = path.join(__dirname, 'public');
+        await fs.promises.mkdir(publicDir, { recursive: true });
         const data = await fs.promises.readFile(serverListPath, 'utf8');
         const lines = data.trim().split('\n');
         const updatedLines = [];
         let changesMade = false;
+        const updatedAppsThisRun = [];
 
         for (const line of lines) {
             if (line.startsWith('//') || line.trim() === '') {
@@ -89,30 +181,34 @@ async function checkUpdates() {
                 continue;
             }
 
-            // Fix URL parsing - each line should be in this format:
-            // status:appId:url:etag:lastModified
-            // But we need to be careful about the URL which may contain colons
-            
-            // First, separate status and appId which are guaranteed to not have colons
+            // Accept lines with or without a leading status flag. Supported formats:
+            // - appId:url[:etag][:lastModified]
+            // - status:appId:url[:etag][:lastModified] (status is ignored)
             const firstColonIndex = line.indexOf(':');
             if (firstColonIndex === -1) {
                 console.warn(`Malformed line (no colon found): "${line}"`);
                 updatedLines.push(line);
                 continue;
             }
-            const secondColonIndex = line.indexOf(':', firstColonIndex + 1);
-            if (secondColonIndex === -1) {
-                console.warn(`Malformed line (only one colon found): "${line}"`);
-                updatedLines.push(line);
-                continue;
+            let appId;
+            let urlStart;
+            const firstToken = line.substring(0, firstColonIndex);
+            if (/^\d+$/.test(firstToken)) {
+                const secondColonIndex = line.indexOf(':', firstColonIndex + 1);
+                if (secondColonIndex === -1) {
+                    console.warn(`Malformed line (only one colon found after status): "${line}"`);
+                    updatedLines.push(line);
+                    continue;
+                }
+                appId = line.substring(firstColonIndex + 1, secondColonIndex);
+                urlStart = secondColonIndex + 1;
+            } else {
+                appId = firstToken;
+                urlStart = firstColonIndex + 1;
             }
-            
-            const storedStatus = line.substring(0, firstColonIndex);
-            const appId = line.substring(firstColonIndex + 1, secondColonIndex);
             
             // Now find the URL which will start right after appId and may contain colons
             // Look for http:// or https:// and then find the next colon after the URL
-            const urlStart = secondColonIndex + 1;
             const urlProtocolEnd = line.indexOf('://', urlStart);
             if (urlProtocolEnd === -1) {
                 console.warn(`Malformed URL (no protocol found): "${line}"`);
@@ -139,143 +235,177 @@ async function checkUpdates() {
 
             if (!appUrl.startsWith('http://') && !appUrl.startsWith('https://')) {
                 console.warn(`Skipping line for app "${appId}" due to invalid URL: "${appUrl}" in line: "${line}"`);
-                updatedLines.push(`0:${appId}:${appUrl}:${storedEtag}:${storedLastModified}`); // 0 = not updated
-                if (storedStatus !== '0') changesMade = true;
+                updatedLines.push(line);
                 continue;
             }
 
-            // Only update if status is 0 (not updated/missing) or 2 (manual update needed)
-            if (storedStatus === '0' || storedStatus === '2') {
-                let outputStatus = '0';
-                let outputEtag = storedEtag;
-                let outputLastModified = storedLastModified;
-                console.log(`Checking ${appId}...`);
+            // Determine installer path and existence before deciding whether to attempt download
+            const installerFilenamePre = getInstallerFileName(appId);
+            const installerPathPre = path.join(installersBaseDir, installerFilenamePre);
+            let installerExistsPre = false;
+            try {
+                await fs.promises.access(installerPathPre);
+                installerExistsPre = true;
+            } catch {
+                // missing
+            }
+
+            // Always perform a HEAD check to detect updates; decide whether to download
+            let outputEtag = storedEtag;
+            let outputLastModified = storedLastModified;
+            console.log(`Checking ${appId}...`);
+
+            // Special handling for Opera - always resolve latest valid installer URL
+            if (appId === 'opera') {
                 try {
-                    const protocol = appUrl.startsWith('https') ? https : http;
-                    const headResponse = await new Promise((resolve, reject) => {
-                        const req = protocol.request(appUrl, { method: 'HEAD', timeout: 30000 }, (res) => {
-                            resolve(res);
-                        });
-                        req.on('error', (e) => {
-                            reject(new Error(`HEAD request error: ${e.message}`));
-                        });
-                        req.on('timeout', () => {
-                            req.destroy();
-                            reject(new Error('HEAD request timed out'));
-                        });
-                        req.end();
+                    appUrl = await getLatestOperaUrl();
+                    console.log(`Found latest Opera URL: ${appUrl}`);
+                } catch (error) {
+                    console.error(`Failed to get latest Opera URL: ${error.message}`);
+                    // Keep the original URL and continue
+                }
+            }
+
+            try {
+                const protocol = appUrl.startsWith('https') ? https : http;
+                const headResponse = await new Promise((resolve, reject) => {
+                    const req = protocol.request(appUrl, { method: 'HEAD', timeout: 30000 }, (res) => {
+                        resolve(res);
                     });
-                    const liveEtag = headResponse.headers['etag'] || 'N/A';
-                    const liveLastModified = headResponse.headers['last-modified'] || 'N/A';
-                    const installerFilename = getInstallerFileName(appId);
-                    const installerPath = path.join(installersBaseDir, installerFilename);
-                    let installerExists = false;
-                    try {
-                        await fs.promises.access(installerPath);
-                        installerExists = true;
-                    } catch {
-                        // Installer does not exist
-                    }
-                    const isUpdateAvailable = (liveEtag !== 'N/A' && liveEtag !== storedEtag) ||
-                                              (liveLastModified !== 'N/A' && liveLastModified !== storedLastModified);
-                    if (isUpdateAvailable || !installerExists) {
-                        console.log(`Action required for ${appId}: Update available: ${isUpdateAvailable}, Installer exists: ${installerExists}.`);
-                        console.log(`Attempting to download from ${appUrl} to ${installerPath}`);
-                        const downloadProtocol = appUrl.startsWith('https') ? https : http;
-                        try {
-                            await new Promise((resolve, reject) => {
-                                const request = downloadProtocol.get(appUrl, { timeout: 120000 }, (response) => {
-                                    if (response.statusCode >= 300 && response.statusCode < 400 && response.headers.location) {
-                                        // Handle redirect
-                                        console.log(`Redirecting to ${response.headers.location} for ${appId}`);
-                                        const redirectProtocol = response.headers.location.startsWith('https') ? https : http;
-                                        const redirectRequest = redirectProtocol.get(response.headers.location, { timeout: 120000 }, (redirectResponse) => {
-                                            if (redirectResponse.statusCode !== 200) {
-                                                reject(new Error(`Download failed after redirect with status: ${redirectResponse.statusCode} for URL: ${response.headers.location}`));
-                                                return;
-                                            }
-                                            const fileStream = fs.createWriteStream(installerPath);
-                                            redirectResponse.pipe(fileStream);
-                                            fileStream.on('finish', () => {
-                                                fileStream.close(() => {
-                                                    console.log(`Successfully downloaded ${appId} after redirect.`);
-                                                    resolve();
-                                                });
-                                            });
-                                            fileStream.on('error', (err) => {
-                                                fs.unlink(installerPath, () => {});
-                                                reject(new Error(`File stream error after redirect: ${err.message}`));
-                                            });
-                                        });
-                                        redirectRequest.on('error', (err) => {
-                                            reject(new Error(`Request error during redirected download: ${err.message}`));
-                                        });
-                                        redirectRequest.on('timeout', () => {
-                                            redirectRequest.destroy();
-                                            reject(new Error('Redirected download request timed out'));
-                                        });
-                                        return;
+                    req.on('error', (e) => {
+                        reject(new Error(`HEAD request error: ${e.message}`));
+                    });
+                    req.on('timeout', () => {
+                        req.destroy();
+                        reject(new Error('HEAD request timed out'));
+                    });
+                    req.end();
+                });
+                const liveEtag = headResponse.headers['etag'] || 'N/A';
+                const liveLastModified = headResponse.headers['last-modified'] || 'N/A';
+                const installerFilename = installerFilenamePre;
+                const installerPath = installerPathPre;
+                const installerExists = installerExistsPre;
+                const isUpdateAvailable = (liveEtag !== 'N/A' && liveEtag !== storedEtag) ||
+                                          (liveLastModified !== 'N/A' && liveLastModified !== storedLastModified);
+
+                if (!installerExists || isUpdateAvailable) {
+                    console.log(`Action required for ${appId}: Update available: ${isUpdateAvailable}, Installer exists: ${installerExists}.`);
+                    console.log(`Attempting to download from ${appUrl} to ${installerPath}`);
+                    await new Promise((resolve, reject) => {
+                        // Function to handle downloads with recursive redirect following
+                        const downloadWithRedirects = (url, maxRedirects = 10) => {
+                            if (maxRedirects <= 0) {
+                                reject(new Error(`Too many redirects for ${appId} at ${url}`));
+                                return;
+                            }
+
+                            const currentProtocol = url.startsWith('https') ? https : http;
+                            const request = currentProtocol.get(url, { timeout: 120000 }, (response) => {
+                                if (response.statusCode >= 300 && response.statusCode < 400 && response.headers.location) {
+                                    // Handle redirect recursively - handle both absolute and relative URLs
+                                    let redirectUrl = response.headers.location;
+                                    if (redirectUrl.startsWith('/')) {
+                                        // Relative URL - construct absolute URL from current domain
+                                        const urlObj = new URL(url);
+                                        redirectUrl = `${urlObj.protocol}//${urlObj.host}${redirectUrl}`;
+                                    } else if (!redirectUrl.startsWith('http')) {
+                                        // Relative URL without leading slash
+                                        const urlObj = new URL(url);
+                                        const basePath = urlObj.pathname.substring(0, urlObj.pathname.lastIndexOf('/') + 1);
+                                        redirectUrl = `${urlObj.protocol}//${urlObj.host}${basePath}${redirectUrl}`;
                                     }
-                                    if (response.statusCode !== 200) {
-                                        reject(new Error(`Download failed with status: ${response.statusCode} for URL: ${appUrl}`));
-                                        return;
-                                    }
-                                    const fileStream = fs.createWriteStream(installerPath);
-                                    response.pipe(fileStream);
-                                    fileStream.on('finish', () => {
-                                        fileStream.close(() => {
-                                            console.log(`Successfully downloaded ${appId}.`);
-                                            resolve();
-                                        });
-                                    });
-                                    fileStream.on('error', (err) => {
-                                        fs.unlink(installerPath, () => {});
-                                        reject(new Error(`File stream error: ${err.message}`));
+                                    console.log(`Redirecting to ${redirectUrl} for ${appId} (${maxRedirects} redirects remaining)`);
+                                    downloadWithRedirects(redirectUrl, maxRedirects - 1);
+                                    return;
+                                }
+                                if (response.statusCode !== 200) {
+                                    reject(new Error(`Download failed with status: ${response.statusCode} for URL: ${url}`));
+                                    return;
+                                }
+                                const fileStream = fs.createWriteStream(installerPath);
+                                response.pipe(fileStream);
+                                fileStream.on('finish', () => {
+                                    fileStream.close(() => {
+                                        console.log(`Successfully downloaded ${appId}.`);
+                                        resolve();
                                     });
                                 });
-                                request.on('error', (err) => {
-                                    reject(new Error(`Request error during download: ${err.message}`));
-                                });
-                                request.on('timeout', () => {
-                                    request.destroy();
-                                    reject(new Error('Download request timed out'));
+                                fileStream.on('error', (err) => {
+                                    fs.unlink(installerPath, () => {});
+                                    reject(new Error(`File stream error: ${err.message}`));
                                 });
                             });
-                            // If download is successful
-                            outputStatus = '1'; // Mark as updated/done
-                            outputEtag = liveEtag;
-                            outputLastModified = liveLastModified;
-                        } catch (downloadError) {
-                            console.error(`Download failed for ${appId}: ${downloadError.message}`);
-                            outputStatus = '0'; // Mark as not updated
-                            // Keep previous ETag/LastModified
-                        }
-                    } else {
-                        // No update needed and file exists
-                        outputStatus = '1'; // Mark as updated/done
-                        outputEtag = liveEtag;
-                        outputLastModified = liveLastModified;
-                    }
-                } catch (error) {
-                    console.error(`Failed to check ${appId} at ${appUrl}: ${error.message}`);
-                    outputStatus = '0'; // Mark as not updated
+                            request.on('error', (err) => {
+                                reject(new Error(`Request error during download: ${err.message}`));
+                            });
+                            request.on('timeout', () => {
+                                request.destroy();
+                                reject(new Error('Download request timed out'));
+                            });
+                        };
+
+                        downloadWithRedirects(appUrl);
+                    });
+                    // If download is successful
+                    outputEtag = liveEtag;
+                    outputLastModified = liveLastModified;
+                    // Track successful updates for homepage display (normalized to UI IDs)
+                    updatedAppsThisRun.push({ appId: normalizeAppId(appId), updatedAt: new Date().toISOString() });
+                } else {
+                    // No update needed and file exists
+                    outputEtag = liveEtag;
+                    outputLastModified = liveLastModified;
                 }
-                const newLine = `${outputStatus}:${appId}:${appUrl}:${outputEtag}:${outputLastModified}`;
-                if (line !== newLine) {
-                    changesMade = true;
-                }
-                updatedLines.push(newLine);
-            } else {
-                // If status is 1, just keep as is (already updated/done)
+            } catch (error) {
+                console.error(`HEAD/download check failed for ${appId} at ${appUrl}: ${error.message}`);
+                // Keep existing line as-is on failure
                 updatedLines.push(line);
+                continue;
             }
+
+            const newLine = `${appId}:${appUrl}:${outputEtag}:${outputLastModified}`;
+            if (line !== newLine) {
+                changesMade = true;
+            }
+            updatedLines.push(newLine);
         }
 
         if (changesMade) {
             await fs.promises.writeFile(serverListPath, updatedLines.join('\n') + '\n', 'utf8');
-            console.log('Server list updated successfully.');
+            console.log('Server list updated successfully (no status flags written).');
         } else {
             console.log('No updates found or no changes to serverlist.txt needed.');
+        }
+
+        // Write latest updates JSON for homepage (merge with prior items, keep latest 25)
+        try {
+            const latestUpdatesPath = path.join(__dirname, 'public', 'latest-updates.json');
+            let previousItems = [];
+            try {
+                const prevRaw = await fs.promises.readFile(latestUpdatesPath, 'utf8');
+                const prevParsed = JSON.parse(prevRaw);
+                previousItems = Array.isArray(prevParsed.items) ? prevParsed.items : [];
+            } catch (_) { /* ignore */ }
+
+            // Normalize legacy entries (e.g., opera -> opera64)
+            previousItems = previousItems.map((it) => ({
+                ...it,
+                appId: normalizeAppId(it.appId)
+            }));
+
+            const merged = [...updatedAppsThisRun, ...previousItems]
+                .sort((a, b) => (new Date(b.updatedAt)) - (new Date(a.updatedAt)))
+                .slice(0, 25);
+
+            const payload = {
+                generatedAt: new Date().toISOString(),
+                items: merged
+            };
+            await fs.promises.writeFile(latestUpdatesPath, JSON.stringify(payload, null, 2), 'utf8');
+            console.log(`Wrote latest updates to ${latestUpdatesPath}`);
+        } catch (e) {
+            console.error('Failed to write latest updates JSON:', e.message);
         }
 
     } catch (error) {
@@ -283,4 +413,4 @@ async function checkUpdates() {
     }
 }
 
-checkUpdates();
+module.exports = { checkUpdates };

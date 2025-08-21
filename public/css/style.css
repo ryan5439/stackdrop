@@ -31,6 +31,37 @@ body {
     margin-left: 1.5rem;
 }
 
+/* Header CTA buttons to match theme */
+.nav-cta {
+    font-weight: 600;
+    padding: 12px 8px; /* align with brand */
+    color: var(--primary-color) !important;
+    margin-left: 8px;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    line-height: 20px;
+}
+.nav-cta:hover {
+    text-decoration: underline;
+    background: transparent;
+}
+.nav-cta-pro {
+    color: var(--primary-color) !important; /* match theme blue */
+    background: transparent;
+    border: none;
+    line-height: 20px;
+    padding: 12px 8px; /* align with brand */
+}
+
+/* Normalize brand and nav link vertical rhythm */
+.navbar-brand { padding-top: 12px; padding-bottom: 12px; line-height: 20px; }
+.navbar-nav > li > a { padding-top: 12px; padding-bottom: 12px; line-height: 20px; }
+.nav-cta-pro:hover {
+    text-decoration: underline;
+    background: transparent;
+}
+
 .features {
     max-width: 1200px;
     margin: 1rem auto;
