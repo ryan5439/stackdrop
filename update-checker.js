@@ -5,6 +5,7 @@ const path = require('path');
 
 const serverListPath = path.join(__dirname, 'silentinstallers', 'serverlist.txt');
 const installersBaseDir = path.join(__dirname, 'silentinstallers'); // Directory to store downloaded EXEs
+const versionsDir = path.join(installersBaseDir, 'versions');
 
 // Helper function to get the correct installer filename (same as in app.js)
 function getInstallerFileName(appId) {
@@ -157,6 +158,38 @@ async function getLatestOperaUrl() {
     }
 }
 
+// Fetch latest Chrome stable version (Windows x64) using omahaproxy
+async function fetchLatestChromeVersion() {
+    const url = 'https://omahaproxy.appspot.com/all.json';
+    const jsonText = await fetchTextWithRedirects(url);
+    const parsed = JSON.parse(jsonText);
+    // Prefer win64 stable
+    const pick = (osName) => {
+        const osEntry = parsed.find(e => (e.os || '').toLowerCase() === osName);
+        if (!osEntry) return null;
+        const stable = (osEntry.versions || []).find(v => (v.channel || '').toLowerCase() === 'stable');
+        return stable && stable.current_version ? String(stable.current_version) : null;
+    };
+    return pick('win64') || pick('win') || null;
+}
+
+async function readStoredVersion(appId) {
+    try {
+        await fs.promises.mkdir(versionsDir, { recursive: true });
+        const file = path.join(versionsDir, `${appId}.txt`);
+        return (await fs.promises.readFile(file, 'utf8')).trim();
+    } catch (_) {
+        return null;
+    }
+}
+
+async function writeStoredVersion(appId, version) {
+    try {
+        await fs.promises.mkdir(versionsDir, { recursive: true });
+        const file = path.join(versionsDir, `${appId}.txt`);
+        await fs.promises.writeFile(file, String(version || ''), 'utf8');
+    } catch (_) {}
+}
 // Normalize legacy/mismatched app IDs to those used in the UI/app catalog
 function normalizeAppId(appId) {
     if (appId === 'opera') return 'opera64';
@@ -253,6 +286,8 @@ async function checkUpdates() {
             // Always perform a HEAD check to detect updates; decide whether to download
             let outputEtag = storedEtag;
             let outputLastModified = storedLastModified;
+            let latestVersionForApp = null;
+            let storedVersionForApp = null;
             console.log(`Checking ${appId}...`);
 
             // Special handling for Opera - always resolve latest valid installer URL
@@ -267,6 +302,14 @@ async function checkUpdates() {
             }
 
             try {
+                if (appId === 'chrome64') {
+                    try {
+                        latestVersionForApp = await fetchLatestChromeVersion();
+                        storedVersionForApp = await readStoredVersion(appId);
+                    } catch (e) {
+                        console.warn(`Chrome version lookup failed: ${e.message}`);
+                    }
+                }
                 const protocol = appUrl.startsWith('https') ? https : http;
                 const headResponse = await new Promise((resolve, reject) => {
                     const req = protocol.request(appUrl, { method: 'HEAD', timeout: 30000 }, (res) => {
@@ -286,8 +329,12 @@ async function checkUpdates() {
                 const installerFilename = installerFilenamePre;
                 const installerPath = installerPathPre;
                 const installerExists = installerExistsPre;
-                const isUpdateAvailable = (liveEtag !== 'N/A' && liveEtag !== storedEtag) ||
+                let isUpdateAvailable = (liveEtag !== 'N/A' && liveEtag !== storedEtag) ||
                                           (liveLastModified !== 'N/A' && liveLastModified !== storedLastModified);
+                if (appId === 'chrome64' && latestVersionForApp && storedVersionForApp !== latestVersionForApp) {
+                    console.log(`Chrome version change detected: ${storedVersionForApp || 'none'} -> ${latestVersionForApp}`);
+                    isUpdateAvailable = true;
+                }
 
                 if (!installerExists || isUpdateAvailable) {
                     console.log(`Action required for ${appId}: Update available: ${isUpdateAvailable}, Installer exists: ${installerExists}.`);
@@ -352,6 +399,9 @@ async function checkUpdates() {
                     outputLastModified = liveLastModified;
                     // Track successful updates for homepage display (normalized to UI IDs)
                     updatedAppsThisRun.push({ appId: normalizeAppId(appId), updatedAt: new Date().toISOString() });
+                    if (appId === 'chrome64' && latestVersionForApp) {
+                        await writeStoredVersion(appId, latestVersionForApp);
+                    }
                 } else {
                     // No update needed and file exists
                     outputEtag = liveEtag;
