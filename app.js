@@ -718,7 +718,6 @@ ${appInstallSections}
 
 Function .onInstSuccess
     DetailPrint "All applications installed successfully!"
-    MessageBox MB_OK|MB_ICONINFORMATION "Stackdrop installation complete! All selected applications have been installed."
 FunctionEnd
 
 Function .onInstFailed
