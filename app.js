@@ -219,6 +219,14 @@ const apps = {
             { id: 'vscode', name: 'Visual Studio Code' }
         ]
     },
+    imaging: {
+        title: '🖼️  Imaging 🖼️',
+        items: [
+            { id: 'gimp', name: 'GIMP' },
+            { id: 'blender', name: 'Blender' },
+            { id: 'krita', name: 'Krita' }
+        ]
+    },
     dotnet: {
         title: '🔧  .NET Frameworks (with System Variables)  🔧',
         items: [
@@ -251,14 +259,6 @@ const apps = {
             { id: 'libreoffice', name: 'LibreOffice' },
             { id: 'foxitreader', name: 'Foxit Reader' },
             { id: 'openoffice', name: 'OpenOffice' }
-        ]
-    },
-    imaging: {
-        title: '🖼️  Imaging 🖼️',
-        items: [
-            { id: 'gimp', name: 'GIMP' },
-            { id: 'blender', name: 'Blender' },
-            { id: 'krita', name: 'Krita' }
         ]
     }
 };
