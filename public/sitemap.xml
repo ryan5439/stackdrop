@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+  
+  <!-- Homepage -->
+  <url>
+    <loc>https://stackdrop.it/</loc>
+    <lastmod>2024-12-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://stackdrop.it/images/og-image.png</image:loc>
+      <image:title>Stackdrop.it - Silent Windows Software Installer Generator</image:title>
+      <image:caption>Generate silent installers for Windows applications with one click</image:caption>
+    </image:image>
+  </url>
+  
+  <!-- Pro Page -->
+  <url>
+    <loc>https://stackdrop.it/pro</loc>
+    <lastmod>2024-12-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://stackdrop.it/images/dash2.jpg</image:loc>
+      <image:title>Stackdrop Pro Dashboard - Device Management</image:title>
+      <image:caption>Professional dashboard for managing Windows software across multiple devices</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://stackdrop.it/images/dash2.jpg</image:loc>
+      <image:title>Stackdrop Pro Dashboard - Application Control</image:title>
+      <image:caption>Granular control over application updates and installations</image:caption>
+    </image:image>
+  </url>
+  
+  <!-- FAQ Page -->
+  <url>
+    <loc>https://stackdrop.it/faq</loc>
+    <lastmod>2024-12-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://stackdrop.it/images/og-image.png</image:loc>
+      <image:title>Stackdrop.it FAQ - Windows Software Installer Help</image:title>
+      <image:caption>Frequently asked questions about Stackdrop Windows software installer generator</image:caption>
+    </image:image>
+  </url>
+  
+  <!-- Help Page -->
+  <url>
+    <loc>https://stackdrop.it/help</loc>
+    <lastmod>2024-12-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Feedback Page -->
+  <url>
+    <loc>https://stackdrop.it/feedback</loc>
+    <lastmod>2024-12-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <!-- Login Page -->
+  <url>
+    <loc>https://stackdrop.it/login</loc>
+    <lastmod>2024-12-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <!-- Signup Payment Page -->
+  <url>
+    <loc>https://stackdrop.it/signup-payment</loc>
+    <lastmod>2024-12-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://stackdrop.it/tools</loc>
+    <lastmod>2026-09-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://stackdrop.it/tools/spectra-eq</loc>
+    <lastmod>2026-09-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://stackdrop.it/tools/chrome-transparency</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://stackdrop.it/tools/deskcheck</loc>
+    <lastmod>2026-09-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://stackdrop.it/creditcards</loc>
+    <lastmod>2026-10-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- RSO recipe -->
+  <url>
+    <loc>https://stackdrop.it/rso</loc>
+    <lastmod>2026-10-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://stackdrop.it/images/rso/og.png</image:loc>
+      <image:title>How to Make RSO: Rick Simpson Oil Recipe (Rice Cooker Method)</image:title>
+    </image:image>
+  </url>
+
+  <!-- About Page (if exists) -->
+  <url>
+    <loc>https://stackdrop.it/about</loc>
+    <lastmod>2024-12-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  
+</urlset>

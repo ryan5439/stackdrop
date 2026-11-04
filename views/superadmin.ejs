@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-E7Q1WH4R00', {
+      'send_page_view': true
+    });
+  </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-E7Q1WH4R00"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Superadmin Dashboard - Stackdrop</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --primary: #667eea;
+      --secondary: #764ba2;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+      --dark: #1f2937;
+      --light: #f9fafb;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding-bottom: 50px;
+    }
+    
+    .admin-container {
+      max-width: 1800px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+    
+    .header-card {
+      background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+      color: white;
+      border-radius: 15px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    
+    .stat-card {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+      border-left: 4px solid var(--primary);
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    
+    .stat-card.users { border-left-color: var(--primary); }
+    .stat-card.devices { border-left-color: var(--info); }
+    .stat-card.apps { border-left-color: var(--success); }
+    .stat-card.revenue { border-left-color: var(--warning); }
+    
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin: 10px 0;
+    }
+    
+    .stat-label {
+      font-size: 0.9rem;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+    
+    .stat-icon {
+      font-size: 2rem;
+      opacity: 0.3;
+      float: right;
+    }
+    
+    .data-card {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .data-card h3 {
+      color: var(--dark);
+      font-weight: 700;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid var(--light);
+    }
+    
+    .table-responsive {
+      max-height: 500px;
+      overflow-y: auto;
+    }
+    
+    .table {
+      font-size: 0.9rem;
+    }
+    
+    .table thead {
+      position: sticky;
+      top: 0;
+      background: var(--dark);
+      color: white;
+      z-index: 10;
+    }
+    
+    .badge-active {
+      background: var(--success);
+      color: white;
+    }
+    
+    .badge-inactive {
+      background: var(--danger);
+      color: white;
+    }
+    
+    .badge-trial {
+      background: var(--warning);
+      color: white;
+    }
+    
+    .refresh-btn {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border: none;
+      color: white;
+      padding: 10px 25px;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    
+    .refresh-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    
+    .spinner {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .loading .spinner {
+      display: inline-block;
+    }
+    
+    .activity-item {
+      padding: 15px;
+      border-left: 3px solid var(--info);
+      margin-bottom: 10px;
+      background: var(--light);
+      border-radius: 5px;
+    }
+    
+    .activity-time {
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+    
+    .status-online {
+      color: var(--success);
+    }
+    
+    .status-offline {
+      color: var(--danger);
+    }
+    
+    .chart-container {
+      position: relative;
+      height: 300px;
+      margin-top: 20px;
+    }
+    
+    .search-box {
+      margin-bottom: 20px;
+    }
+    
+    .search-box input {
+      border-radius: 8px;
+      padding: 12px 20px;
+      border: 2px solid var(--light);
+    }
+    
+    .search-box input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-container">
+    <!-- Header -->
+    <div class="header-card">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h1 class="mb-2">
+            <i class="fas fa-shield-alt"></i> Superadmin Dashboard
+          </h1>
+          <p class="mb-0 opacity-75">Complete system overview and monitoring</p>
+        </div>
+        <div class="text-end">
+          <button class="refresh-btn" onclick="refreshAllData()">
+            <span class="spinner"></span>
+            <i class="fas fa-sync-alt me-2"></i> Refresh All
+          </button>
+          <div class="mt-2">
+            <small>Last updated: <span id="lastUpdate">Loading...</span></small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row">
+      <div class="col-md-3">
+        <div class="stat-card users">
+          <i class="fas fa-users stat-icon"></i>
+          <div class="stat-label">Total Users</div>
+          <div class="stat-number" id="totalUsers">-</div>
+          <small class="text-muted">
+            <span id="activeUsers">-</span> active subscriptions
+          </small>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card devices">
+          <i class="fas fa-desktop stat-icon"></i>
+          <div class="stat-label">Total Devices</div>
+          <div class="stat-number" id="totalDevices">-</div>
+          <small class="text-muted">
+            <span id="onlineDevices">-</span> online now
+          </small>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card apps">
+          <i class="fas fa-box stat-icon"></i>
+          <div class="stat-label">Apps Installed</div>
+          <div class="stat-number" id="totalApps">-</div>
+          <small class="text-muted">
+            <span id="uniqueApps">-</span> unique apps
+          </small>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card revenue">
+          <i class="fas fa-dollar-sign stat-icon"></i>
+          <div class="stat-label">Monthly Revenue</div>
+          <div class="stat-number" id="totalRevenue">$0</div>
+          <small class="text-muted">
+            <span id="monthlyGrowth">-</span> vs last month
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="row">
+      <!-- Users Table -->
+      <div class="col-lg-8">
+        <div class="data-card">
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <h3 class="mb-0"><i class="fas fa-users me-2"></i> All Users</h3>
+            <button class="btn btn-success btn-sm" onclick="openCreateUserModal()">
+              <i class="fas fa-user-plus me-1"></i> Create user
+            </button>
+          </div>
+          <div class="search-box mt-2">
+            <input type="text" class="form-control" id="userSearch" placeholder="Search users by email, plan, or status...">
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Email</th>
+                  <th>Plan</th>
+                  <th>Status</th>
+                  <th>Devices</th>
+                  <th>Created</th>
+                  <th>Last Seen</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody">
+                <tr>
+                  <td colspan="7" class="text-center">Loading...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="col-lg-4">
+        <div class="data-card">
+          <h3><i class="fas fa-clock me-2"></i> Recent Activity</h3>
+          <div id="recentActivity">
+            <div class="text-center text-muted">Loading...</div>
+          </div>
+        </div>
+
+        <!-- Quick Stats Chart -->
+        <div class="data-card mt-3">
+          <h3><i class="fas fa-chart-line me-2"></i> User Growth</h3>
+          <div class="chart-container">
+            <canvas id="userGrowthChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Devices Table -->
+    <div class="row">
+      <div class="col-12">
+        <div class="data-card">
+          <h3><i class="fas fa-desktop me-2"></i> All Devices</h3>
+          <div class="search-box">
+            <input type="text" class="form-control" id="deviceSearch" placeholder="Search devices by hostname, OS, or device ID...">
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Device ID</th>
+                  <th>Owner</th>
+                  <th>Hostname</th>
+                  <th>OS</th>
+                  <th>Last IP</th>
+                  <th>Status</th>
+                  <th>Apps</th>
+                  <th>Last Seen</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="devicesTableBody">
+                <tr>
+                  <td colspan="9" class="text-center">Loading...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Apps Table -->
+    <div class="row">
+      <div class="col-12">
+        <div class="data-card">
+          <h3><i class="fas fa-box me-2"></i> Installed Applications</h3>
+          <div class="search-box">
+            <input type="text" class="form-control" id="appSearch" placeholder="Search apps by name, device, or version...">
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>App Name</th>
+                  <th>Device</th>
+                  <th>Owner</th>
+                  <th>Version</th>
+                  <th>Install Path</th>
+                  <th>Installed</th>
+                  <th>Auto-Update</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="appsTableBody">
+                <tr>
+                  <td colspan="8" class="text-center">Loading...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Audit Log -->
+    <div class="row">
+      <div class="col-12">
+        <div class="data-card">
+          <h3><i class="fas fa-clipboard-list me-2"></i> Admin Audit Log</h3>
+          <p class="text-muted small mb-2">Recent changes made from this dashboard (kept in memory, most recent first).</p>
+          <div id="auditLog" style="max-height: 320px; overflow-y: auto;">
+            <div class="text-center text-muted">Loading...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Management Modal -->
+  <div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fas fa-user-cog me-2"></i> Manage User</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="mb-1"><strong id="umEmail"></strong></p>
+          <p class="text-muted small"><code id="umId"></code></p>
+          <hr>
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Plan type</label>
+            <select id="umPlanType" class="form-select">
+              <option value="free">free</option>
+              <option value="pro">pro</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Subscription status</label>
+            <select id="umPlanStatus" class="form-select">
+              <option value="inactive">inactive</option>
+              <option value="active">active</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Device limit</label>
+            <input id="umDeviceLimit" type="number" min="0" max="100000" class="form-control">
+          </div>
+          <hr>
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="text-muted small">Danger zone</span>
+            <div>
+              <button id="umBanBtn" type="button" class="btn btn-outline-warning btn-sm" onclick="toggleUserBan()">Ban user</button>
+              <button id="umDeleteBtn" type="button" class="btn btn-outline-danger btn-sm" onclick="deleteCurrentUser()">Delete user</button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="saveUserChanges()">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create User Modal -->
+  <div class="modal fade" id="createUserModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fas fa-user-plus me-2"></i> Create User</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Email</label>
+            <input id="cuEmail" type="email" class="form-control" placeholder="user@example.com" autocomplete="off">
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Password</label>
+            <div class="input-group">
+              <input id="cuPassword" type="text" class="form-control" placeholder="At least 8 characters" autocomplete="off">
+              <button type="button" class="btn btn-outline-secondary" onclick="generatePassword()" title="Generate a strong password"><i class="fas fa-dice"></i></button>
+            </div>
+            <small class="text-muted">The account is created already confirmed; share these credentials with the user.</small>
+          </div>
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label class="form-label small fw-bold">Plan type</label>
+              <select id="cuPlanType" class="form-select">
+                <option value="free">free</option>
+                <option value="pro">pro</option>
+              </select>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label small fw-bold">Status</label>
+              <select id="cuPlanStatus" class="form-select">
+                <option value="inactive">inactive</option>
+                <option value="active">active</option>
+              </select>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label small fw-bold">Device limit</label>
+              <input id="cuDeviceLimit" type="number" min="0" max="100000" class="form-control" value="1">
+            </div>
+          </div>
+          <div id="cuError" class="alert alert-danger py-2 small mb-0" style="display:none;"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button id="cuSubmit" type="button" class="btn btn-success" onclick="createUser()">Create user</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    let allUsers = [];
+    let allDevices = [];
+    let allApps = [];
+    let userGrowthChart = null;
+
+    // All privileged data is fetched from owner-only server endpoints, gated by
+    // the superadmin session cookie. The service-role key never reaches the browser.
+    async function apiGet(path) {
+      const res = await fetch(path, { headers: { 'Accept': 'application/json' } });
+      if (res.status === 401) { window.location.href = '/superadmin-login'; throw new Error('Unauthorized'); }
+      if (!res.ok) throw new Error('Request failed: ' + res.status);
+      return res.json();
+    }
+
+    // Generic write helper for PATCH/POST/DELETE actions.
+    async function apiSend(method, path, body) {
+      const res = await fetch(path, {
+        method,
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: body ? JSON.stringify(body) : undefined
+      });
+      if (res.status === 401) { window.location.href = '/superadmin-login'; throw new Error('Unauthorized'); }
+      let data = {};
+      try { data = await res.json(); } catch (_) {}
+      if (!res.ok) throw new Error(data.error || ('Request failed: ' + res.status));
+      return data;
+    }
+
+    // Lightweight toast notifications.
+    function showToast(message, type = 'success') {
+      let wrap = document.getElementById('sdToastWrap');
+      if (!wrap) {
+        wrap = document.createElement('div');
+        wrap.id = 'sdToastWrap';
+        wrap.style.cssText = 'position:fixed;top:20px;right:20px;z-index:2000;display:flex;flex-direction:column;gap:10px;';
+        document.body.appendChild(wrap);
+      }
+      const colors = { success: '#198754', error: '#dc3545', info: '#0d6efd' };
+      const t = document.createElement('div');
+      t.style.cssText = `background:${colors[type] || colors.info};color:#fff;padding:12px 18px;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.25);font-size:14px;max-width:340px;opacity:0;transform:translateY(-8px);transition:all .2s ease;`;
+      t.textContent = message;
+      wrap.appendChild(t);
+      requestAnimationFrame(() => { t.style.opacity = '1'; t.style.transform = 'translateY(0)'; });
+      setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateY(-8px)'; setTimeout(() => t.remove(), 250); }, 3200);
+    }
+
+    async function superadminLogout() {
+      try { await fetch('/superadmin/logout', { method: 'POST' }); } catch (_) {}
+      window.location.href = '/';
+    }
+
+    // Bootstrap modal instances (created on load).
+    let userModal, createUserModal;
+
+    // Initialize dashboard
+    async function init() {
+      userModal = new bootstrap.Modal(document.getElementById('userModal'));
+      createUserModal = new bootstrap.Modal(document.getElementById('createUserModal'));
+      await refreshAllData();
+      setupSearchFilters();
+    }
+
+    // Refresh all data
+    async function refreshAllData() {
+      const btn = document.querySelector('.refresh-btn');
+      btn.classList.add('loading');
+      
+      try {
+        await Promise.all([
+          loadUsers(),
+          loadDevices(),
+          loadApps(),
+          loadActivity(),
+          loadAudit()
+        ]);
+        
+        updateStatistics();
+        updateLastUpdateTime();
+        renderUserGrowthChart();
+      } catch (error) {
+        console.error('Error refreshing data:', error);
+        alert('Error loading data: ' + error.message);
+      } finally {
+        btn.classList.remove('loading');
+      }
+    }
+
+    // Load users from the owner-only server API
+    async function loadUsers() {
+      try {
+        const { users } = await apiGet('/api/superadmin/users');
+        allUsers = users || [];
+        renderUsersTable();
+      } catch (error) {
+        console.error('Error loading users:', error);
+        document.getElementById('usersTableBody').innerHTML = 
+          '<tr><td colspan="7" class="text-center text-danger">Error loading users</td></tr>';
+      }
+    }
+
+    // Load devices
+    async function loadDevices() {
+      try {
+        const { devices } = await apiGet('/api/superadmin/devices');
+        allDevices = devices || [];
+        renderDevicesTable();
+      } catch (error) {
+        console.error('Error loading devices:', error);
+        document.getElementById('devicesTableBody').innerHTML = 
+          '<tr><td colspan="9" class="text-center text-danger">Error loading devices</td></tr>';
+      }
+    }
+
+    // Load apps
+    async function loadApps() {
+      try {
+        const { apps } = await apiGet('/api/superadmin/apps');
+        allApps = apps || [];
+        renderAppsTable();
+      } catch (error) {
+        console.error('Error loading apps:', error);
+        document.getElementById('appsTableBody').innerHTML = 
+          '<tr><td colspan="8" class="text-center text-danger">Error loading apps</td></tr>';
+      }
+    }
+
+    // Load recent activity
+    async function loadActivity() {
+      try {
+        const { activity } = await apiGet('/api/superadmin/activity');
+        renderActivity(activity || []);
+      } catch (error) {
+        console.error('Error loading activity:', error);
+      }
+    }
+
+    // Render users table
+    function renderUsersTable(filteredUsers = null) {
+      const users = filteredUsers || allUsers;
+      const tbody = document.getElementById('usersTableBody');
+      
+      if (users.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center">No users found</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = users.map(user => {
+        const deviceCount = allDevices.filter(d => d.org_id === user.id).length;
+        const lastDevice = allDevices.find(d => d.org_id === user.id);
+        const lastSeen = lastDevice?.last_seen_at || user.last_sign_in_at;
+        
+        return `
+          <tr>
+            <td>
+              <strong>${user.email}</strong><br>
+              <small class="text-muted">${user.id.substring(0, 8)}...</small>
+            </td>
+            <td>
+              <span class="badge bg-primary">${user.plan_type || 'free'}</span>
+            </td>
+            <td>
+              <span class="badge badge-${user.plan_status === 'active' ? 'active' : 'inactive'}">
+                ${user.plan_status || 'inactive'}
+              </span>
+              ${user.banned ? '<br><span class="badge bg-dark mt-1">Banned</span>' : ''}
+              ${user.is_owner ? '<br><span class="badge bg-info text-dark mt-1">Owner</span>' : ''}
+            </td>
+            <td>${deviceCount}</td>
+            <td>${formatDate(user.created_at)}</td>
+            <td>${lastSeen ? formatTimeAgo(lastSeen) : 'Never'}</td>
+            <td class="text-nowrap">
+              <button class="btn btn-sm btn-outline-primary" title="Manage" onclick="openUserModal('${user.id}')">
+                <i class="fas fa-user-cog"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Render devices table
+    function renderDevicesTable(filteredDevices = null) {
+      const devices = filteredDevices || allDevices;
+      const tbody = document.getElementById('devicesTableBody');
+      
+      if (devices.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" class="text-center">No devices found</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = devices.map(device => {
+        const owner = allUsers.find(u => u.id === device.org_id);
+        const appCount = allApps.filter(a => a.device_id === device.device_id).length;
+        const isOnline = isDeviceOnline(device.last_seen_at);
+        
+        return `
+          <tr>
+            <td>
+              <code>${device.device_id.substring(0, 12)}...</code>
+            </td>
+            <td>${owner?.email || 'Unknown'}</td>
+            <td><strong>${device.hostname}</strong></td>
+            <td>
+              ${device.os_name || 'Unknown'}<br>
+              <small class="text-muted">${device.os_version || ''}</small>
+            </td>
+            <td><code>${device.last_ip || 'N/A'}</code></td>
+            <td>
+              <i class="fas fa-circle ${isOnline ? 'status-online' : 'status-offline'}"></i>
+              ${isOnline ? 'Online' : 'Offline'}
+            </td>
+            <td>${appCount}</td>
+            <td>${formatTimeAgo(device.last_seen_at)}</td>
+            <td class="text-nowrap">
+              <button class="btn btn-sm btn-outline-primary" title="View" onclick="viewDevice('${device.device_id}')">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-danger" title="Delete device" onclick="deleteDevice('${device.device_id}', '${(device.hostname || '').replace(/'/g, "\\'")}')">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Render apps table
+    function renderAppsTable(filteredApps = null) {
+      const apps = filteredApps || allApps;
+      const tbody = document.getElementById('appsTableBody');
+      
+      if (apps.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center">No apps found</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = apps.map(app => {
+        const device = allDevices.find(d => d.device_id === app.device_id);
+        const owner = allUsers.find(u => u.id === app.org_id);
+        
+        return `
+          <tr>
+            <td><strong>${app.app_name}</strong></td>
+            <td>${device?.hostname || 'Unknown'}</td>
+            <td>${owner?.email || 'Unknown'}</td>
+            <td>${app.installed_version || 'N/A'}</td>
+            <td><small>${app.install_path || 'N/A'}</small></td>
+            <td>${formatDate(app.install_date)}</td>
+            <td>
+              <button class="btn btn-sm ${app.auto_update_enabled ? 'btn-success' : 'btn-outline-secondary'}"
+                title="Click to toggle auto-update"
+                onclick="toggleAppAutoUpdate(this, '${app.id != null ? app.id : ''}', '${app.device_id || ''}', '${(app.app_name || '').replace(/'/g, "\\'")}', ${app.auto_update_enabled ? 'true' : 'false'})">
+                ${app.auto_update_enabled ? 'Enabled' : 'Disabled'}
+              </button>
+            </td>
+            <td>
+              ${app.update_available 
+                ? '<span class="badge bg-warning">Update Available</span>' 
+                : '<span class="badge bg-success">Up to date</span>'}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Render activity
+    function renderActivity(activities) {
+      const container = document.getElementById('recentActivity');
+      
+      if (activities.length === 0) {
+        container.innerHTML = '<div class="text-center text-muted">No recent activity</div>';
+        return;
+      }
+
+      container.innerHTML = activities.map(activity => `
+        <div class="activity-item">
+          <strong>${activity.hostname || 'Unknown Device'}</strong> checked in<br>
+          <small class="activity-time">${formatTimeAgo(activity.created_at)}</small>
+        </div>
+      `).join('');
+    }
+
+    // Update statistics
+    function updateStatistics() {
+      document.getElementById('totalUsers').textContent = allUsers.length;
+      document.getElementById('activeUsers').textContent = 
+        allUsers.filter(u => u.plan_status === 'active').length;
+      
+      document.getElementById('totalDevices').textContent = allDevices.length;
+      document.getElementById('onlineDevices').textContent = 
+        allDevices.filter(d => isDeviceOnline(d.last_seen_at)).length;
+      
+      document.getElementById('totalApps').textContent = allApps.length;
+      document.getElementById('uniqueApps').textContent = 
+        new Set(allApps.map(a => a.app_id)).size;
+      
+      // Calculate revenue
+      const activeCount = allUsers.filter(u => u.plan_status === 'active').length;
+      const starterCount = allUsers.filter(u => u.plan_type === 'starter' && u.plan_status === 'active').length;
+      const proCount = allUsers.filter(u => u.plan_type === 'pro100' && u.plan_status === 'active').length;
+      const revenue = (starterCount * 2.99) + (proCount * 14.99);
+      document.getElementById('totalRevenue').textContent = '$' + revenue.toFixed(2);
+    }
+
+    // Render user growth chart
+    function renderUserGrowthChart() {
+      const ctx = document.getElementById('userGrowthChart');
+      if (!ctx) return;
+
+      // Group users by date
+      const usersByDate = {};
+      allUsers.forEach(user => {
+        const date = new Date(user.created_at).toISOString().split('T')[0];
+        usersByDate[date] = (usersByDate[date] || 0) + 1;
+      });
+
+      const sortedDates = Object.keys(usersByDate).sort();
+      const last30Days = sortedDates.slice(-30);
+      const counts = last30Days.map(date => usersByDate[date]);
+
+      if (userGrowthChart) {
+        userGrowthChart.destroy();
+      }
+
+      userGrowthChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: last30Days.map(d => new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })),
+          datasets: [{
+            label: 'New Users',
+            data: counts,
+            borderColor: '#667eea',
+            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+            tension: 0.4,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                stepSize: 1
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Search filters
+    function setupSearchFilters() {
+      document.getElementById('userSearch').addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        const filtered = allUsers.filter(u => 
+          u.email.toLowerCase().includes(query) ||
+          u.plan_type.toLowerCase().includes(query) ||
+          u.plan_status.toLowerCase().includes(query)
+        );
+        renderUsersTable(filtered);
+      });
+
+      document.getElementById('deviceSearch').addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        const filtered = allDevices.filter(d => 
+          d.hostname.toLowerCase().includes(query) ||
+          d.device_id.toLowerCase().includes(query) ||
+          (d.os_name || '').toLowerCase().includes(query)
+        );
+        renderDevicesTable(filtered);
+      });
+
+      document.getElementById('appSearch').addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        const filtered = allApps.filter(a => 
+          a.app_name.toLowerCase().includes(query) ||
+          a.device_id.toLowerCase().includes(query) ||
+          (a.installed_version || '').toLowerCase().includes(query)
+        );
+        renderAppsTable(filtered);
+      });
+    }
+
+    // Utility functions
+    function formatDate(dateString) {
+      if (!dateString) return 'N/A';
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function formatTimeAgo(dateString) {
+      if (!dateString) return 'Never';
+      const date = new Date(dateString);
+      const seconds = Math.floor((new Date() - date) / 1000);
+      
+      if (seconds < 60) return 'Just now';
+      if (seconds < 3600) return Math.floor(seconds / 60) + ' minutes ago';
+      if (seconds < 86400) return Math.floor(seconds / 3600) + ' hours ago';
+      if (seconds < 2592000) return Math.floor(seconds / 86400) + ' days ago';
+      return formatDate(dateString);
+    }
+
+    function isDeviceOnline(lastSeenAt) {
+      if (!lastSeenAt) return false;
+      const fiveMinutes = 5 * 60 * 1000;
+      return (new Date() - new Date(lastSeenAt)) < fiveMinutes;
+    }
+
+    function updateLastUpdateTime() {
+      document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+    }
+
+    function viewUser(userId) {
+      const user = allUsers.find(u => u.id === userId);
+      if (!user) return;
+      alert(`User Details:\n\nEmail: ${user.email}\nID: ${user.id}\nPlan: ${user.plan_type}\nStatus: ${user.plan_status}\nCreated: ${formatDate(user.created_at)}`);
+    }
+
+    function viewDevice(deviceId) {
+      const device = allDevices.find(d => d.device_id === deviceId);
+      if (!device) return;
+      alert(`Device Details:\n\nID: ${device.device_id}\nHostname: ${device.hostname}\nOS: ${device.os_name} ${device.os_version}\nLast Seen: ${formatTimeAgo(device.last_seen_at)}`);
+    }
+
+    // ---- Create user ----
+    function openCreateUserModal() {
+      document.getElementById('cuEmail').value = '';
+      document.getElementById('cuPassword').value = '';
+      document.getElementById('cuPlanType').value = 'free';
+      document.getElementById('cuPlanStatus').value = 'inactive';
+      document.getElementById('cuDeviceLimit').value = 1;
+      document.getElementById('cuError').style.display = 'none';
+      createUserModal.show();
+    }
+
+    function generatePassword() {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%&*?';
+      let pw = '';
+      const arr = new Uint32Array(16);
+      crypto.getRandomValues(arr);
+      for (let i = 0; i < arr.length; i++) pw += chars[arr[i] % chars.length];
+      document.getElementById('cuPassword').value = pw;
+    }
+
+    async function createUser() {
+      const err = document.getElementById('cuError');
+      const btn = document.getElementById('cuSubmit');
+      err.style.display = 'none';
+      const payload = {
+        email: document.getElementById('cuEmail').value.trim(),
+        password: document.getElementById('cuPassword').value,
+        plan_type: document.getElementById('cuPlanType').value,
+        plan_status: document.getElementById('cuPlanStatus').value,
+        device_limit: parseInt(document.getElementById('cuDeviceLimit').value, 10)
+      };
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email)) {
+        err.textContent = 'Please enter a valid email address.'; err.style.display = 'block'; return;
+      }
+      if (!payload.password || payload.password.length < 8) {
+        err.textContent = 'Password must be at least 8 characters.'; err.style.display = 'block'; return;
+      }
+      btn.disabled = true; btn.textContent = 'Creating...';
+      try {
+        await apiSend('POST', '/api/superadmin/users', payload);
+        showToast('User created: ' + payload.email);
+        createUserModal.hide();
+        await loadUsers();
+        renderUsersTable();
+        updateStatistics();
+      } catch (e) {
+        const map = {
+          email_exists: 'A user with that email already exists.',
+          invalid_email: 'Please enter a valid email address.',
+          weak_password: 'Password must be at least 8 characters.'
+        };
+        err.textContent = map[e.message] || ('Could not create user: ' + e.message);
+        err.style.display = 'block';
+      } finally {
+        btn.disabled = false; btn.textContent = 'Create user';
+      }
+    }
+
+    // ---- User management modal ----
+    let currentUserId = null;
+    function openUserModal(userId) {
+      const user = allUsers.find(u => u.id === userId);
+      if (!user) return;
+      currentUserId = userId;
+      document.getElementById('umEmail').textContent = user.email + (user.is_owner ? ' (owner)' : '');
+      document.getElementById('umId').textContent = user.id;
+      document.getElementById('umPlanType').value = user.plan_type || 'free';
+      document.getElementById('umPlanStatus').value = user.plan_status || 'inactive';
+      document.getElementById('umDeviceLimit').value = user.device_limit != null ? user.device_limit : 1;
+
+      const banBtn = document.getElementById('umBanBtn');
+      const delBtn = document.getElementById('umDeleteBtn');
+      banBtn.textContent = user.banned ? 'Unban user' : 'Ban user';
+      banBtn.className = 'btn ' + (user.banned ? 'btn-outline-success' : 'btn-outline-warning');
+      // Owner account is protected from ban/delete.
+      banBtn.disabled = !!user.is_owner;
+      delBtn.disabled = !!user.is_owner;
+
+      userModal.show();
+    }
+
+    async function saveUserChanges() {
+      if (!currentUserId) return;
+      const payload = {
+        plan_type: document.getElementById('umPlanType').value,
+        plan_status: document.getElementById('umPlanStatus').value,
+        device_limit: parseInt(document.getElementById('umDeviceLimit').value, 10)
+      };
+      try {
+        await apiSend('PATCH', '/api/superadmin/users/' + encodeURIComponent(currentUserId), payload);
+        showToast('User updated.');
+        userModal.hide();
+        await loadUsers();
+        renderUsersTable();
+      } catch (e) {
+        showToast('Update failed: ' + e.message, 'error');
+      }
+    }
+
+    async function toggleUserBan() {
+      if (!currentUserId) return;
+      const user = allUsers.find(u => u.id === currentUserId);
+      const willBan = !(user && user.banned);
+      if (willBan && !confirm('Ban ' + (user ? user.email : 'this user') + '? They will be unable to sign in.')) return;
+      try {
+        await apiSend('POST', '/api/superadmin/users/' + encodeURIComponent(currentUserId) + '/ban', { ban: willBan });
+        showToast(willBan ? 'User banned.' : 'User unbanned.');
+        userModal.hide();
+        await loadUsers();
+        renderUsersTable();
+      } catch (e) {
+        showToast('Action failed: ' + e.message, 'error');
+      }
+    }
+
+    async function deleteCurrentUser() {
+      if (!currentUserId) return;
+      const user = allUsers.find(u => u.id === currentUserId);
+      const email = user ? user.email : 'this user';
+      if (!confirm('PERMANENTLY delete ' + email + ' and all their data? This cannot be undone.')) return;
+      if (!confirm('Are you absolutely sure? Type OK on the next prompt.') ) return;
+      try {
+        await apiSend('DELETE', '/api/superadmin/users/' + encodeURIComponent(currentUserId));
+        showToast('User deleted.');
+        userModal.hide();
+        await Promise.all([loadUsers(), loadDevices(), loadApps()]);
+        renderUsersTable(); renderDevicesTable(); renderAppsTable();
+        updateStatistics();
+      } catch (e) {
+        showToast('Delete failed: ' + e.message, 'error');
+      }
+    }
+
+    async function deleteDevice(deviceId, hostname) {
+      if (!confirm('Delete device "' + (hostname || deviceId) + '" and its app records? This cannot be undone.')) return;
+      try {
+        await apiSend('DELETE', '/api/superadmin/devices/' + encodeURIComponent(deviceId));
+        showToast('Device deleted.');
+        await Promise.all([loadDevices(), loadApps()]);
+        renderDevicesTable(); renderAppsTable();
+        updateStatistics();
+      } catch (e) {
+        showToast('Delete failed: ' + e.message, 'error');
+      }
+    }
+
+    async function toggleAppAutoUpdate(btn, id, deviceId, appName, current) {
+      const next = !current;
+      btn.disabled = true;
+      try {
+        await apiSend('PATCH', '/api/superadmin/apps', {
+          id: id || undefined, device_id: deviceId, app_name: appName, auto_update_enabled: next
+        });
+        showToast('Auto-update ' + (next ? 'enabled' : 'disabled') + ' for ' + appName + '.');
+        await loadApps();
+        renderAppsTable();
+      } catch (e) {
+        btn.disabled = false;
+        showToast('Update failed: ' + e.message, 'error');
+      }
+    }
+
+    // ---- Audit log ----
+    async function loadAudit() {
+      try {
+        const { audit } = await apiGet('/api/superadmin/audit');
+        const c = document.getElementById('auditLog');
+        if (!audit || !audit.length) { c.innerHTML = '<div class="text-center text-muted">No actions logged yet</div>'; return; }
+        c.innerHTML = audit.map(a => {
+          const d = a.details || {};
+          const extra = d.email || d.app_name || d.device_id || (d.id ? String(d.id).substring(0, 8) : '') || '';
+          return `<div class="activity-item">
+            <strong>${a.action}</strong> ${extra ? '<span class="text-muted">' + extra + '</span>' : ''}<br>
+            <small class="activity-time">${formatTimeAgo(a.at)} · ${a.ip}</small>
+          </div>`;
+        }).join('');
+      } catch (e) {
+        // non-fatal
+      }
+    }
+
+    // Auto-refresh every 30 seconds
+    setInterval(() => {
+      refreshAllData();
+    }, 30000);
+
+    // Initialize on load
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+
+  <!-- Footer Navigation -->
+  <footer class="py-4" style="background: white; margin-top: 50px; box-shadow: 0 -4px 12px rgba(0,0,0,0.1);">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center">
+        <p class="text-muted small mb-0">&copy; <script>document.write(new Date().getFullYear())</script> Stackdrop</p>
+        <ul class="list-inline mb-0">
+          <li class="list-inline-item"><a href="/" class="text-decoration-none" style="color: #667eea; font-weight: 600;">Home</a></li>
+          <li class="list-inline-item mx-3" style="color: #ccc;">•</li>
+          <li class="list-inline-item"><a href="/about" class="text-decoration-none" style="color: #667eea; font-weight: 600;">About</a></li>
+          <li class="list-inline-item mx-3" style="color: #ccc;">•</li>
+          <li class="list-inline-item"><a href="/help" class="text-decoration-none" style="color: #667eea; font-weight: 600;">Help</a></li>
+          <li class="list-inline-item mx-3" style="color: #ccc;">•</li>
+          <li class="list-inline-item"><a href="/feedback" class="text-decoration-none" style="color: #667eea; font-weight: 600;">Feedback</a></li>
+          <li class="list-inline-item mx-3" style="color: #ccc;">•</li>
+          <li class="list-inline-item"><a href="#" onclick="superadminLogout(); return false;" class="text-decoration-none" style="color: #dc3545; font-weight: 600;">Sign out</a></li>
+        </ul>
+      </div>
+      <%- include('partials/social-follow') %>
+    </div>
+  </footer>
+</body>
+</html>
+

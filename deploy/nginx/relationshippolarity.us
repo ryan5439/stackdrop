@@ -1,0 +1,32 @@
+server {
+    server_name relationshippolarity.us www.relationshippolarity.us;
+
+    location / {
+        proxy_pass http://127.0.0.1:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    listen 443 ssl;
+    ssl_certificate /etc/letsencrypt/live/relationshippolarity.us/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/relationshippolarity.us/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+}
+
+server {
+    if ($host = www.relationshippolarity.us) {
+        return 301 https://$host$request_uri;
+    }
+
+    if ($host = relationshippolarity.us) {
+        return 301 https://$host$request_uri;
+    }
+
+    listen 80;
+    server_name relationshippolarity.us www.relationshippolarity.us;
+    return 404;
+}

@@ -1,0 +1,48 @@
+# Stackdrop.it Security Policy
+# https://stackdrop.it/.well-known/security.txt
+
+Contact: https://stackdrop.it/feedback
+Contact: mailto:security@stackdrop.it
+Expires: 2025-12-31T23:59:59.000Z
+Encryption: https://stackdrop.it/feedback
+Acknowledgments: https://stackdrop.it/feedback
+Preferred-Languages: en
+Canonical: https://stackdrop.it/.well-known/security.txt
+
+# Security Policy
+# We take security seriously at Stackdrop. If you discover a security vulnerability,
+# please report it responsibly through our feedback system.
+
+# Scope
+# This security policy applies to:
+# - https://stackdrop.it/ and all subdomains
+# - Stackdrop Pro dashboard
+# - All associated APIs and services
+
+# Out of Scope
+# - Third-party services and dependencies
+# - Social engineering attacks
+# - Physical attacks
+# - Denial of service attacks
+
+# Reporting Process
+# 1. Report the vulnerability through https://stackdrop.it/feedback
+# 2. Provide detailed information about the vulnerability
+# 3. Allow reasonable time for response and remediation
+# 4. Do not publicly disclose until we've had a chance to fix it
+
+# Response Timeline
+# - Initial response: 24-48 hours
+# - Status update: Within 1 week
+# - Resolution: Depends on severity and complexity
+
+# Recognition
+# We appreciate responsible disclosure and will acknowledge security researchers
+# who help us improve our security posture.
+
+# Legal
+# By reporting vulnerabilities, you agree to:
+# - Not access or modify data that doesn't belong to you
+# - Not disrupt our services
+# - Not publicly disclose the vulnerability until we've had time to fix it
+# - Comply with applicable laws and regulations

@@ -1,30 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E7Q1WH4R00', {
+        'send_page_view': true
+      });
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E7Q1WH4R00"></script>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Feedback - Stackdrop</title>
-    <link href="https://ninite.com/static/css/bootstrap.min-ce67dc5fdca0309111ecf0491515e7a7.css" rel="stylesheet">
+    
+    <!-- Primary Meta Tags -->
+    <title>Feedback & Support - Stackdrop | Contact Us for Help</title>
+    <meta name="title" content="Feedback & Support - Stackdrop | Contact Us for Help">
+    <meta name="description" content="Send feedback, feature requests, and get support for Stackdrop and Stackdrop Pro. We value your input to improve our Windows software installer generator.">
+    <meta name="keywords" content="Stackdrop feedback, Windows installer support, software deployment help, feature requests, technical support, Stackdrop Pro support">
+    <meta name="author" content="Stackdrop">
+    <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://stackdrop.it/feedback" />
+    
+    <!-- Additional SEO Meta Tags -->
+    <meta name="language" content="English">
+    <meta name="revisit-after" content="7 days">
+    <meta name="theme-color" content="#0066cc">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://stackdrop.it/feedback">
+    <meta property="og:title" content="Feedback & Support - Stackdrop">
+    <meta property="og:description" content="Send feedback, feature requests, and get support for Stackdrop and Stackdrop Pro. We value your input to improve our Windows software installer generator.">
+    <meta property="og:image" content="/images/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Stackdrop Feedback and Support">
+    <meta property="og:site_name" content="Stackdrop">
+    <meta property="og:locale" content="en_US">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@stackdrop">
+    <meta name="twitter:creator" content="@stackdrop">
+    <meta name="twitter:url" content="https://stackdrop.it/feedback">
+    <meta name="twitter:title" content="Feedback & Support - Stackdrop">
+    <meta name="twitter:description" content="Send feedback, feature requests, and get support for Stackdrop and Stackdrop Pro.">
+    <meta name="twitter:image" content="https://stackdrop.it/images/og-image.png">
+    <meta name="twitter:image:alt" content="Stackdrop Feedback and Support">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/images/favicon.png">
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    
+    <!-- Performance Optimizations -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ContactPage",
+      "name": "Feedback & Support - Stackdrop",
+      "description": "Send feedback, feature requests, and get support for Stackdrop and Stackdrop Pro.",
+      "url": "https://stackdrop.it/feedback",
+      "mainEntity": {
+        "@type": "Organization",
+        "name": "Stackdrop",
+        "url": "https://stackdrop.it/",
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "customer service",
+          "url": "https://stackdrop.it/feedback",
+          "availableLanguage": "English"
+        }
+      },
+      "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://stackdrop.it/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Feedback",
+            "item": "https://stackdrop.it/feedback"
+          }
+        ]
+      }
+    }
+    </script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background: #f8f9fa; }
         .container { max-width: 820px; }
         .page-header { margin-top: 24px; }
         .help-block { color: #6c757d; }
+        h1, h2, h3 { color: #0066cc; }
+        .navbar .navbar-brand, .navbar .navbar-nav > li > a { color: #0066cc !important; }
+        .btn-primary { background-color: #0066cc; border-color: #0066cc; }
+        .btn-primary:hover { background-color: #005bb5; border-color: #005bb5; }
     </style>
 </head>
 <body>
-<nav class="navbar navbar-default navbar-static-top">
-  <div class="container">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="/">Stackdrop.It</a>
-    </div>
-    <ul class="nav navbar-nav navbar-right">
-      <li><a href="/">Home</a></li>
-      <li class="active"><a href="/feedback">Feedback</a></li>
-    </ul>
-  </div>
-  </nav>
+<%- include('partials/site-nav') %>
 
 <div class="container">
   <div class="page-header">
@@ -33,7 +121,30 @@
   </div>
 
   <% if (typeof submitted !== 'undefined' && submitted) { %>
-    <div class="alert alert-success">Thanks! Your feedback was submitted.</div>
+    <% if (typeof success !== 'undefined' && success) { %>
+      <div class="alert alert-success">Thanks! Your feedback was sent successfully.</div>
+    <% } else { %>
+      <% if (typeof error !== 'undefined' && error === 'captcha') { %>
+        <div class="alert alert-danger">Human verification failed. Please answer the question correctly.</div>
+      <% } else if (typeof error !== 'undefined' && error === 'missing_message') { %>
+        <div class="alert alert-danger">Please enter a message.</div>
+      <% } else if (typeof error !== 'undefined' && error === 'email_send_failed') { %>
+        <div class="alert alert-warning">We couldn't send the email just now. Please try again later.</div>
+      <% } else { %>
+        <div class="alert alert-danger">Submission failed. Please fix errors and try again.</div>
+      <% } %>
+    <% } %>
+    <% if (typeof message !== 'undefined') { %>
+      <div class="panel panel-default">
+        <div class="panel-heading">Your submission</div>
+        <div class="panel-body">
+          <p><strong>Name:</strong> <%= (typeof name !== 'undefined' ? name : '') %></p>
+          <p><strong>Email:</strong> <%= (typeof email !== 'undefined' ? email : '') %></p>
+          <p><strong>Subject:</strong> <%= (typeof subject !== 'undefined' ? subject : '') %></p>
+          <p><strong>Message:</strong><br><pre style="white-space:pre-wrap"><%= message %></pre></p>
+        </div>
+      </div>
+    <% } %>
   <% } %>
 
   <form method="post" action="/feedback" class="form-horizontal">
@@ -65,6 +176,20 @@
     <div style="display:none">
       <input type="text" name="website" tabindex="-1" autocomplete="off">
     </div>
+    <!-- Simple human verification -->
+    <div class="form-group">
+      <label class="col-sm-2 control-label" for="captcha_answer">Verify you're human</label>
+      <div class="col-sm-10">
+        <div class="input-group">
+          <span class="input-group-addon"><%= (typeof captchaQuestion !== 'undefined' ? captchaQuestion : 'What is 3 + 4?') %></span>
+          <input id="captcha_answer" name="captcha_answer" type="number" class="form-control" placeholder="Answer" required>
+        </div>
+        <input type="hidden" name="captcha_token" value="<%= (typeof captchaToken !== 'undefined' ? captchaToken : '') %>">
+        <% if (typeof error !== 'undefined' && error === 'captcha') { %>
+          <span class="help-block text-danger">Captcha incorrect. Please try again.</span>
+        <% } %>
+      </div>
+    </div>
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">
         <button type="submit" class="btn btn-primary">Send Feedback</button>
@@ -73,8 +198,16 @@
   </form>
 
   <hr>
-  <p class="text-muted small">We store submissions to a local log for reliability. Email delivery is attempted if SMTP is configured.</p>
+  <p class="text-muted small">Your message is sent by email only and not stored on disk.</p>
 </div>
+
+<footer style="background:#f6f8fa;border-top:1px solid #e1e4e8;padding:32px 0;margin-top:40px;text-align:center;color:#586069;font-size:14px;">
+  <div class="container">
+    <p style="margin:0;">© 2026 Stackdrop · <a href="/help/" style="color:#0066cc;">Help</a> · <a href="/feedback" style="color:#0066cc;">Feedback</a> · <a href="/pro" style="color:#0066cc;">Stackdrop Pro</a></p>
+    <p style="margin-top:4px;margin-bottom:0;"><span class="text-muted" style="font-size: 12px;color:#999;">Views: <%= typeof viewCount !== 'undefined' ? viewCount : '' %></span></p>
+    <%- include('partials/social-follow') %>
+  </div>
+</footer>
 
 </body>
 </html>

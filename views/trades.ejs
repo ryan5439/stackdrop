@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trades — Stackdrop</title>
+  <meta name="description" content="Every options fill, the cash on each trade, and the running P&amp;L.">
+  <link rel="canonical" href="https://stackdrop.it/trades">
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background:#f6f8fb; color:#1c2430; font-family: Helvetica, Arial, sans-serif; }
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 28px 16px 64px; }
+    h1 { font-size: 34px; font-weight: 750; letter-spacing: -0.03em; margin: 0 0 6px; }
+    .lede { color:#5c6b7a; margin: 0 0 22px; font-size: 16px; }
+    .total { background:#fff; border:1px solid #e6ebf2; border-radius: 16px; padding: 22px 24px 18px; margin-bottom: 14px; }
+    .total span { display:block; color:#6b7785; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; }
+    .total strong { display:block; margin-top: 4px; font-size: 56px; letter-spacing: -0.04em; line-height: 1.05; font-variant-numeric: tabular-nums; }
+    .total p { margin: 8px 0 0; color:#5c6b7a; }
+    .cards { display:grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 14px; }
+    .cardx { background:#fff; border:1px solid #e6ebf2; border-radius: 14px; padding: 14px 16px; }
+    .cardx span { display:block; color:#6b7785; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; font-weight: 700; }
+    .cardx strong { display:block; margin-top: 6px; font-size: 22px; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+    .cardx em { display:block; margin-top: 4px; font-style: normal; color:#6b7785; font-size: 13px; }
+    .days { background:#fff; border:1px solid #e6ebf2; border-radius: 14px; overflow: auto; margin-bottom: 16px; }
+    .days h2 { font-size: 15px; margin: 0; padding: 14px 16px 0; letter-spacing: -0.02em; }
+    .days table { min-width: 0; }
+    .up { color:#0d8a4b; }
+    .down { color:#c62828; }
+    .chart { background:#fff; border:1px solid #e6ebf2; border-radius: 14px; padding: 14px 14px 8px; margin-bottom: 16px; }
+    .chart svg { width:100%; height: 140px; display:block; }
+    .toolbar { display:flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 8px 0 12px; }
+    .toolbar input { flex: 1; min-width: 220px; border:1px solid #d5deea; border-radius: 10px; padding: 10px 12px; font-size: 15px; }
+    .chips { display:flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+    .chip { border:1px solid #d5deea; background:#fff; border-radius: 999px; padding: 6px 10px; font-size: 13px; cursor: pointer; color:#243140; }
+    .chip.on { background:#0066cc; color:#fff; border-color:#0066cc; }
+    .table-wrap { background:#fff; border:1px solid #e6ebf2; border-radius: 14px; overflow: auto; }
+    table { width:100%; border-collapse: collapse; min-width: 860px; }
+    th, td { text-align: left; padding: 11px 12px; border-bottom: 1px solid #eef2f6; vertical-align: top; font-size: 14px; }
+    th { position: sticky; top: 0; background:#f8fafc; font-size: 12px; letter-spacing: .05em; text-transform: uppercase; color:#607080; }
+    td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .sym { font-weight: 700; }
+    .desc { color:#3d4b5c; line-height: 1.35; }
+    .tag { display:inline-block; min-width: 58px; text-align:center; border-radius: 999px; padding: 2px 8px; font-size: 12px; font-weight: 700; }
+    .tag.cr { background:#e8f7ee; color:#0d8a4b; }
+    .tag.db { background:#fdecec; color:#c62828; }
+    .empty { padding: 28px; color:#6b7785; }
+    @media (max-width: 800px) {
+      .cards { grid-template-columns: 1fr 1fr; }
+      h1 { font-size: 28px; }
+      .total strong { font-size: 40px; }
+    }
+  </style>
+</head>
+<body>
+<%- include('partials/site-nav') %>
+<div class="wrap">
+  <h1>Trades</h1>
+  <p class="lede"><%= summary.first %> through <%= summary.last %>. A credit still open is cash received, not a finished win.</p>
+
+  <%
+    function money(n) {
+      const sign = n >= 0 ? '+' : '−';
+      return sign + '$' + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+  %>
+
+  <div class="total">
+    <span>Total P&amp;L</span>
+    <strong class="<%= summary.pl >= 0 ? 'up' : 'down' %>"><%= money(summary.pl) %></strong>
+    <p><%= summary.count %> fills · <%= summary.winDays %> up days · <%= summary.lossDays %> down days</p>
+  </div>
+
+  <div class="cards">
+    <div class="cardx">
+      <span>Credits in</span>
+      <strong class="up"><%= money(summary.credits) %></strong>
+      <em><%= summary.winners %> winning fills</em>
+    </div>
+    <div class="cardx">
+      <span>Debits out</span>
+      <strong class="down"><%= money(summary.debits) %></strong>
+      <em><%= summary.losers %> losing fills</em>
+    </div>
+    <div class="cardx">
+      <span>Best day</span>
+      <strong class="up"><%= summary.bestDay ? money(summary.bestDay.dollar) : '—' %></strong>
+      <em><%= summary.bestDay ? summary.bestDay.day + ' · ' + summary.bestDay.count + ' fills' : '' %></em>
+    </div>
+    <div class="cardx">
+      <span>Worst day</span>
+      <strong class="down"><%= summary.worstDay ? money(summary.worstDay.dollar) : '—' %></strong>
+      <em><%= summary.worstDay ? summary.worstDay.day + ' · ' + summary.worstDay.count + ' fills' : '' %></em>
+    </div>
+    <div class="cardx">
+      <span>Best fill</span>
+      <strong class="up"><%= summary.best ? money(summary.best.dollar) : '—' %></strong>
+      <em><%= summary.best ? summary.best.symbol + ' · ' + summary.best.day : '' %></em>
+    </div>
+    <div class="cardx">
+      <span>Worst fill</span>
+      <strong class="down"><%= summary.worst ? money(summary.worst.dollar) : '—' %></strong>
+      <em><%= summary.worst ? summary.worst.symbol + ' · ' + summary.worst.day : '' %></em>
+    </div>
+    <div class="cardx">
+      <span>Last day</span>
+      <strong class="<%= days.length && days[days.length - 1].dollar >= 0 ? 'up' : 'down' %>"><%= days.length ? money(days[days.length - 1].dollar) : '—' %></strong>
+      <em><%= summary.last %></em>
+    </div>
+    <div class="cardx">
+      <span>Fills</span>
+      <strong><%= summary.count %></strong>
+      <em><%= days.length %> trading days</em>
+    </div>
+  </div>
+
+  <div class="days">
+    <h2>P&amp;L by day</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Day</th>
+          <th class="num">Fills</th>
+          <th class="num">Day P&amp;L</th>
+          <th class="num">Total P&amp;L</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% days.slice().reverse().forEach(function (day) { %>
+          <tr>
+            <td><%= day.day %></td>
+            <td class="num"><%= day.count %></td>
+            <td class="num <%= day.dollar >= 0 ? 'up' : 'down' %>"><%= money(day.dollar) %></td>
+            <td class="num <%= day.cum >= 0 ? 'up' : 'down' %>"><%= money(day.cum) %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="chart" aria-hidden="true">
+    <%
+      const pts = trades.map(t => t.cum_pl);
+      const min = Math.min(0, ...pts);
+      const max = Math.max(0, ...pts);
+      const span = (max - min) || 1;
+      const w = 1000, h = 140, pad = 8;
+      const xy = pts.map((v, i) => {
+        const x = pad + (i / Math.max(pts.length - 1, 1)) * (w - pad * 2);
+        const y = pad + (1 - (v - min) / span) * (h - pad * 2);
+        return x.toFixed(1) + ',' + y.toFixed(1);
+      }).join(' ');
+      const zeroY = (pad + (1 - (0 - min) / span) * (h - pad * 2)).toFixed(1);
+    %>
+    <svg viewBox="0 0 <%= w %> <%= h %>" preserveAspectRatio="none">
+      <line x1="0" y1="<%= zeroY %>" x2="<%= w %>" y2="<%= zeroY %>" stroke="#d5deea" stroke-dasharray="4 4"/>
+      <polyline fill="none" stroke="#0066cc" stroke-width="3" points="<%= xy %>"/>
+    </svg>
+  </div>
+
+  <div class="toolbar">
+    <input id="q" type="search" placeholder="Search symbol or description" autocomplete="off">
+  </div>
+  <div class="chips" id="chips">
+    <button type="button" class="chip on" data-sym="">All</button>
+    <% symbols.forEach(function (s) { %>
+      <button type="button" class="chip" data-sym="<%= s.symbol %>">
+        <%= s.symbol %>
+        <%= s.dollar >= 0 ? '+' : '−' %>$<%= Math.abs(s.dollar).toLocaleString('en-US', { maximumFractionDigits: 0 }) %>
+      </button>
+    <% }) %>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Symbol</th>
+          <th>Trade</th>
+          <th>Side</th>
+          <th class="num">Qty</th>
+          <th class="num">Price</th>
+          <th class="num">P&amp;L</th>
+          <th class="num">Running</th>
+        </tr>
+      </thead>
+      <tbody id="rows">
+        <% trades.slice().reverse().forEach(function (t) { %>
+          <tr data-sym="<%= t.symbol %>" data-text="<%= (t.symbol + ' ' + t.description).toLowerCase() %>">
+            <td><%= t.time %></td>
+            <td class="sym"><%= t.symbol %></td>
+            <td class="desc"><%= t.description %></td>
+            <td><span class="tag <%= t.kind %>"><%= t.kind === 'cr' ? 'Credit' : 'Debit' %></span></td>
+            <td class="num"><%= t.qty %></td>
+            <td class="num"><%= t.price %></td>
+            <td class="num <%= t.dollar >= 0 ? 'up' : 'down' %>"><%= t.dollar >= 0 ? '+' : '−' %>$<%= Math.abs(t.dollar).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></td>
+            <td class="num <%= t.cum_pl >= 0 ? 'up' : 'down' %>"><%= t.cum_pl >= 0 ? '+' : '−' %>$<%= Math.abs(t.cum_pl).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+    <div class="empty" id="none" hidden>No trades match.</div>
+  </div>
+</div>
+<script>
+  var q = document.getElementById('q');
+  var rows = Array.prototype.slice.call(document.querySelectorAll('#rows tr'));
+  var none = document.getElementById('none');
+  var sym = '';
+  function apply() {
+    var text = (q.value || '').trim().toLowerCase();
+    var shown = 0;
+    rows.forEach(function (row) {
+      var ok = (!sym || row.getAttribute('data-sym') === sym) && (!text || row.getAttribute('data-text').indexOf(text) !== -1);
+      row.style.display = ok ? '' : 'none';
+      if (ok) shown += 1;
+    });
+    none.hidden = shown !== 0;
+  }
+  q.addEventListener('input', apply);
+  document.getElementById('chips').addEventListener('click', function (e) {
+    var btn = e.target.closest('.chip');
+    if (!btn) return;
+    document.querySelectorAll('.chip').forEach(function (c) { c.classList.remove('on'); });
+    btn.classList.add('on');
+    sym = btn.getAttribute('data-sym') || '';
+    apply();
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<style>
+  .sd-topnav{background:#fff;border-bottom:1px solid #e7e7e7;position:relative;z-index:1000;}
+  .sd-topnav-inner{max-width:1170px;margin:0 auto;padding:0 15px;display:flex;align-items:center;justify-content:space-between;min-height:50px;position:relative;}
+  .sd-topnav-brand{display:inline-flex;align-items:center;font-weight:700;color:#0066cc !important;text-decoration:none !important;font-size:18px;line-height:20px;padding:12px 0;font-family:Helvetica,Arial,sans-serif;}
+  .sd-topnav-brand img{height:20px;width:auto;margin-right:6px;}
+  .sd-topnav-links{display:flex;align-items:center;margin:0;padding:0;}
+  .sd-topnav-links a{font-family:Helvetica,Arial,sans-serif;font-weight:600;font-size:14px;color:#0066cc !important;text-decoration:none;padding:12px 8px;margin-left:8px;line-height:20px;background:transparent;border-radius:0;}
+  .sd-topnav-links a:hover{text-decoration:underline;background:transparent;color:#0066cc !important;}
+  .sd-topnav-links a.sd-topnav-login{background:#0066cc !important;color:#fff !important;border-radius:6px;padding:8px 16px !important;margin-left:18px !important;text-decoration:none !important;display:inline-block;line-height:1.4 !important;font-weight:600;}
+  .sd-topnav-links a.sd-topnav-login:hover{text-decoration:none !important;background:#0052a3 !important;color:#fff !important;}
+  .sd-topnav-toggle{display:none;background:#fff;border:1px solid #ddd;border-radius:4px;padding:8px 10px;cursor:pointer;}
+  .sd-topnav-toggle span{display:block;width:18px;height:2px;background:#888;margin:3px 0;}
+  @media (max-width:767px){
+    .sd-topnav-toggle{display:block;}
+    .sd-topnav-links{display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border-bottom:1px solid #e7e7e7;flex-direction:column;align-items:flex-start;padding:8px 15px 12px;box-shadow:0 8px 16px rgba(0,0,0,.06);}
+    .sd-topnav.is-open .sd-topnav-links{display:flex;}
+    .sd-topnav-links a{margin-left:0;padding:10px 0;}
+    .sd-topnav-login{margin:8px 0 0 !important;}
+  }
+</style>
+<nav class="sd-topnav" aria-label="Main">
+  <div class="sd-topnav-inner">
+    <a class="sd-topnav-brand" href="/"><img src="/images/splash.png" alt="Stackdrop">Stackdrop</a>
+    <button class="sd-topnav-toggle" type="button" aria-label="Toggle navigation" onclick="this.closest('.sd-topnav').classList.toggle('is-open')">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="sd-topnav-links">
+      <a href="/">Home</a>
+      <a href="/tools">Tools</a>
+      <a href="/trades">Trades</a>
+      <a href="/help/">Help</a>
+      <a href="/feedback">Feedback</a>
+      <a href="/pro">Stackdrop Pro</a>
+      <a class="sd-topnav-login" href="/login">Login</a>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <!-- Main Pages Sitemap -->
+  <sitemap>
+    <loc>https://stackdrop.it/sitemap.xml</loc>
+    <lastmod>2024-12-27</lastmod>
+  </sitemap>
+  
+  <!-- FAQ Sitemap -->
+  <sitemap>
+    <loc>https://stackdrop.it/sitemap-faq.xml</loc>
+    <lastmod>2024-12-27</lastmod>
+  </sitemap>
+  
+  <!-- Help Documentation Sitemap -->
+  <sitemap>
+    <loc>https://stackdrop.it/sitemap-help.xml</loc>
+    <lastmod>2024-12-27</lastmod>
+  </sitemap>
+  
+</sitemapindex>

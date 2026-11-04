@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-E7Q1WH4R00', { 'send_page_view': true });
+  </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-E7Q1WH4R00"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DeskCheck by Stackdrop v1.2.1 — Turn Monitors Fully Off for Windows | Free</title>
+  <meta name="title" content="DeskCheck by Stackdrop v1.2.1 — Turn Monitors Fully Off for Windows">
+  <meta name="description" content="DeskCheck v1.2.1 by Stackdrop turns your monitors fully off (not just a black overlay) and hides the cursor. Perfect for stepping away from your desk. Unlock with any key, click, or continuous mouse movement. Free portable .exe for Windows 10 & 11.">
+  <meta name="keywords" content="deskcheck, stackdrop deskcheck, turn off monitor windows, monitor power off tool, black screen lock, privacy screen windows, step away from desk, hide screen windows, monitor blackout tool, desk privacy, free monitor off tool">
+  <meta name="author" content="Stackdrop">
+  <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large">
+  <meta name="theme-color" content="#0a0a0a">
+  <link rel="canonical" href="https://stackdrop.it/tools/deskcheck">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Stackdrop">
+  <meta property="og:title" content="DeskCheck by Stackdrop v1.2.1 — Turn Monitors Fully Off">
+  <meta property="og:description" content="One click. Monitors power off. Cursor hidden. Unlock when you're back. Free Windows tool by Stackdrop.">
+  <meta property="og:url" content="https://stackdrop.it/tools/deskcheck">
+  <meta property="og:image" content="https://stackdrop.it/images/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="DeskCheck by Stackdrop turns Windows monitors fully off">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@stackdrop">
+  <meta name="twitter:title" content="DeskCheck by Stackdrop v1.2.1 — Monitor Power-Off">
+  <meta name="twitter:description" content="Turns monitors fully off, hides the cursor, unlocks when you're back. Free portable .exe for Windows.">
+  <meta name="twitter:image" content="https://stackdrop.it/images/og-image.png">
+  <link rel="icon" type="image/x-icon" href="/images/deskcheck.ico">
+  <link rel="apple-touch-icon" href="/images/deskcheck.ico">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "DeskCheck by Stackdrop",
+    "applicationCategory": "UtilityApplication",
+    "operatingSystem": "Windows",
+    "softwareVersion": "1.2.1",
+    "dateModified": "2026-09-07",
+    "description": "Powers monitors fully off and hides the cursor for desk privacy and focus. Unlock with any key, click, or continuous mouse movement.",
+    "url": "https://stackdrop.it/tools/deskcheck",
+    "downloadUrl": "https://stackdrop.it/downloads/DeskCheck.exe",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD", "availability": "https://schema.org/InStock" },
+    "publisher": { "@type": "Organization", "name": "Stackdrop", "url": "https://stackdrop.it/" },
+    "releaseNotes": "v1.2.1: Removed fullscreen overlay during power-off (fixes hang on wake). Hidden host window + lock-free input hooks. v1.1: Real SC_MONITORPOWER off.",
+    "featureList": [
+      "Powers monitors fully off",
+      "Multi-monitor support",
+      "Hidden system cursor",
+      "Unlock on key, click, or mouse movement",
+      "Portable standalone .exe"
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"Home","item":"https://stackdrop.it/"},
+    {"@type":"ListItem","position":2,"name":"Tools","item":"https://stackdrop.it/tools"},
+    {"@type":"ListItem","position":3,"name":"DeskCheck","item":"https://stackdrop.it/tools/deskcheck"}
+  ]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+    {"@type":"Question","name":"Is DeskCheck the same as locking Windows?","acceptedAnswer":{"@type":"Answer","text":"No. DeskCheck powers the monitors off and hides the cursor. It does not show the Windows sign-in screen. When you unlock, your apps are still open."}},
+    {"@type":"Question","name":"How do I turn the monitors back on?","acceptedAnswer":{"@type":"Answer","text":"Press any key, click, or move the mouse continuously for about two seconds."}},
+    {"@type":"Question","name":"Does DeskCheck work with more than one monitor?","acceptedAnswer":{"@type":"Answer","text":"Yes. It powers off every connected display."}}
+  ]}
+  </script>
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body { background: #0d0d0d; color: #e8e8e8; }
+    .navbar-default { background: #111; border-color: #222; }
+    .navbar-brand, .nav-cta { color: #8ab4ff !important; }
+    .nav-cta:hover { color: #aecbfa !important; }
+    .hero {
+      padding: 72px 0 64px;
+      background: radial-gradient(ellipse at 50% 0%, #1a1a2e 0%, #0a0a0a 55%, #000 100%);
+      border-bottom: 1px solid #222;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 40%, rgba(102,126,234,0.08) 0%, transparent 50%),
+                  radial-gradient(circle at 70% 60%, rgba(118,75,162,0.06) 0%, transparent 45%);
+      pointer-events: none;
+    }
+    .hero .container { position: relative; z-index: 1; }
+    .hero-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: 44px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 12px;
+      line-height: 1.15;
+    }
+    .hero .subtitle {
+      font-size: 20px;
+      color: #9aa0a6;
+      max-width: 680px;
+      margin: 0 auto 32px;
+      line-height: 1.6;
+    }
+    .hero-icon {
+      width: 72px;
+      height: 72px;
+      margin-bottom: 20px;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06);
+    }
+    .btn-download {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      color: #fff !important;
+      font-size: 18px;
+      font-weight: 700;
+      padding: 16px 36px;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(102,126,234,0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-download:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(102,126,234,0.5);
+      color: #fff !important;
+    }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid #444;
+      color: #ccc !important;
+      padding: 16px 28px;
+      border-radius: 10px;
+      font-weight: 600;
+      margin-left: 12px;
+    }
+    .btn-ghost:hover { border-color: #667eea; color: #fff !important; background: rgba(102,126,234,0.1); }
+    .preview-box {
+      max-width: 520px;
+      margin: 48px auto 0;
+      aspect-ratio: 16/10;
+      background: #000;
+      border-radius: 12px;
+      border: 2px solid #333;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.8), inset 0 0 60px rgba(0,0,0,1);
+      position: relative;
+      overflow: hidden;
+    }
+    .preview-box::after {
+      content: 'SCREEN LOCKED';
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: #333;
+      font-weight: 600;
+    }
+    .section { padding: 56px 0; }
+    .section-alt { background: #111; border-top: 1px solid #1e1e1e; border-bottom: 1px solid #1e1e1e; }
+    .section h2 { color: #fff; font-weight: 700; margin-bottom: 24px; font-size: 28px; }
+    .section p, .section li { color: #9aa0a6; line-height: 1.8; font-size: 16px; }
+    .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-top: 32px; }
+    .feature-card {
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      padding: 28px 24px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .feature-card:hover { border-color: #667eea; transform: translateY(-3px); }
+    .feature-card i { font-size: 28px; color: #667eea; margin-bottom: 14px; display: block; }
+    .feature-card h3 { color: #fff; font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+    .feature-card p { margin: 0; font-size: 14px; }
+    .unlock-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 28px 0; }
+    .unlock-item {
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+    }
+    .unlock-item .icon { font-size: 32px; margin-bottom: 10px; }
+    .unlock-item strong { display: block; color: #fff; margin-bottom: 6px; }
+    .unlock-item span { font-size: 13px; color: #888; }
+    .steps { counter-reset: step; list-style: none; padding: 0; }
+    .steps li {
+      counter-increment: step;
+      padding: 20px 20px 20px 64px;
+      position: relative;
+      margin-bottom: 12px;
+      background: #161616;
+      border-radius: 10px;
+      border: 1px solid #2a2a2a;
+    }
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 50%;
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 32px;
+      text-align: center;
+    }
+    .faq-item { margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid #222; }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-item strong { color: #fff; display: block; margin-bottom: 8px; font-size: 17px; }
+    .cta-band {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 56px 0;
+      text-align: center;
+      margin-top: 40px;
+    }
+    .cta-band h2 { color: #fff; margin-bottom: 12px; }
+    .cta-band p { color: rgba(255,255,255,0.9); margin-bottom: 28px; font-size: 18px; }
+    .cta-band .btn-download { background: #fff; color: #4a3f8f !important; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+    .av-warning {
+      margin: 28px 0;
+      padding: 18px 20px;
+      background: rgba(255, 193, 7, 0.08);
+      border: 1px solid rgba(255, 193, 7, 0.35);
+      border-radius: 10px;
+      color: #c9b896;
+      line-height: 1.75;
+      font-size: 15px;
+    }
+    .av-warning strong { color: #ffc107; }
+    footer { background: #0a0a0a; border-top: 1px solid #222; padding: 32px 0; text-align: center; color: #666; font-size: 14px; }
+    footer a { color: #8ab4ff; }
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 30px; }
+      .hero .subtitle { font-size: 16px; }
+      .btn-ghost { margin-left: 0; margin-top: 12px; display: inline-block; }
+    }
+  </style>
+</head>
+<body>
+  <%- include('partials/site-nav') %>
+
+  <div class="hero">
+    <div class="container">
+      <span class="hero-badge">v1.2.1 • Updated Sep 7, 2026</span>
+      <img src="/images/deskcheck.ico" alt="DeskCheck" class="hero-icon" width="72" height="72">
+      <h1>DeskCheck by Stackdrop</h1>
+      <p style="color:#8ab4ff;font-weight:700;margin:0 0 12px;font-size:16px;">Version 1.2.1 • Real monitor power-off (wake-safe)</p>
+      <p class="subtitle">Step away from your desk with confidence. One click powers every monitor off — cursor hidden, panels dark, distractions gone. Not Windows lock: no password, just unlock and you're back.</p>
+      <div style="max-width:640px;margin:0 auto 24px;text-align:left;padding:14px 16px;background:rgba(102,126,234,0.12);border:1px solid rgba(102,126,234,0.35);border-radius:8px;">
+        <p style="margin:0 0 6px;color:#a5b4fc;font-weight:700;font-size:15px;">What's new in v1.2.1</p>
+        <ul style="margin:0;padding-left:18px;color:#c4c8d4;font-size:14px;line-height:1.7;">
+          <li><strong style="color:#fff;">Bump ≠ unlock</strong> — a light mouse touch re-sleeps the monitors</li>
+          <li><strong style="color:#fff;">2 seconds of continuous movement</strong> to unlock by mouse, or any key / click</li>
+          <li>Black privacy cover if a display wakes early</li>
+        </ul>
+      </div>
+      <a href="/downloads/DeskCheck.exe" class="btn btn-download btn-lg">
+        <i class="fas fa-download"></i> Download DeskCheck v1.2.1 (Free)
+      </a>
+      <a href="/tools" class="btn btn-ghost btn-lg">All Tools</a>
+      <div class="av-warning" style="max-width:680px;margin:28px auto 0;text-align:left;">
+        <strong><i class="fas fa-shield-alt"></i> Antivirus / SmartScreen notice:</strong>
+        DeskCheck is a new, unsigned portable .exe. Windows Defender, SmartScreen, or your antivirus may warn you — this is a common <strong>false positive</strong> for small tools. If prompted, click <strong>More info → Run anyway</strong> (SmartScreen) or <strong>Allow</strong> / <strong>Restore</strong> in your antivirus. DeskCheck is built by Stackdrop, runs entirely on your PC, and never phones home.
+      </div>
+      <div class="preview-box" aria-hidden="true"></div>
+      <p style="margin-top:16px;font-size:12px;color:#555;letter-spacing:0.5px;">What your screen looks like while DeskCheck is active</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+          <h2>What is DeskCheck?</h2>
+          <p><strong style="color:#fff;">DeskCheck</strong> is a lightweight Windows utility that sends your displays into real power-off (the same Windows monitor-off signal used for idle sleep) — not a fake black window while the panel stays lit. The mouse cursor is hidden while locked. Unlocking wakes the displays and exits instantly.</p>
+          <p>Run the portable <code style="color:#8ab4ff;">DeskCheck.exe</code>, and your monitors go dark until <em>you</em> decide to come back. No installation, no account, no nonsense.</p>
+          <p><strong style="color:#8ab4ff;">Not Windows lock screen.</strong> DeskCheck does not trigger Win+L or the sign-in screen. Unlocking never asks for your Windows password — monitors wake and you’re right back on your desktop.</p>
+
+          <div class="feature-grid">
+            <div class="feature-card">
+              <i class="fas fa-power-off"></i>
+              <h3>Real Monitor Power-Off</h3>
+              <p>Uses Windows SC_MONITORPOWER so panels actually turn off — saving power and privacy, not just painting black.</p>
+            </div>
+            <div class="feature-card">
+              <i class="fas fa-desktop"></i>
+              <h3>All Monitors</h3>
+              <p>Applies across your entire setup — dual monitors, ultrawides, and mixed displays.</p>
+            </div>
+            <div class="feature-card">
+              <i class="fas fa-eye-slash"></i>
+              <h3>Hidden Cursor</h3>
+              <p>The system pointer is fully hidden while locked. Nothing peeks through.</p>
+            </div>
+            <div class="feature-card">
+              <i class="fas fa-bolt"></i>
+              <h3>Instant & Portable</h3>
+              <p>Single .exe file. Double-click to lock. No installer, no registry changes.</p>
+            </div>
+            <div class="feature-card">
+              <i class="fas fa-shield-alt"></i>
+              <h3>Private & Local</h3>
+              <p>Runs entirely on your machine. No data collection, no cloud, no tracking.</p>
+            </div>
+            <div class="feature-card">
+              <i class="fas fa-unlock-alt"></i>
+              <h3>No Windows Lock Screen</h3>
+              <p>Not Win+L. No password prompt. Unlock returns you straight to your desktop — not the Windows sign-in screen.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section section-alt">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+          <h2>How to unlock</h2>
+          <p>DeskCheck is designed to be easy to dismiss when <em>you</em> return — but opaque to casual observers. This is <strong>not</strong> the Windows lock screen: no password, no PIN, no sign-in page. Any one of these will close DeskCheck and restore your desktop:</p>
+          <div class="unlock-grid">
+            <div class="unlock-item">
+              <div class="icon">⌨️</div>
+              <strong>Any key</strong>
+              <span>Press any keyboard key</span>
+            </div>
+            <div class="unlock-item">
+              <div class="icon">🖱️</div>
+              <strong>Any click</strong>
+              <span>Left, right, or middle mouse button</span>
+            </div>
+            <div class="unlock-item">
+              <div class="icon">↔️</div>
+              <strong>Mouse movement</strong>
+              <span>Move the mouse continuously for 2 seconds</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+          <h2>How to use</h2>
+          <ol class="steps">
+            <li><strong style="color:#fff;">Download</strong> — Grab <code>DeskCheck.exe</code> using the button above. Save it anywhere — Desktop, Downloads, or a USB stick.</li>
+            <li><strong style="color:#fff;">Allow it if warned</strong> — Windows SmartScreen or your antivirus may flag the file because it is new and unsigned. Click <strong>More info → Run anyway</strong> on SmartScreen, or allow/restore the file in your antivirus. This is a false positive — DeskCheck is safe and local-only.</li>
+            <li><strong style="color:#fff;">Run</strong> — Double-click the file. Your monitors power off immediately. The cursor vanishes.</li>
+            <li><strong style="color:#fff;">Step away</strong> — Your screen content is hidden. Grab coffee, take a call, walk the dog.</li>
+            <li><strong style="color:#fff;">Return & unlock</strong> — Press any key, click, or wiggle the mouse for 2 seconds. DeskCheck closes and your desktop is back instantly — no Windows password required.</li>
+          </ol>
+
+          <h2 style="margin-top:48px;">Perfect for</h2>
+          <ul>
+            <li><strong style="color:#ccc;">Open offices & shared spaces</strong> — Hide sensitive documents when you leave your desk.</li>
+            <li><strong style="color:#ccc;">Home offices</strong> — Quick privacy when family walks into the room.</li>
+            <li><strong style="color:#ccc;">Focus breaks</strong> — A hard visual stop between work sessions.</li>
+            <li><strong style="color:#ccc;">Presentations & demos</strong> — Black out screens before sharing or switching inputs.</li>
+          </ul>
+
+          <h2 style="margin-top:48px;">FAQ</h2>
+          <div class="faq-item">
+            <strong>Is this the same as Windows lock (Win+L)?</strong>
+            No. DeskCheck powers your monitors off and hides the cursor. It does not lock Windows, log you out, or show the sign-in screen. When you unlock DeskCheck, monitors wake and you return directly to your open apps — no password needed.
+          </div>
+          <div class="faq-item">
+            <strong>Does DeskCheck turn off my monitors?</strong>
+            Yes. It uses the same Windows monitor power-off command as idle sleep, so the panels actually go dark (and use less power). v1.2.1 no longer keeps a fullscreen black window on top while they are off — that was causing the wake hang.
+          </div>
+          <div class="faq-item">
+            <strong>Will I get locked out forever?</strong>
+            No. Press any key, click the mouse, or move it continuously for 2 seconds to unlock. DeskCheck stays on until you do one of those.
+          </div>
+          <div class="faq-item">
+            <strong>Does it work with multiple monitors?</strong>
+            Yes. DeskCheck covers your entire virtual desktop — all connected displays at once.
+          </div>
+          <div class="faq-item">
+            <strong>Why does my antivirus or Windows warn me about DeskCheck?</strong>
+            DeskCheck is a small, unsigned portable .exe from a newer tool. Antivirus software and Windows SmartScreen often flag files like this until they build reputation — even when the file is completely safe. If you see a warning, use <strong>More info → Run anyway</strong> on SmartScreen, or allow/restore the file in your antivirus. DeskCheck does not install anything, does not connect to the internet, and does not collect data.
+          </div>
+          <div class="faq-item">
+            <strong>Is it safe? Does it send data anywhere?</strong>
+            DeskCheck runs 100% locally. No internet connection required, no telemetry, no ads.
+          </div>
+          <div class="faq-item">
+            <strong>What versions of Windows are supported?</strong>
+            Windows 10 and Windows 11 (64-bit).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta-band">
+    <div class="container">
+      <h2>Ready to lock your screen?</h2>
+      <p>Download DeskCheck v1.2.1 by Stackdrop — free, portable, and yours forever.</p>
+      <a href="/downloads/DeskCheck.exe" class="btn btn-download btn-lg">
+        <i class="fas fa-download"></i> Download DeskCheck.exe v1.2.1
+      </a>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <p style="margin:0;">© 2026 Stackdrop · <a href="/tools">Tools</a> · <a href="/help/">Help</a> · <a href="/feedback">Feedback</a></p>
+      <p style="margin-top:8px;margin-bottom:0;font-size:12px;color:#444;">Views: <%= typeof viewCount !== 'undefined' ? viewCount : '' %></p>
+    </div>
+    <%- include('partials/social-follow') %>
+  </footer>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+</body>
+</html>

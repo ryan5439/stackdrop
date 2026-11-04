@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-E7Q1WH4R00', {
+      'send_page_view': true
+    });
+  </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-E7Q1WH4R00"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Device Management - Stackdrop</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <style>
+    :root { --sd-primary:#0d6efd; --sd-bg:#f6f8fb; }
+    body {
+      background: radial-gradient(1000px 500px at 10% -10%, #e9f1ff, transparent),
+                  radial-gradient(700px 350px at 110% 10%, #f7f9ff, transparent),
+                  var(--sd-bg);
+    }
+    .sd-card { max-width: 980px; margin: 0 auto; border:1px solid rgba(13,110,253,0.08); box-shadow:0 10px 30px rgba(2,6,23,0.06); border-radius:14px; }
+    .brand-mark { display:inline-flex; align-items:center; gap:.5rem; font-weight:700; color:#0b5ed7; text-decoration:none }
+    .brand-dot { width:10px; height:10px; background:var(--sd-primary); border-radius:50%; display:inline-block }
+    .app-item { padding:.75rem 1rem; border-bottom:1px solid #f0f2f7; display:flex; justify-content:space-between; align-items:center; transition: background-color 0.2s; }
+    .app-item:hover { background-color: #f8f9fa; }
+    .app-item:last-child { border-bottom:0 }
+    .muted { color:#6c757d }
+    .status-pill { display:inline-flex; align-items:center; gap:.4rem; padding:4px 10px; border-radius:9999px; font-weight:600; font-size:.85rem; }
+    .status-pill.enabled { border:1px solid #cde9d6; background:#eaf7ee; color:#2d7a46 }
+    .status-pill.disabled { border:1px solid #f8d7da; background:#f5c6cb; color:#721c24 }
+    .status-pill.available { border:1px solid #fff3cd; background:#ffeaa7; color:#856404 }
+    .toggle-switch { position: relative; display: inline-block; width: 50px; height: 24px; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
+    .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+    input:checked + .slider { background-color: #2196F3; }
+    input:checked + .slider:before { transform: translateX(26px); }
+    .loading { opacity: 0.6; pointer-events: none; }
+  </style>
+</head>
+<body>
+  <%- include('partials/site-nav') %>
+
+  <div class="container mt-4">
+    <div class="sd-card bg-white p-4">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="mb-1" id="deviceName">Loading...</h2>
+          <p class="text-muted mb-0" id="deviceInfo">Loading device information...</p>
+        </div>
+        <div>
+          <span class="status-pill" id="deviceStatus">Online</span>
+          <a href="/dashboard" style="margin-left:12px;font-weight:600;color:#0066cc;">Dashboard</a>
+          <a href="/logout" style="margin-left:12px;font-weight:600;color:#0066cc;">Logout</a>
+        </div>
+      </div>
+
+      <div class="mb-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+          <h4 class="mb-1">Manage Applications</h4>
+          <p class="text-muted mb-0">Toggle apps <strong>on to install</strong> or <strong>off to remove</strong> them on this device.</p>
+        </div>
+        <span id="pendingBadge" class="badge bg-warning text-dark" style="display:none;"></span>
+      </div>
+
+      <div class="alert alert-info py-2 small" role="alert">
+        Changes are saved instantly and applied on the device's next sync (or automatically at 3&nbsp;AM).
+        To apply them immediately, open the Stackdrop client and click <strong>“Run all now.”</strong>
+      </div>
+
+      <div class="mb-3">
+        <input type="text" id="appSearch" class="form-control" placeholder="Search applications...">
+      </div>
+
+      <div id="appsContainer">
+        <div class="text-center py-4">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <p class="mt-2 text-muted">Loading applications...</p>
+        </div>
+      </div>
+
+      <div class="mt-4 pt-3 border-top text-end">
+        <a href="/dashboard" class="btn btn-outline-primary btn-sm">← Back to Dashboard</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  const SUPABASE_URL = "<%= supabaseUrl %>";
+  const SUPABASE_ANON = "<%= supabaseAnon %>";
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+  
+  let currentDeviceId = null;
+
+  async function ensureAuth() {
+    const { data } = await sb.auth.getSession();
+    if (!data || !data.session) { 
+      window.location.href = '/login'; 
+      return null; 
+    }
+    return data.session;
+  }
+
+  async function loadDeviceInfo() {
+    const session = await ensureAuth(); 
+    if (!session) return;
+
+    // Get device ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    currentDeviceId = urlParams.get('device');
+    
+    if (!currentDeviceId) {
+      window.location.href = '/dashboard';
+      return;
+    }
+
+    const token = session.access_token;
+
+    try {
+      const response = await fetch(`/api/devices/${encodeURIComponent(currentDeviceId)}/apps`, {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+
+      if (response.status === 404) {
+        document.getElementById('appsContainer').innerHTML =
+          '<div class="alert alert-warning">This device was not found on your account.</div>';
+        return;
+      }
+      if (!response.ok) throw new Error('Failed to load device apps (' + response.status + ')');
+
+      const data = await response.json();
+      allApps = data.apps || [];
+      const hostname = data.hostname || currentDeviceId;
+      document.getElementById('deviceName').textContent = `Device: ${hostname}`;
+      renderApps();
+    } catch (error) {
+      console.error('Error loading device apps:', error);
+      document.getElementById('appsContainer').innerHTML = `
+        <div class="alert alert-danger">
+          <strong>Error:</strong> Failed to load device applications. ${escapeHtml(error.message)}
+        </div>`;
+    }
+  }
+
+  let allApps = [];
+
+  // A toggle is "on" when the user wants the app installed:
+  //  - explicitly desired 'install', OR
+  //  - no explicit desire yet but the app is currently installed.
+  function isOn(app) {
+    if (app.desired_state === 'install') return true;
+    if (app.desired_state === 'remove') return false;
+    return !!app.installed;
+  }
+
+  function statusText(app) {
+    const parts = [];
+    parts.push(app.installed ? 'Installed' + (app.installed_version ? ' (' + escapeHtml(app.installed_version) + ')' : '') : 'Not installed');
+    if (app.update_available) parts.push('<span class="text-warning">Update available</span>');
+    if (app.desired_state === 'install' && !app.installed) parts.push('<span class="text-primary">Will install</span>');
+    if (app.desired_state === 'remove' && app.installed) parts.push('<span class="text-danger">Will remove</span>');
+    return parts.join(' • ');
+  }
+
+  function updatePendingBadge() {
+    const pending = allApps.filter(a =>
+      (a.desired_state === 'install' && !a.installed) ||
+      (a.desired_state === 'remove' && a.installed)
+    ).length;
+    const badge = document.getElementById('pendingBadge');
+    if (pending > 0) {
+      badge.style.display = 'inline-block';
+      badge.textContent = pending + ' pending change' + (pending === 1 ? '' : 's');
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+
+  function renderApps() {
+    const container = document.getElementById('appsContainer');
+    const q = (document.getElementById('appSearch').value || '').toLowerCase();
+    const apps = allApps.filter(a => !q || a.name.toLowerCase().includes(q) || a.id.toLowerCase().includes(q));
+
+    if (!apps.length) {
+      container.innerHTML = '<div class="text-center py-4 text-muted">No matching applications.</div>';
+      updatePendingBadge();
+      return;
+    }
+
+    container.innerHTML = apps.map(app => `
+      <div class="app-item">
+        <div class="flex-grow-1">
+          <div class="fw-bold">${escapeHtml(app.name)}</div>
+          <div class="small text-muted">${statusText(app)}</div>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+          <span class="status-pill ${isOn(app) ? 'enabled' : 'disabled'}" id="pill-${app.id}">
+            ${isOn(app) ? 'Install' : 'Remove'}
+          </span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle-${app.id}" ${isOn(app) ? 'checked' : ''}
+                   onchange="setDesired('${app.id}', this.checked)">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>`).join('');
+    updatePendingBadge();
+  }
+
+  async function setDesired(appId, wantInstalled) {
+    const session = await ensureAuth();
+    if (!session) return;
+    const token = session.access_token;
+    const desired = wantInstalled ? 'install' : 'remove';
+    const container = document.getElementById('appsContainer');
+    container.classList.add('loading');
+    try {
+      const response = await fetch(`/api/devices/${encodeURIComponent(currentDeviceId)}/apps`, {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ app_id: appId, desired_state: desired })
+      });
+      if (!response.ok) throw new Error('save failed (' + response.status + ')');
+      const app = allApps.find(a => a.id === appId);
+      if (app) app.desired_state = desired;
+      const pill = document.getElementById('pill-' + appId);
+      if (pill) { pill.className = 'status-pill ' + (wantInstalled ? 'enabled' : 'disabled'); pill.textContent = wantInstalled ? 'Install' : 'Remove'; }
+      // refresh status line + pending count
+      const item = document.getElementById('toggle-' + appId).closest('.app-item');
+      if (item && app) item.querySelector('.small.text-muted').innerHTML = statusText(app);
+      updatePendingBadge();
+    } catch (error) {
+      console.error('setDesired error:', error);
+      alert('Failed to save change. Please try again.');
+      const t = document.getElementById('toggle-' + appId);
+      if (t) t.checked = !wantInstalled;
+    } finally {
+      container.classList.remove('loading');
+    }
+  }
+
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text == null ? '' : text;
+    return div.innerHTML;
+  }
+
+  document.addEventListener('input', function (e) {
+    if (e.target && e.target.id === 'appSearch') renderApps();
+  });
+
+  // Initialize page
+  loadDeviceInfo();
+  </script>
+  <%- include('partials/social-follow') %>
+</body>
+</html>

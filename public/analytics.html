@@ -1,0 +1,111 @@
+<!-- Google Analytics 4 (GA4) Integration -->
+<!-- Replace GA_MEASUREMENT_ID with your actual Google Analytics 4 Measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'GA_MEASUREMENT_ID', {
+    // Enhanced ecommerce tracking for Stackdrop Pro subscriptions
+    send_page_view: true,
+    custom_map: {
+      'custom_parameter_1': 'subscription_plan',
+      'custom_parameter_2': 'device_count'
+    }
+  });
+  
+  // Track installer generation events
+  function trackInstallerGeneration(appCount) {
+    gtag('event', 'installer_generated', {
+      'event_category': 'engagement',
+      'event_label': 'apps_selected',
+      'value': appCount
+    });
+  }
+  
+  // Track Pro subscription events
+  function trackProSubscription(plan, price) {
+    gtag('event', 'purchase', {
+      'transaction_id': Date.now().toString(),
+      'value': price,
+      'currency': 'USD',
+      'items': [{
+        'item_id': plan,
+        'item_name': 'Stackdrop Pro ' + plan,
+        'category': 'Software Subscription',
+        'quantity': 1,
+        'price': price
+      }]
+    });
+  }
+  
+  // Track page views with custom parameters
+  function trackPageView(pageName, category) {
+    gtag('event', 'page_view', {
+      'page_title': pageName,
+      'page_location': window.location.href,
+      'page_category': category
+    });
+  }
+</script>
+
+<!-- Google Search Console Verification -->
+<!-- Replace with your actual Search Console verification meta tag -->
+<meta name="google-site-verification" content="YOUR_SEARCH_CONSOLE_VERIFICATION_CODE" />
+
+<!-- Google Tag Manager (GTM) - Alternative to GA4 -->
+<!-- Uncomment and replace GTM_ID with your actual GTM ID if using GTM instead of GA4 -->
+<!--
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM_ID');</script>
+-->
+
+<!-- Facebook Pixel (Optional) -->
+<!-- Uncomment and replace PIXEL_ID with your actual Facebook Pixel ID -->
+<!--
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', 'PIXEL_ID');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=PIXEL_ID&ev=PageView&noscript=1"
+/></noscript>
+-->
+
+<!-- Microsoft Clarity (Optional) -->
+<!-- Uncomment and replace CLARITY_ID with your actual Microsoft Clarity ID -->
+<!--
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "CLARITY_ID");
+</script>
+-->
+
+<!-- Hotjar (Optional) -->
+<!-- Uncomment and replace HOTJAR_ID with your actual Hotjar Site ID -->
+<!--
+<script>
+    (function(h,o,t,j,a,r){
+        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+        h._hjSettings={hjid:HOTJAR_ID,hjsv:6};
+        a=o.getElementsByTagName('head')[0];
+        r=o.createElement('script');r.async=1;
+        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+        a.appendChild(r);
+    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+</script>
+-->

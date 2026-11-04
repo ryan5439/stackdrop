@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  
+  <!-- FAQ Page -->
+  <url>
+    <loc>https://stackdrop.it/faq</loc>
+    <lastmod>2024-12-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://stackdrop.it/images/og-image.png</image:loc>
+      <image:title>Stackdrop.it FAQ - Windows Software Installer Help</image:title>
+      <image:caption>Frequently asked questions about Stackdrop Windows software installer generator</image:caption>
+    </image:image>
+  </url>
+  
+</urlset>

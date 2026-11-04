@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-E7Q1WH4R00', {
+      'send_page_view': true
+    });
+  </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-E7Q1WH4R00"></script>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Primary Meta Tags -->
+  <title>Stackdrop AI Agent Dashboard | Control Your PC with AI</title>
+  <meta name="title" content="Stackdrop AI Agent Dashboard | Control Your PC with AI">
+  <meta name="description" content="Stackdrop AI Agent dashboard. Control your Windows PC with autonomous AI agents using natural language commands, video analysis, and real-time processing.">
+  <meta name="keywords" content="AI agent dashboard, Stackdrop AI, desktop control, AI automation, computer vision, AI agents">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="author" content="Stackdrop">
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://stackdrop.it/ai-agent/dashboard" />
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://stackdrop.it/ai-agent/dashboard">
+  <meta property="og:title" content="Stackdrop AI Agent Dashboard">
+  <meta property="og:description" content="Control your PC with autonomous AI agents - Stackdrop AI Agent Dashboard">
+  <meta property="og:image" content="/images/og-image.png">
+  <meta property="og:site_name" content="Stackdrop">
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Stackdrop AI Agent Dashboard">
+  <meta name="twitter:description" content="Control your PC with autonomous AI agents">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <style>
+    :root {
+      --primary: #667eea;
+      --primary-dark: #5a67d8;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+      --dark: #1f2937;
+      --light: #f3f4f6;
+    }
+
+    body {
+      background: #f9fafb;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .navbar-brand {
+      font-weight: bold;
+      color: var(--primary) !important;
+    }
+
+    .dashboard-container {
+      max-width: 1400px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+
+    .connection-card {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 14px;
+      gap: 8px;
+    }
+
+    .status-badge.connected {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .status-badge.disconnected {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .status-badge.waiting {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .room-code {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: var(--primary);
+      font-family: 'Courier New', monospace;
+      text-align: center;
+      padding: 20px;
+      background: #f0f7ff;
+      border-radius: 8px;
+      margin: 15px 0;
+    }
+
+    .chat-container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      height: 600px;
+    }
+
+    .chat-header {
+      padding: 20px;
+      border-bottom: 1px solid #e5e7eb;
+      background: var(--primary);
+      color: white;
+      border-radius: 12px 12px 0 0;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      background: #f9fafb;
+    }
+
+    .message {
+      margin-bottom: 15px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      max-width: 80%;
+      word-wrap: break-word;
+    }
+
+    .message.user {
+      background: var(--primary);
+      color: white;
+      margin-left: auto;
+      text-align: right;
+    }
+
+    .message.ai {
+      background: white;
+      border: 1px solid #e5e7eb;
+    }
+
+    .message.system {
+      background: #fef3c7;
+      border-left: 4px solid var(--warning);
+      text-align: center;
+      max-width: 100%;
+      font-size: 13px;
+      color: #92400e;
+    }
+
+    .message.action {
+      background: #dbeafe;
+      border-left: 4px solid var(--info);
+      font-family: monospace;
+      font-size: 13px;
+    }
+
+    .message.error {
+      background: #fee2e2;
+      border-left: 4px solid var(--danger);
+      color: #991b1b;
+    }
+
+    .message-time {
+      font-size: 11px;
+      opacity: 0.7;
+      margin-top: 5px;
+    }
+
+    .chat-input-container {
+      padding: 20px;
+      border-top: 1px solid #e5e7eb;
+      background: white;
+      border-radius: 0 0 12px 12px;
+    }
+
+    .chat-input {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: border-color 0.2s;
+    }
+
+    .chat-input input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .btn-send {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-send:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-send:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    .btn-voice {
+      background: white;
+      border: 2px solid var(--primary);
+      color: var(--primary);
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-voice:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-voice.recording {
+      background: var(--danger);
+      border-color: var(--danger);
+      color: white;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    .btn-emergency {
+      background: var(--danger);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-emergency:hover {
+      background: #dc2626;
+      transform: scale(1.05);
+    }
+
+    .action-log {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 20px;
+      height: 600px;
+      overflow-y: auto;
+    }
+
+    .action-log-header {
+      font-weight: 700;
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: var(--dark);
+    }
+
+    .action-item {
+      padding: 10px;
+      margin-bottom: 8px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: monospace;
+      background: #f9fafb;
+      border-left: 3px solid #d1d5db;
+    }
+
+    .action-item.success {
+      border-left-color: var(--success);
+      background: #ecfdf5;
+    }
+
+    .action-item.failed {
+      border-left-color: var(--danger);
+      background: #fef2f2;
+    }
+
+    .action-item.executing {
+      border-left-color: var(--info);
+      background: #eff6ff;
+      animation: pulse-action 1s infinite;
+    }
+
+    @keyframes pulse-action {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 992px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .quick-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+
+    .quick-action-btn {
+      background: white;
+      border: 2px solid #e5e7eb;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .quick-action-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: 5px;
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <%- include('partials/site-nav') %>
+
+  <div class="dashboard-container">
+    <!-- Connection Status -->
+    <div class="connection-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+        <div>
+          <h3 style="margin: 0 0 10px 0; color: var(--dark);">
+            <i class="fas fa-robot"></i> AI Agent Control Panel
+          </h3>
+          <div id="connection-status">
+            <span class="status-badge waiting">
+              <i class="fas fa-circle-notch fa-spin"></i> Connecting...
+            </span>
+          </div>
+        </div>
+        <div style="text-align: right;">
+          <div style="margin-bottom: 10px;">
+            <strong>Room Code:</strong>
+            <div class="room-code" id="room-code">------</div>
+          </div>
+          <button class="btn-emergency" id="emergency-stop" style="display: none;">
+            <i class="fas fa-stop-circle"></i> EMERGENCY STOP
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row" style="margin-top: 20px;">
+        <div class="stat-card">
+          <div class="stat-value" id="stat-sessions">0</div>
+          <div class="stat-label">Sessions Today</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-actions">0</div>
+          <div class="stat-label">Actions Executed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-success">0%</div>
+          <div class="stat-label">Success Rate</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Interface -->
+    <div class="grid-2">
+      <!-- Chat Interface -->
+      <div class="chat-container">
+        <div class="chat-header">
+          <h4 style="margin: 0;"><i class="fas fa-comments"></i> AI Command Center</h4>
+          <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 13px;">Tell the AI what you want to do</p>
+        </div>
+        
+        <div class="chat-messages" id="chat-messages">
+          <div class="message system">
+            <i class="fas fa-info-circle"></i> Welcome! Connect your PC by running the Stackdrop AI Agent and entering the room code above.
+          </div>
+        </div>
+
+        <div class="chat-input-container">
+          <div class="chat-input">
+            <input 
+              type="text" 
+              id="command-input" 
+              placeholder="Type a command (e.g., 'Open Chrome and go to Google')" 
+              disabled
+            />
+            <button class="btn-voice" id="voice-btn" title="Voice Input" disabled>
+              <i class="fas fa-microphone"></i>
+            </button>
+            <button class="btn-send" id="send-btn" disabled>
+              <i class="fas fa-paper-plane"></i> Send
+            </button>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="quick-actions">
+            <button class="quick-action-btn" data-command="Open Chrome">📱 Open Chrome</button>
+            <button class="quick-action-btn" data-command="Take a screenshot">📸 Screenshot</button>
+            <button class="quick-action-btn" data-command="Open Calculator">🔢 Calculator</button>
+            <button class="quick-action-btn" data-command="Open Notepad">📝 Notepad</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Log -->
+      <div class="action-log">
+        <div class="action-log-header">
+          <i class="fas fa-list"></i> Action Log
+        </div>
+        <div id="action-log-content">
+          <div style="text-align: center; color: #9ca3af; padding: 40px 0;">
+            <i class="fas fa-clock" style="font-size: 48px; margin-bottom: 15px;"></i>
+            <p>No actions yet. Send a command to get started!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script>
+    // Socket.IO Connection
+    const socket = io();
+    let roomCode = null;
+    let isConnected = false;
+    let isRecording = false;
+    let recognition = null;
+
+    // Stats
+    let stats = {
+      sessions: 0,
+      actions: 0,
+      successful: 0
+    };
+
+    // Initialize
+    $(document).ready(function() {
+      // Request room code
+      socket.emit('join_ai_agent');
+
+      // Initialize voice recognition if supported
+      if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        recognition = new (window.webkitSpeechRecognition || window.SpeechRecognition)();
+        recognition.lang = 'en-US';
+        recognition.continuous = false;
+        recognition.interimResults = false;
+
+        recognition.onresult = function(event) {
+          const transcript = event.results[0][0].transcript;
+          $('#command-input').val(transcript);
+          stopRecording();
+        };
+
+        recognition.onerror = function(event) {
+          console.error('Speech recognition error:', event.error);
+          stopRecording();
+        };
+
+        recognition.onend = function() {
+          stopRecording();
+        };
+      } else {
+        $('#voice-btn').prop('disabled', true).attr('title', 'Voice input not supported');
+      }
+    });
+
+    // Socket Events
+    socket.on('room_registered', function(data) {
+      roomCode = data.room_code;
+      $('#room-code').text(roomCode);
+      updateConnectionStatus('waiting', 'Waiting for PC connection...');
+    });
+
+    socket.on('pc_connected', function(data) {
+      isConnected = true;
+      updateConnectionStatus('connected', `Connected to ${data.pc_name}`);
+      $('#command-input, #send-btn, #voice-btn').prop('disabled', false);
+      $('#emergency-stop').show();
+      addSystemMessage(`✅ Connected to ${data.pc_name}`);
+    });
+
+    socket.on('pc_disconnected', function() {
+      isConnected = false;
+      updateConnectionStatus('disconnected', 'PC Disconnected');
+      $('#command-input, #send-btn, #voice-btn').prop('disabled', true);
+      $('#emergency-stop').hide();
+      addSystemMessage('❌ PC disconnected');
+    });
+
+    socket.on('agent_response', function(data) {
+      if (data.type === 'log') {
+        if (data.level === 'ai') {
+          addAIMessage(data.message);
+        } else if (data.level === 'system') {
+          addSystemMessage(data.message);
+        } else if (data.level === 'action') {
+          addActionLog(data.message, 'executing');
+        } else if (data.level === 'error') {
+          addErrorMessage(data.message);
+        }
+      }
+    });
+
+    socket.on('action_result', function(data) {
+      updateActionLog(data.message, data.success ? 'success' : 'failed');
+      stats.actions++;
+      if (data.success) stats.successful++;
+      updateStats();
+    });
+
+    // UI Functions
+    function updateConnectionStatus(status, message) {
+      const badge = $('#connection-status');
+      const icons = {
+        connected: 'fa-check-circle',
+        disconnected: 'fa-times-circle',
+        waiting: 'fa-circle-notch fa-spin'
+      };
+      badge.html(`
+        <span class="status-badge ${status}">
+          <i class="fas ${icons[status]}"></i> ${message}
+        </span>
+      `);
+    }
+
+    function addUserMessage(text) {
+      const html = `
+        <div class="message user">
+          <strong>You:</strong> ${escapeHtml(text)}
+          <div class="message-time">${new Date().toLocaleTimeString()}</div>
+        </div>
+      `;
+      $('#chat-messages').append(html);
+      scrollToBottom();
+    }
+
+    function addAIMessage(text) {
+      const html = `
+        <div class="message ai">
+          <strong><i class="fas fa-robot"></i> AI:</strong> ${escapeHtml(text)}
+          <div class="message-time">${new Date().toLocaleTimeString()}</div>
+        </div>
+      `;
+      $('#chat-messages').append(html);
+      scrollToBottom();
+    }
+
+    function addSystemMessage(text) {
+      const html = `
+        <div class="message system">
+          <i class="fas fa-info-circle"></i> ${escapeHtml(text)}
+        </div>
+      `;
+      $('#chat-messages').append(html);
+      scrollToBottom();
+    }
+
+    function addErrorMessage(text) {
+      const html = `
+        <div class="message error">
+          <i class="fas fa-exclamation-triangle"></i> ${escapeHtml(text)}
+        </div>
+      `;
+      $('#chat-messages').append(html);
+      scrollToBottom();
+    }
+
+    function addActionLog(text, status) {
+      if ($('#action-log-content div[style*="text-align: center"]').length) {
+        $('#action-log-content').empty();
+      }
+      const html = `
+        <div class="action-item ${status}" data-action="${escapeHtml(text)}">
+          <i class="fas fa-${status === 'executing' ? 'spinner fa-spin' : status === 'success' ? 'check' : 'times'}"></i>
+          ${escapeHtml(text)}
+          <div style="font-size: 11px; opacity: 0.7; margin-top: 3px;">${new Date().toLocaleTimeString()}</div>
+        </div>
+      `;
+      $('#action-log-content').prepend(html);
+    }
+
+    function updateActionLog(text, status) {
+      const $item = $(`.action-item[data-action="${escapeHtml(text)}"]`);
+      if ($item.length) {
+        $item.removeClass('executing success failed').addClass(status);
+        $item.find('i').removeClass('fa-spinner fa-spin fa-check fa-times')
+          .addClass(status === 'success' ? 'fa-check' : 'fa-times');
+      }
+    }
+
+    function updateStats() {
+      $('#stat-sessions').text(stats.sessions);
+      $('#stat-actions').text(stats.actions);
+      const successRate = stats.actions > 0 ? Math.round((stats.successful / stats.actions) * 100) : 0;
+      $('#stat-success').text(successRate + '%');
+    }
+
+    function scrollToBottom() {
+      const messages = document.getElementById('chat-messages');
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function escapeHtml(text) {
+      const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      };
+      return text.replace(/[&<>"']/g, m => map[m]);
+    }
+
+    // Send Command
+    $('#send-btn').click(function() {
+      sendCommand();
+    });
+
+    $('#command-input').keypress(function(e) {
+      if (e.which === 13) {
+        sendCommand();
+      }
+    });
+
+    function sendCommand() {
+      const command = $('#command-input').val().trim();
+      if (!command || !isConnected) return;
+
+      addUserMessage(command);
+      socket.emit('start_agent', {
+        goal: command,
+        api_key: 'user_api_key', // TODO: Get from user settings
+        provider: 'openai'
+      });
+
+      $('#command-input').val('');
+      stats.sessions++;
+      updateStats();
+    }
+
+    // Quick Actions
+    $('.quick-action-btn').click(function() {
+      const command = $(this).data('command');
+      $('#command-input').val(command);
+      sendCommand();
+    });
+
+    // Voice Input
+    $('#voice-btn').click(function() {
+      if (isRecording) {
+        stopRecording();
+      } else {
+        startRecording();
+      }
+    });
+
+    function startRecording() {
+      if (!recognition) return;
+      isRecording = true;
+      $('#voice-btn').addClass('recording');
+      $('#voice-btn i').removeClass('fa-microphone').addClass('fa-stop');
+      recognition.start();
+    }
+
+    function stopRecording() {
+      if (!recognition) return;
+      isRecording = false;
+      $('#voice-btn').removeClass('recording');
+      $('#voice-btn i').removeClass('fa-stop').addClass('fa-microphone');
+      try {
+        recognition.stop();
+      } catch (e) {}
+    }
+
+    // Emergency Stop
+    $('#emergency-stop').click(function() {
+      if (confirm('Are you sure you want to stop all AI actions immediately?')) {
+        socket.emit('emergency_stop');
+        addSystemMessage('⚠️ EMERGENCY STOP ACTIVATED');
+      }
+    });
+  </script>
+  <%- include('partials/social-follow') %>
+</body>
+</html>
+

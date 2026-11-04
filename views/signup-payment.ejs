@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-E7Q1WH4R00', {
+      'send_page_view': true
+    });
+  </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-E7Q1WH4R00"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign Up & Subscribe - Stackdrop Pro</title>
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --primary: #0d6efd;
+      --success: #198754;
+      --danger: #dc3545;
+      --warning: #ffc107;
+      --info: #0dcaf0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
+      overflow-x: hidden;
+    }
+
+    .navbar {
+      background: white !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar-brand {
+      font-weight: 700;
+      color: var(--primary) !important;
+      font-size: 20px;
+    }
+
+    .main-container {
+      min-height: calc(100vh - 80px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .card-container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+      padding: 50px;
+      max-width: 500px;
+      width: 100%;
+    }
+
+    .step-indicator {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 40px;
+      align-items: center;
+    }
+
+    .step {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 18px;
+      background: #e9ecef;
+      color: #6c757d;
+      transition: all 0.3s ease;
+    }
+
+    .step.active {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 15px rgba(13, 110, 253, 0.4);
+    }
+
+    .step.completed {
+      background: var(--success);
+      color: white;
+    }
+
+    .step-line {
+      flex: 1;
+      height: 2px;
+      background: #e9ecef;
+    }
+
+    .step-line.active {
+      background: var(--primary);
+    }
+
+    .header-text h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #222;
+      margin-bottom: 10px;
+    }
+
+    .header-text p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .plan-card {
+      border: 2px solid #e9ecef;
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .plan-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--primary);
+      box-shadow: 0 10px 30px rgba(13, 110, 253, 0.15);
+    }
+
+    .plan-card.selected {
+      border-color: var(--primary);
+      background: linear-gradient(135deg, rgba(13, 110, 253, 0.08), rgba(118, 75, 162, 0.08));
+    }
+
+    .plan-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 15px;
+    }
+
+    .plan-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #222;
+    }
+
+    .plan-subtitle {
+      color: #666;
+      font-size: 13px;
+      margin-top: 5px;
+    }
+
+    .plan-price {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .plan-period {
+      color: #666;
+      font-size: 13px;
+      margin-top: -5px;
+    }
+
+    .plan-features {
+      list-style: none;
+      margin-top: 15px;
+    }
+
+    .plan-features li {
+      padding: 8px 0;
+      color: #666;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+    }
+
+    .plan-features li:before {
+      content: "✓";
+      color: var(--success);
+      font-weight: bold;
+      margin-right: 12px;
+      font-size: 16px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      font-weight: 600;
+      color: #222;
+      font-size: 14px;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .form-control {
+      border: 2px solid #e9ecef;
+      border-radius: 10px;
+      padding: 12px 15px;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+      outline: none;
+    }
+
+    .btn-primary-large {
+      background: linear-gradient(135deg, var(--primary) 0%, #764ba2 100%);
+      border: none;
+      border-radius: 12px;
+      padding: 14px 30px;
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+      width: 100%;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-primary-large:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(13, 110, 253, 0.4);
+    }
+
+    .btn-primary-large:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary-outline {
+      background: white;
+      border: 2px solid #e9ecef;
+      border-radius: 10px;
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--primary);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-secondary-outline:hover {
+      border-color: var(--primary);
+      background: #f8f9ff;
+    }
+
+    .plan-summary {
+      background: #f8f9ff;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .plan-summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      color: #666;
+      font-size: 14px;
+    }
+
+    .plan-summary-row:last-child {
+      margin-bottom: 0;
+      border-top: 1px solid #e9ecef;
+      padding-top: 10px;
+      font-weight: 600;
+      color: #222;
+    }
+
+    .alert-message {
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .alert-message.error {
+      background: #fee;
+      color: #c33;
+      border: 1px solid #fcc;
+      display: flex;
+    }
+
+    .alert-message.success {
+      background: #efe;
+      color: #3c3;
+      border: 1px solid #cfc;
+      display: flex;
+    }
+
+    .alert-message.info {
+      background: #eef;
+      color: #33c;
+      border: 1px solid #ccf;
+      display: flex;
+    }
+
+    .spinner-mini {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    footer {
+      background: rgba(255,255,255,0.1);
+      color: white;
+      text-align: center;
+      padding: 30px 20px;
+      font-size: 13px;
+    }
+
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .card-container {
+        padding: 30px 20px;
+      }
+
+      .header-text h1 {
+        font-size: 22px;
+      }
+
+      .plan-price {
+        font-size: 24px;
+      }
+
+      .step-indicator {
+        gap: 8px;
+      }
+
+      .step {
+        width: 38px;
+        height: 38px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%- include('partials/site-nav') %>
+
+  <main class="main-container">
+    <div class="card-container">
+      <!-- Step Indicator -->
+      <div class="step-indicator">
+        <div class="step active" id="step1">1</div>
+        <div class="step-line"></div>
+        <div class="step" id="step2">2</div>
+        <div class="step-line"></div>
+        <div class="step" id="step3">3</div>
+      </div>
+
+      <!-- Header -->
+      <div class="header-text text-center mb-4">
+        <h1>Stackdrop Pro</h1>
+        <p>Choose your plan and get started</p>
+      </div>
+
+      <!-- Alert Messages -->
+      <div id="alert-message" class="alert-message">
+        <i class="fas fa-info-circle"></i>
+        <span id="alert-text"></span>
+      </div>
+
+      <!-- Step 1: Plan Selection -->
+      <div id="step-1" class="step-content">
+        <h6 style="margin-bottom: 25px; font-weight: 700; color: #222;">Choose Your Plan</h6>
+        
+        <!-- Starter Plan -->
+        <div class="plan-card" data-plan="starter" onclick="selectPlan('starter')">
+          <div class="plan-header">
+            <div>
+              <div class="plan-title">Starter</div>
+              <div class="plan-subtitle">Perfect for individuals</div>
+            </div>
+            <div>
+              <div class="plan-price">$2.99</div>
+              <div class="plan-period">/month</div>
+            </div>
+          </div>
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 8px 12px; border-radius: 8px; text-align: center; margin: 12px 0; font-weight: 700; font-size: 13px;">
+            <i class="fas fa-gift"></i> 7-DAY FREE TRIAL
+          </div>
+          <ul class="plan-features">
+            <li>Up to 20 PCs</li>
+            <li>Automatic app updates</li>
+            <li>Web dashboard</li>
+            <li>Email support</li>
+          </ul>
+        </div>
+
+        <!-- Pro Plan -->
+        <div class="plan-card" data-plan="pro100" onclick="selectPlan('pro100')">
+          <div class="plan-header">
+            <div>
+              <div class="plan-title">Pro</div>
+              <div class="plan-subtitle">For growing teams</div>
+            </div>
+            <div>
+              <div class="plan-price">$14.99</div>
+              <div class="plan-period">/month</div>
+            </div>
+          </div>
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 8px 12px; border-radius: 8px; text-align: center; margin: 12px 0; font-weight: 700; font-size: 13px;">
+            <i class="fas fa-gift"></i> 7-DAY FREE TRIAL
+          </div>
+          <ul class="plan-features">
+            <li>Up to 100 PCs</li>
+            <li>All Starter features</li>
+            <li>Priority support</li>
+            <li>Advanced controls</li>
+          </ul>
+        </div>
+
+        <button id="btn-continue" class="btn-primary-large" onclick="nextStep()" disabled>
+          <i class="fas fa-arrow-right"></i> Continue to Account Creation
+        </button>
+      </div>
+
+      <!-- Step 2: Account Creation -->
+      <div id="step-2" class="step-content" style="display: none;">
+        <h6 style="margin-bottom: 20px; font-weight: 700; color: #222;">Create Your Account</h6>
+        
+        <!-- Plan Summary -->
+        <div class="plan-summary">
+          <div class="plan-summary-row">
+            <span>Plan:</span>
+            <strong id="summary-plan">-</strong>
+          </div>
+          <div class="plan-summary-row">
+            <span>After trial:</span>
+            <strong id="summary-price">-</strong>
+          </div>
+          <div class="plan-summary-row" style="border-top: 2px solid #667eea; background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%); padding: 12px; margin-top: 8px;">
+            <span style="color: #667eea; font-weight: 700;"><i class="fas fa-gift"></i> Today (7-Day Trial):</span>
+            <strong style="color: #667eea; font-size: 20px;">$0.00</strong>
+          </div>
+        </div>
+
+        <form onsubmit="handleSignup(event)">
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-envelope" style="margin-right: 8px; color: var(--primary);"></i>Email Address</label>
+            <input type="email" class="form-control" id="email" placeholder="you@example.com" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-lock" style="margin-right: 8px; color: var(--primary);"></i>Password</label>
+            <input type="password" class="form-control" id="password" placeholder="At least 8 characters" minlength="8" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-lock" style="margin-right: 8px; color: var(--primary);"></i>Confirm Password</label>
+            <input type="password" class="form-control" id="password2" placeholder="Re-enter password" required>
+          </div>
+
+          <button type="submit" id="btn-signup" class="btn-primary-large">
+            <i class="fas fa-check"></i> Create Account & Subscribe
+          </button>
+
+          <div class="text-center mt-3">
+            <button type="button" class="btn-secondary-outline" onclick="prevStep()">
+              <i class="fas fa-arrow-left"></i> Back
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Step 3: Payment Processing -->
+      <div id="step-3" class="step-content" style="display: none; text-align: center;">
+        <div style="font-size: 50px; margin-bottom: 20px;">
+          <div class="spinner-mini" style="width: 50px; height: 50px; display: inline-block; border-width: 3px;"></div>
+        </div>
+        <h6 style="font-weight: 700; color: #222; margin-bottom: 10px;">Processing Your Subscription</h6>
+        <p style="color: #666; margin-bottom: 20px;">Please wait while we set up your account...</p>
+        <p style="color: #999; font-size: 12px;">You will be redirected to complete payment shortly.</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; <span id="year">2024</span> Stackdrop. All rights reserved. | <a href="/help" style="color: white; text-decoration: none;">Need Help?</a></p>
+    <%- include('partials/social-follow') %>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const SUPABASE_URL = "<%= supabaseUrl %>";
+    const SUPABASE_ANON = "<%= supabaseAnon %>";
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+    let selectedPlan = null;
+    let currentStep = 1;
+
+    // Get plan from URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const planFromUrl = urlParams.get('plan');
+    if (planFromUrl && ['starter', 'pro100'].includes(planFromUrl)) {
+      selectPlan(planFromUrl);
+    }
+
+    // Set year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    function showAlert(message, type = 'error') {
+      const alertEl = document.getElementById('alert-message');
+      const alertText = document.getElementById('alert-text');
+      alertEl.className = `alert-message ${type}`;
+      alertText.textContent = message;
+      alertEl.style.display = 'flex';
+      setTimeout(() => {
+        if (alertEl.style.display !== 'none') {
+          alertEl.style.display = 'none';
+        }
+      }, 5000);
+    }
+
+    function selectPlan(plan) {
+      selectedPlan = plan;
+      document.querySelectorAll('.plan-card').forEach(card => {
+        card.classList.remove('selected');
+      });
+      document.querySelector(`[data-plan="${plan}"]`).classList.add('selected');
+      document.getElementById('btn-continue').disabled = false;
+
+      const plans = {
+        'starter': { name: 'Starter Plan', price: '$2.99' },
+        'pro100': { name: 'Pro Plan', price: '$14.99' }
+      };
+
+      document.getElementById('summary-plan').textContent = plans[plan].name;
+      document.getElementById('summary-price').textContent = plans[plan].price;
+      document.getElementById('summary-total').textContent = plans[plan].price;
+    }
+
+    function nextStep() {
+      if (currentStep < 3) {
+        currentStep++;
+        updateStepDisplay();
+      }
+    }
+
+    function prevStep() {
+      if (currentStep > 1) {
+        currentStep--;
+        updateStepDisplay();
+      }
+    }
+
+    function updateStepDisplay() {
+      document.querySelectorAll('.step-content').forEach(el => el.style.display = 'none');
+      document.getElementById(`step-${currentStep}`).style.display = 'block';
+
+      for (let i = 1; i <= 3; i++) {
+        const step = document.getElementById(`step${i}`);
+        step.classList.remove('active', 'completed');
+        if (i < currentStep) step.classList.add('completed');
+        else if (i === currentStep) step.classList.add('active');
+      }
+    }
+
+    async function handleSignup(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const password2 = document.getElementById('password2').value;
+
+      if (password !== password2) {
+        showAlert('Passwords do not match', 'error');
+        return;
+      }
+
+      if (password.length < 8) {
+        showAlert('Password must be at least 8 characters', 'error');
+        return;
+      }
+
+      const btn = document.getElementById('btn-signup');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-mini"></span> Creating Account...';
+
+      try {
+        const { data, error } = await sb.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: '/email-confirmed' }
+        });
+
+        if (error) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-check"></i> Create Account & Subscribe';
+          showAlert(error.message, 'error');
+          return;
+        }
+
+        // Move to payment step
+        currentStep = 3;
+        updateStepDisplay();
+
+        // Create checkout session
+        const response = await fetch('/api/billing/create-checkout-session', {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + (data.session?.access_token || ''),
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ plan: selectedPlan })
+        });
+
+        const result = await response.json();
+        if (result.url) {
+          setTimeout(() => {
+            window.location.href = result.url;
+          }, 1500);
+        } else {
+          showAlert('Failed to create checkout session', 'error');
+          currentStep = 2;
+          updateStepDisplay();
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-check"></i> Create Account & Subscribe';
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check"></i> Create Account & Subscribe';
+        showAlert('Signup failed: ' + err.message, 'error');
+      }
+    }
+  </script>
+</body>
+</html>

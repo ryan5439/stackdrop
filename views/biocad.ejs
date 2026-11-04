@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BioCAD — The Operating System for Programmable Biology</title>
+  <meta name="description" content="BioCAD is a theoretical operating system and DNA printer: design genetics on a computer, assemble physical DNA, introduce it into cells. Vision only, no product." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #071018;
+      --bg-2: #0d1722;
+      --card: rgba(255,255,255,0.05);
+      --card-2: rgba(255,255,255,0.07);
+      --stroke: rgba(255,255,255,0.09);
+      --text: #ecf3ff;
+      --muted: #9eb0c7;
+      --cyan: #58d6ff;
+      --blue: #4d7cff;
+      --green: #63ffbe;
+      --glow: 0 0 40px rgba(88,214,255,.16);
+      --radius: 24px;
+      --max: 1240px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(88,214,255,.10), transparent 28%),
+        radial-gradient(circle at 80% 10%, rgba(77,124,255,.12), transparent 24%),
+        radial-gradient(circle at 70% 60%, rgba(99,255,190,.06), transparent 22%),
+        linear-gradient(180deg, #061018 0%, #09121d 30%, #071018 100%);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .container {
+      width: 100%;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 24px;
+    }
+
+    .section {
+      position: relative;
+      padding: 90px 0;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      border: 1px solid var(--stroke);
+      border-radius: 999px;
+      color: var(--cyan);
+      background: rgba(88,214,255,.06);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      backdrop-filter: blur(12px);
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--cyan);
+      box-shadow: 0 0 16px var(--cyan);
+    }
+
+    h1, h2, h3, h4, p {
+      margin-top: 0;
+    }
+
+    h1 {
+      font-size: clamp(42px, 7vw, 82px);
+      line-height: .96;
+      letter-spacing: -0.05em;
+      font-weight: 800;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: clamp(30px, 4vw, 52px);
+      line-height: 1.02;
+      letter-spacing: -0.04em;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    h3 {
+      font-size: 22px;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .lead {
+      font-size: clamp(18px, 2vw, 22px);
+      line-height: 1.6;
+      color: var(--muted);
+      max-width: 840px;
+    }
+
+    .sub {
+      color: var(--muted);
+      line-height: 1.75;
+      font-size: 16px;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(14px);
+      background: rgba(7,16,24,.72);
+      border-bottom: 1px solid rgba(255,255,255,.05);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 76px;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: -0.03em;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background:
+        linear-gradient(135deg, rgba(88,214,255,.95), rgba(77,124,255,.9));
+      box-shadow: 0 0 28px rgba(88,214,255,.25);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .brand-mark::before,
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border: 1.5px solid rgba(255,255,255,.42);
+      border-radius: 9px;
+    }
+
+    .brand-mark::after {
+      inset: 14px;
+      border-radius: 6px;
+      opacity: .8;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      font-size: 15px;
+      transition: .2s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .btns {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 50px;
+      padding: 0 20px;
+      border-radius: 16px;
+      font-weight: 700;
+      border: 1px solid transparent;
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      color: #04101a;
+      box-shadow: 0 12px 34px rgba(88,214,255,.18);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,.04);
+      border-color: var(--stroke);
+      color: var(--text);
+    }
+
+    .hero {
+      padding: 90px 0 40px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 34px;
+      align-items: center;
+    }
+
+    .hero-card,
+    .card,
+    .glass {
+      background: linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.03));
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      box-shadow: var(--glow);
+      backdrop-filter: blur(14px);
+    }
+
+    .hero-card {
+      padding: 26px;
+      min-height: 580px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: auto -100px -120px auto;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(88,214,255,.16), transparent 65%);
+      pointer-events: none;
+    }
+
+    .mini-tag {
+      display: inline-flex;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(99,255,190,.07);
+      border: 1px solid rgba(99,255,190,.14);
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .hero-visual {
+      height: 100%;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      gap: 18px;
+    }
+
+    .machine-hero {
+      position: relative;
+      min-height: 340px;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid var(--stroke);
+      background: #050b12;
+    }
+
+    .machine-hero img {
+      width: 100%;
+      height: 100%;
+      min-height: 340px;
+      object-fit: cover;
+      display: block;
+      filter: saturate(1.05) contrast(1.05);
+    }
+
+    .machine-hero-caption {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(5, 12, 20, 0.72);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
+    }
+
+    .machine-hero-caption strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 15px;
+    }
+
+    .machine-hero-caption span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .machine-gallery {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .machine-shot {
+      position: relative;
+      overflow: hidden;
+      border-radius: 20px;
+      border: 1px solid var(--stroke);
+      background: #050b12;
+      min-height: 220px;
+    }
+
+    .machine-shot img {
+      width: 100%;
+      height: 100%;
+      min-height: 220px;
+      object-fit: cover;
+      display: block;
+      transition: transform .45s ease;
+    }
+
+    .machine-shot:hover img {
+      transform: scale(1.04);
+    }
+
+    .machine-shot figcaption {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 14px 16px;
+      background: linear-gradient(transparent, rgba(0,0,0,.78));
+      color: #e8f2ff;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .learn-square {
+      margin-top: 18px;
+      width: 220px;
+      max-width: 100%;
+      border-radius: 16px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      overflow: hidden;
+      text-decoration: none;
+      display: block;
+      transition: border-color .2s ease, transform .2s ease;
+    }
+
+    .learn-square:hover {
+      border-color: rgba(88,214,255,.35);
+      transform: translateY(-2px);
+    }
+
+    .learn-square-media {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      background: #050b12;
+    }
+
+    .learn-square-media iframe,
+    .learn-square-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border: 0;
+      display: block;
+    }
+
+    .learn-square-label {
+      padding: 10px 12px 12px;
+    }
+
+    .learn-square-label strong {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .learn-square-label span {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .canvas {
+      position: relative;
+      border-radius: 22px;
+      background:
+        linear-gradient(180deg, rgba(9,16,28,.92), rgba(6,12,20,.95)),
+        radial-gradient(circle at 20% 20%, rgba(88,214,255,.06), transparent 30%);
+      border: 1px solid rgba(255,255,255,.07);
+      min-height: 390px;
+      overflow: hidden;
+    }
+
+    .canvas-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+      background-size: 28px 28px;
+      mask-image: radial-gradient(circle at center, black 45%, transparent 100%);
+    }
+
+    .node {
+      position: absolute;
+      width: 170px;
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.05);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px rgba(0,0,0,.22);
+      animation: float 5s ease-in-out infinite;
+    }
+
+    .node.small { width: 150px; }
+    .node h4 {
+      font-size: 14px;
+      margin-bottom: 8px;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .node p {
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .node:nth-child(2) { animation-delay: .4s; }
+    .node:nth-child(3) { animation-delay: .8s; }
+    .node:nth-child(4) { animation-delay: 1.2s; }
+
+    .line {
+      position: absolute;
+      height: 2px;
+      background: linear-gradient(90deg, rgba(88,214,255,.08), rgba(88,214,255,.9), rgba(77,124,255,.2));
+      transform-origin: left center;
+      box-shadow: 0 0 14px rgba(88,214,255,.32);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .stat {
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.06);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 28px;
+      letter-spacing: -0.04em;
+      margin-bottom: 6px;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 34px;
+    }
+
+    .cards-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .cards-4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .card {
+      padding: 26px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: auto -50px -60px auto;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(88,214,255,.08), transparent 70%);
+      pointer-events: none;
+    }
+
+    .icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(88,214,255,.18), rgba(77,124,255,.16));
+      border: 1px solid rgba(88,214,255,.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 18px;
+      box-shadow: 0 10px 30px rgba(88,214,255,.12);
+    }
+
+    .feature-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .feature-list div {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.55;
+    }
+
+    .feature-list div::before {
+      content: "•";
+      color: var(--cyan);
+      font-weight: 900;
+      line-height: 1;
+      margin-top: 2px;
+    }
+
+    .timeline {
+      position: relative;
+      display: grid;
+      gap: 18px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 20px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: linear-gradient(180deg, rgba(88,214,255,.4), rgba(77,124,255,.08));
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-left: 58px;
+      padding: 24px;
+      border-radius: 22px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.06);
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      left: -46px;
+      top: 28px;
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      box-shadow: 0 0 18px rgba(88,214,255,.35);
+    }
+
+    .phase {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(88,214,255,.08);
+      border: 1px solid rgba(88,214,255,.14);
+      color: var(--cyan);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin-bottom: 12px;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .market-table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 18px;
+    }
+
+    .market-table th,
+    .market-table td {
+      padding: 16px 18px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+
+    .market-table th {
+      color: var(--text);
+      font-size: 14px;
+      background: rgba(255,255,255,.03);
+    }
+
+    .market-table td {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .market-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .pricing {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .price {
+      font-size: 40px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      margin: 10px 0 8px;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .cta {
+      padding: 32px;
+      border-radius: 32px;
+      background:
+        radial-gradient(circle at top left, rgba(88,214,255,.14), transparent 28%),
+        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: var(--glow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .cta::after {
+      content: "";
+      position: absolute;
+      inset: auto -80px -80px auto;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(77,124,255,.22), transparent 70%);
+      pointer-events: none;
+    }
+
+    footer {
+      padding: 40px 0 70px;
+      color: var(--muted);
+      border-top: 1px solid rgba(255,255,255,.05);
+    }
+
+    .footer-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .print-pipeline {
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 1080px) {
+      .hero-grid,
+      .split,
+      .cards-4,
+      .cards-3,
+      .pricing {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .print-pipeline {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .nav-links {
+        display: none;
+      }
+
+      .hero-grid,
+      .split,
+      .cards-4,
+      .cards-3,
+      .pricing,
+      .stats,
+      .print-pipeline,
+      .machine-gallery {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding-top: 50px;
+      }
+
+      .hero-card {
+        min-height: auto;
+      }
+
+      .section {
+        padding: 70px 0;
+      }
+
+      .section-head {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <div class="container nav-inner">
+      <a href="#top" class="brand">
+        <span class="brand-mark"></span>
+        <span>BioCAD</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="#problem">Problem</a>
+        <a href="#solution">Concept</a>
+        <a href="#print">Print</a>
+        <a href="#edits">Edits</a>
+        <a href="#delivery">Cells</a>
+        <a href="#rollout">Rollout</a>
+        <a href="#safety">Safety</a>
+        <a href="#hardware">Hardware</a>
+        <a href="#open">Open</a>
+        <a href="#glossary">Glossary</a>
+      </nav>
+
+      <div class="btns">
+        <a class="btn btn-secondary" href="#print">How It Would Work</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="reveal">
+          <div class="eyebrow">A Theoretical Framework</div>
+          <h1>To evolve, humanity must <span style="background: linear-gradient(135deg, var(--cyan), var(--green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">rewrite its own genetics</span></h1>
+          <p class="lead">
+            Natural selection operates on timescales measured in millennia. If humanity intends to establish itself across our sector of the galaxy, that timeline is not enough. A central obstacle is older than any nation: inherited patterns that turn neighboring groups against one another. In this framework, a deliberate genetic rewrite would target and remove the biological drivers of intergroup hostility, so cooperation at species scale is no longer undermined from within. Immortality is also part of the viewpoint: not metaphor, but the pursuit of indefinite healthy life through genomic design. Once those changes are designed, verified, and applied universally, a shared next stage of evolution becomes possible.
+          </p>
+          <p class="lead" style="margin-top: 16px; color: var(--muted); font-size: 1.05rem;">
+            <strong style="color: var(--cyan); font-weight: 700;">BioCAD</strong> is a theoretical concept for both an operating system for programmable biology and a machine that produces physical DNA. An operator would design genomic changes on screen, finalize the project, press <strong style="color: var(--text);">Print</strong>, wait several hours for the strand to assemble, then introduce that DNA into cells so replication can begin. With the invention of AI, humanity has finally reached the point where such a machine becomes conceivable: models that can propose, check, and refine genetic designs at a scale no manual workflow could sustain. BioCAD does not exist as software or hardware today. This page documents the idea only.
+          </p>
+
+          <div class="btns" style="margin-top: 28px;">
+            <a class="btn btn-secondary" href="#print">How Printing Would Work</a>
+          </div>
+
+          <div class="stats" style="margin-top: 28px;">
+            <div class="stat">
+              <strong>Design</strong>
+              <span>Specify genomic intent on screen: immortality and lifespan, intergroup aggression pathways, regulatory circuits, metabolic systems, and related targets.</span>
+            </div>
+            <div class="stat">
+              <strong>Print</strong>
+              <span>Compile the project and assemble physical DNA under controlled conditions over a period of hours.</span>
+            </div>
+            <div class="stat">
+              <strong>Integrate</strong>
+              <span>Introduce the output into cells, confirm replication, and only then consider broader application.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-card reveal">
+          <div class="mini-tag">Conceptual Illustration</div>
+
+          <div class="hero-visual">
+            <div class="machine-hero">
+              <img src="/images/biocad/litho-machine-main.jpg" alt="Conceptual DNA print machine styled like a chip lithography tool" />
+              <div class="machine-hero-caption">
+                <strong>Software and machine as one workflow</strong>
+                <span>Visual stand-ins for industrial precision hardware. No BioCAD printer exists; these images convey scale and seriousness, not a finished instrument.</span>
+              </div>
+            </div>
+
+            <div class="grid" style="grid-template-columns: 1fr 1fr;">
+              <div class="card" style="padding:18px;">
+                <div class="muted" style="font-size:12px; text-transform:uppercase; letter-spacing:.08em; margin-bottom:8px;">Design Layer</div>
+                <strong style="font-size:18px;">Intent to Sequence</strong>
+                <p class="sub" style="font-size:14px; margin:8px 0 0;">Operators describe desired biological behavior. BioCAD would compile that intent into printable genetic constructs.</p>
+              </div>
+
+              <div class="card" style="padding:18px;">
+                <div class="muted" style="font-size:12px; text-transform:uppercase; letter-spacing:.08em; margin-bottom:8px;">Core Thesis</div>
+                <strong style="font-size:18px;">Unified Workflow</strong>
+                <p class="sub" style="font-size:14px; margin:8px 0 0;">Edit on screen, assemble physical DNA, introduce it into cells, and allow replication to carry the change forward.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="problem" class="section">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <div class="eyebrow">The Problem</div>
+            <h2>Evolution is too slow for where we are headed</h2>
+          </div>
+          <p class="sub" style="max-width: 560px;">
+            Three constraints stand in the way of a coordinated, species-scale future: biological time, inherited intergroup hostility, and the absence of a single design-to-molecule workflow for DNA.
+          </p>
+        </div>
+
+        <div class="grid cards-3">
+          <div class="card reveal">
+            <div class="icon">⏳</div>
+            <h3>Biological Time Is Insufficient</h3>
+            <p class="sub">Random mutation and natural selection require vast spans of time. Establishing a durable presence across our sector of the galaxy would demand intentional genetic adaptation rather than passive waiting for environmental pressure to finish the work.</p>
+          </div>
+
+          <div class="card reveal">
+            <div class="icon">🫀</div>
+            <h3>Intergroup Hostility Persists</h3>
+            <p class="sub">Humans readily form in-groups and out-groups. That inheritance has repeatedly fueled conflict between communities. At civilizational scale, those biological drivers of hostility remain a structural limit on trust, coordination, and shared purpose.</p>
+          </div>
+
+          <div class="card reveal">
+            <div class="icon">🧩</div>
+            <h3>No End-to-End Design Loop</h3>
+            <p class="sub">There is still no integrated environment in which an operator can express genomic intent, validate it, assemble physical DNA within hours, and move directly into controlled cellular introduction. Design tools and synthesis pipelines remain fragmented.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="solution" class="section">
+      <div class="container split">
+        <div class="reveal">
+          <div class="eyebrow">The Concept</div>
+          <h2>Open BioCAD. Redesign life. Press Print.</h2>
+          <p class="sub">
+            In theory, BioCAD unites two capabilities: desktop software for genome-scale design, and hardware that assembles the finished strand. An operator would revise traits such as lifespan, pathways linked to intergroup hostility, regulatory circuits, and metabolic systems, then finalize the project and print. Several hours later, physical DNA would be available for introduction into cells so replication can begin. The invention of AI is what makes this conceivable now. Design search, conflict detection, and sequence refinement can finally keep pace with the ambition of a true DNA printer.
+          </p>
+
+          <div class="feature-list">
+            <div>Genome-scale desktop environment for intentional biological design</div>
+            <div>Editable systems: lifespan, aggression pathways, circuits, metabolism, and more</div>
+            <div>Finalize, print, and wait measured in hours rather than experimental months</div>
+            <div>Physical DNA output, cellular introduction, and verified replication</div>
+          </div>
+        </div>
+
+        <div class="card reveal">
+          <div class="mini-tag">Theoretical Operator Flow</div>
+          <div style="display:grid; gap:14px;">
+            <div class="glass" style="padding:18px; border-radius:20px;">
+              <strong style="display:block; margin-bottom:8px;">1. Launch BioCAD</strong>
+              <div class="muted">Open the application on a workstation. The environment presents itself as an operating system for programmable biology: projects, libraries, simulation, and print control in one place.</div>
+            </div>
+
+            <div class="glass" style="padding:18px; border-radius:20px;">
+              <strong style="display:block; margin-bottom:8px;">2. Define Genomic Changes</strong>
+              <div class="muted">Specify the intended outcomes: immortality-oriented lifespan design, removal of intergroup hostility drivers, revised circuits and pathways, or other modules. Iterate until the design matches the goal.</div>
+            </div>
+
+            <div class="glass" style="padding:18px; border-radius:20px;">
+              <strong style="display:block; margin-bottom:8px;">3. Finalize and Print</strong>
+              <div class="muted">Lock the validated project. BioCAD compiles the design into an ordered sequence and sends it to the machine, which assembles real DNA one unit at a time under controlled conditions.</div>
+            </div>
+
+            <div class="glass" style="padding:18px; border-radius:20px;">
+              <strong style="display:block; margin-bottom:8px;">4. Introduce Into Cells</strong>
+              <div class="muted">After several hours, physical DNA exits the machine. It is introduced into cells, replication is confirmed, and only then would any broader program be considered.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="print" class="section">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <div class="eyebrow">DNA Printing (Theory)</div>
+            <h2>What “Print” would mean in practice</h2>
+          </div>
+          <p class="sub" style="max-width: 600px;">
+            Printing would not eject a finished molecule in a single step. After finalization, the machine would grow the strand sequentially, guiding each next unit into place under conditions tuned for that step, until the physical chain matches the compiled print job. The analogy is ordinary document printing: software prepares the file, hardware produces the artifact. Here the artifact is DNA, and the following stage is controlled cellular introduction.
+          </p>
+        </div>
+
+        <div class="machine-gallery reveal">
+          <figure class="machine-shot">
+            <img src="/images/biocad/litho-machine-main.jpg" alt="Conceptual cleanroom DNA assembly machine" />
+            <figcaption>Conceptual printer: industrial precision comparable to lithography-scale tools</figcaption>
+          </figure>
+          <figure class="machine-shot">
+            <img src="/images/biocad/litho-wafer-stage.jpg" alt="Precision stage inside a fabrication machine" />
+            <figcaption>Assembly stage: sequential construction of the strand over hours</figcaption>
+          </figure>
+          <figure class="machine-shot">
+            <img src="/images/biocad/litho-fab-floor.jpg" alt="Fabrication floor with rows of manufacturing tools" />
+            <figcaption>Facility scale: design environment paired with dedicated hardware</figcaption>
+          </figure>
+        </div>
+
+        <div class="grid cards-3" style="margin-bottom: 28px;">
+          <div class="card reveal">
+            <div class="icon">📄</div>
+            <h3>Compile</h3>
+            <p class="sub">On-screen edits resolve into an ordered base string. Promoters, coding regions, terminators, and junctions are arranged into a machine-readable print job with metadata for length, composition, and quality checks.</p>
+          </div>
+
+          <div class="card reveal">
+            <div class="icon">🖨️</div>
+            <h3>Assemble</h3>
+            <p class="sub">The growing strand is maintained in a state that favors only the next required unit. Conditions then shift for the following letter. Over a period of hours, this produces a finished physical chain. Longer constructs may be printed as shorter oligos and joined into the full sequence.</p>
+          </div>
+
+          <div class="card reveal">
+            <div class="icon">🧪</div>
+            <h3>Verify and Transfer</h3>
+            <p class="sub">Output leaves the machine as physical DNA in a tube, plasmid, or cartridge. Sequence is checked against the project file before any cellular introduction or replication study begins.</p>
+          </div>
+        </div>
+
+        <div class="card reveal" style="padding: 32px;">
+          <div class="mini-tag">End-to-End Theoretical Loop</div>
+          <div class="grid print-pipeline" style="margin-top: 18px;">
+            <div>
+              <strong style="display:block; color: var(--cyan); margin-bottom: 8px;">Open BioCAD</strong>
+              <div class="muted" style="font-size: 14px;">Launch the biology operating environment on a workstation.</div>
+            </div>
+            <div>
+              <strong style="display:block; color: var(--cyan); margin-bottom: 8px;">Edit DNA</strong>
+              <div class="muted" style="font-size: 14px;">Define lifespan, hostility pathways, circuits, and related genomic changes.</div>
+            </div>
+            <div>
+              <strong style="display:block; color: var(--cyan); margin-bottom: 8px;">Finalize</strong>
+              <div class="muted" style="font-size: 14px;">Simulate, validate, and lock the project for hardware.</div>
+            </div>
+            <div>
+              <strong style="display:block; color: var(--cyan); margin-bottom: 8px;">Press Print</strong>
+              <div class="muted" style="font-size: 14px;">Assemble the strand sequentially under shifting local conditions.</div>
+            </div>
+            <div>
+              <strong style="display:block; color: var(--cyan); margin-bottom: 8px;">Introduce Into Cells</strong>
+              <div class="muted" style="font-size: 14px;">Load DNA into cells, confirm replication, document outcomes.</div>
+            </div>
+          </div>
+          <p class="sub" style="margin-top: 24px; margin-bottom: 0; max-width: 920px;">
+            <strong style="color: var(--text);">Status:</strong> BioCAD does not exist. Neither the software nor the DNA printer has been built. Everything on this page is theoretical.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="platform" class="section">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <div class="eyebrow">Software Environment (Theory)</div>
+            <h2>What an operator would open</h2>
+          </div>
+          <p class="sub" style="max-width:560px;">
+            BioCAD would present a unified environment for genomic design: editors, component libraries, simulation, assisted design tools, and a controlled path from project file to print hardware.
+          </p>
+        </div>
+
+        <div class="grid cards-4">
+          <div class="card reveal">
+            <div class="icon">🎛️</div>
+            <h3>Visual Editor</h3>
+            <p class="sub">A node-based canvas for gene circuits, regulatory logic, pathways, and whole-genome patches. Operators work at the level of biological intent rather than raw nucleotide hunting alone.</p>
+          </div>
+
+          <div class="card reveal">
+            <div class="icon">📚</div>
+            <h3>Part Library</h3>
+            <p class="sub">Catalogued promoters, genes, enzymes, sensors, terminators, and modular constructs, each with documentation describing intended function, known constraints, and compatibility notes.</p>
+          </div>
+
+          <div class="card reveal">
+            <div class="icon">📈</div>
+            <h3>Simulation</h3>
+            <p class="sub">Before printing, estimate expression behavior, conflict between modules, cellular load, stability, and whether a change is coherent enough to leave the screen.</p>
+          </div>
+
+          <div class="card reveal">
+            <div class="icon">🤖</div>
+            <h3>Assisted Design</h3>
+            <p class="sub">Propose candidate sequences, flag hazardous motifs, suggest lifespan or hostility-pathway edits, and map high-level goals back into DNA candidates for human review. AI is the layer that makes genome-scale design tractable enough to drive a print machine.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="edits" class="section">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <div class="eyebrow">Candidate Edit Domains</div>
+            <h2>Systems a future genome design environment might address</h2>
+          </div>
+          <p class="sub" style="max-width:600px;">
+            These domains represent major classes of genomic change that a design environment would need to support. They are theoretical research categories, not implemented edits.
+          </p>
+        </div>
+
+        <div class="grid cards-3">
+          <div class="card reveal">
+            <div class="icon">⏳</div>
+            <h3>Immortality and Aging</h3>
+            <p class="sub">From this viewpoint, the goal is immortality: indefinite healthy life through repair pathways, senescence regulation, and related genomic controls. A species oriented toward long-duration exploration cannot accept decades as the default limit of a human life.</p>
+          </div>
+
+          <div class="card reveal">
+            <div class="icon">🫀</div>
+            <h3>Intergroup Hostility Pathways</h3>
+            <p class="sub">The central rewrite in this framework: identify and remove biological drivers that push groups into conflict with one another, so cooperation at planetary and galactic scale is no longer undercut by inherited hostility.</p>
+          </div>
+
+          <div class="card reveal">
+            <div class="icon">🧠</div>
+            <h3>Cognition and Learning</h3>
+            <p class="sub">Optional modules for memory, attention, language acquisition, and emotional regulation, scoped to whatever capacities the next phase of civilization actually requires and can safely support.</p>
+          </div>
+
+          <div class="card reveal">
+            <div class="icon">🛡️</div>
+            <h3>Immune Function and Resilience</h3>
+            <p class="sub">Radiation tolerance, pathogen resistance, and recovery under stress. Relevant first for Earth, then for environments elsewhere in our sector.</p>
+          </div>
+
+          <div class="card reveal">
+            <div class="icon">🦴</div>
+            <h3>Physiological Systems</h3>
+            <p class="sub">Muscle, bone, metabolism, and sensory range as additional physiological modules. Each would require careful specification before any design work could be contemplated.</p>
+          </div>
+
+          <div class="card reveal">
+            <div class="icon">🧩</div>
+            <h3>Custom Modules</h3>
+            <p class="sub">Additional constructs as the framework develops: metabolic adaptations, symbiotic interfaces, environmental adapters, and related systems.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="delivery" class="section">
+      <div class="container split">
+        <div class="reveal">
+          <div class="eyebrow">After Printing</div>
+          <h2>From physical DNA to living cells</h2>
+          <p class="sub">
+            Assembly is not completion. Printed DNA must enter cells and continue copying under observation. Delivery, verification, and first replication are required theoretical stages with their own protocols.
+          </p>
+          <div class="feature-list">
+            <div>Physical DNA exits the printer after several hours</div>
+            <div>Sequence verification against the BioCAD project file</div>
+            <div>Selection of a controlled delivery path into target cells</div>
+            <div>Confirmed replication before any wider program</div>
+          </div>
+        </div>
+
+        <div class="card reveal">
+          <div class="mini-tag">Delivery Approaches</div>
+          <div style="display:grid; gap:14px;">
+            <div class="glass" style="padding:18px; border-radius:20px;">
+              <strong style="display:block; margin-bottom:8px;">Vector-mediated carriage</strong>
+              <div class="muted">Package printed DNA so cells can take it up through established gene-delivery concepts. Still entirely theoretical within the BioCAD stack.</div>
+            </div>
+            <div class="glass" style="padding:18px; border-radius:20px;">
+              <strong style="display:block; margin-bottom:8px;">Direct cellular introduction</strong>
+              <div class="muted">Introduce DNA into cultured cells first, prove stable replication and intended phenotype, then evaluate whether any larger step is justified.</div>
+            </div>
+            <div class="glass" style="padding:18px; border-radius:20px;">
+              <strong style="display:block; margin-bottom:8px;">Somatic versus germline (unresolved)</strong>
+              <div class="muted">Whether a change remains limited to one organism or passes to subsequent generations is a foundational question. It requires an explicit written position before any serious design work.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="rollout" class="section">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <div class="eyebrow">Species-Scale Application (Theory)</div>
+            <h2>From a verified print to universal adoption</h2>
+          </div>
+          <p class="sub" style="max-width:600px;">
+            The long-range vision assumes that once a change is proven, it is applied consistently across humanity so the next evolutionary step is shared rather than uneven. Each stage below is conceptual and would demand extensive evidence, consent frameworks, and governance before it could ever be more than theory.
+          </p>
+        </div>
+
+        <div class="timeline">
+          <div class="timeline-item reveal">
+            <div class="phase">Stage 1</div>
+            <h3>Design and Simulation</h3>
+            <p class="sub">Construct the edit in BioCAD. Exhaust simulation and in-silico conflict checks. Failures must occur on screen, never as a substitute for unfinished thought.</p>
+          </div>
+
+          <div class="timeline-item reveal">
+            <div class="phase">Stage 2</div>
+            <h3>Print and Cellular Proof</h3>
+            <p class="sub">Assemble the DNA, introduce it into cells, observe replication, and confirm the intended phenotype under controlled laboratory conditions.</p>
+          </div>
+
+          <div class="timeline-item reveal">
+            <div class="phase">Stage 3</div>
+            <h3>Limited, Monitored Cohorts</h3>
+            <p class="sub">If ever contemplated, only after rigorous consent, reversibility research, long-term observation, and independent review.</p>
+          </div>
+
+          <div class="timeline-item reveal">
+            <div class="phase">Stage 4</div>
+            <h3>Species-Wide Application</h3>
+            <p class="sub">Only after proof at every prior stage: the same verified change for everyone, including the removal of intergroup hostility drivers, so humanity advances together rather than in fragments.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="safety" class="section">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <div class="eyebrow">Safety, Ethics, and Constraints</div>
+            <h2>Any serious theory must include the brakes</h2>
+          </div>
+          <p class="sub" style="max-width:600px;">
+            The following topics are not settled policy. They are the minimum categories that must be written down before a design-and-print capability for human DNA could be discussed as more than speculation.
+          </p>
+        </div>
+
+        <div class="grid cards-3">
+          <div class="card reveal">
+            <div class="icon">🧯</div>
+            <h3>Irreversibility</h3>
+            <p class="sub">Some edits may not reverse cleanly. Theory must include rollback strategies, kill switches, and clear classes of changes that must never be printed.</p>
+          </div>
+          <div class="card reveal">
+            <div class="icon">⚖️</div>
+            <h3>Consent and Equity</h3>
+            <p class="sub">A species-scale rewrite cannot belong to a privileged minority. Governance, consent models, and safeguards against fragmentation require formal documentation.</p>
+          </div>
+          <div class="card reveal">
+            <div class="icon">🚫</div>
+            <h3>Misuse Potential</h3>
+            <p class="sub">A genome design environment paired with a DNA printer is dual-use by nature. Access control, audit trails, forbidden motifs, and physically isolated hardware belong in the design from the start.</p>
+          </div>
+          <div class="card reveal">
+            <div class="icon">🔬</div>
+            <h3>Off-Target Effects</h3>
+            <p class="sub">Incorrect bases, unintended tissues, or generational consequences must be treated as first-order risks. Simulation and wet verification precede any print that leaves a controlled setting.</p>
+          </div>
+          <div class="card reveal">
+            <div class="icon">🌍</div>
+            <h3>Ecological Spillover</h3>
+            <p class="sub">Edited cells or delivery vectors must not leave their intended context. Containment doctrine needs a dedicated write-up as the theory matures.</p>
+          </div>
+          <div class="card reveal">
+            <div class="icon">📜</div>
+            <h3>Law and Norms</h3>
+            <p class="sub">International standards, research limits, and clear rules for who may authorize a print of human DNA are essential to the framework.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="hardware" class="section">
+      <div class="container split">
+        <div class="reveal">
+          <div class="eyebrow">Hardware Stack (Theory)</div>
+          <h2>What would sit behind the Print command</h2>
+          <p class="sub">
+            Software prepares the design. Hardware grows the molecule. One speculative path maintains the main chain under a controlled field so each next base is drawn in only when conditions are tuned for it, then retuned for the following letter along the sequence. The facility would require a clean environment, continuous error checking, and a secure output path where finished DNA is released after hours of assembly.
+          </p>
+        </div>
+        <div class="card reveal">
+          <div class="mini-tag">Assembly System</div>
+          <div class="feature-list" style="margin-top:8px;">
+            <div>Sequence compiler producing a machine-readable print job</div>
+            <div>Growing-strand control that favors only the next required base</div>
+            <div>Stepwise cycle: retune, attract, lock, advance</div>
+            <div>Optional oligo assembly and joining for very long constructs</div>
+            <div>On-machine quality control and sequencing spot checks</div>
+            <div>Physical output formats: tubes, plasmids, or sealed cartridges</div>
+            <div>Expected runtime on the order of hours (theoretical)</div>
+          </div>
+          <a class="learn-square" href="https://youtu.be/C7KNyceDmTc?si=qoaUHQygYCYPZyv_" target="_blank" rel="noopener noreferrer">
+            <div class="learn-square-media">
+              <img src="https://img.youtube.com/vi/C7KNyceDmTc/hqdefault.jpg" alt="Learning video about oligos" />
+            </div>
+            <div class="learn-square-label">
+              <strong>Learn: Oligos</strong>
+              <span>Short primer on oligonucleotides and how short DNA pieces relate to longer constructs.</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section id="open" class="section">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <div class="eyebrow">Open Research Questions</div>
+            <h2>Foundational questions for the framework</h2>
+          </div>
+          <p class="sub" style="max-width:600px;">
+            These questions define the scientific and governance work the BioCAD concept depends on.
+          </p>
+        </div>
+
+        <div class="grid cards-3">
+          <div class="card reveal">
+            <h3>Hostility-pathway genomic targets</h3>
+            <p class="sub">Which biological circuits, if any, drive intergroup conflict in the way this vision describes, and can they be safely revised or removed?</p>
+          </div>
+          <div class="card reveal">
+            <h3>Selective stepwise assembly</h3>
+            <p class="sub">What local field or condition on the growing strand would admit only the required next unit before the machine advances?</p>
+          </div>
+          <div class="card reveal">
+            <h3>Replication proof standard</h3>
+            <p class="sub">What experimental criteria establish that a printed construct works before any human-facing consideration?</p>
+          </div>
+          <div class="card reveal">
+            <h3>Civilizational timeline</h3>
+            <p class="sub">How biological readiness relates to propulsion, habitats, culture, and institutions over multi-century horizons.</p>
+          </div>
+          <div class="card reveal">
+            <h3>Reversibility protocol</h3>
+            <p class="sub">If a print is wrong: quarantine, counter-edit, permanent halt, or another response?</p>
+          </div>
+          <div class="card reveal">
+            <h3>Authorization to print</h3>
+            <p class="sub">Individuals, scientific councils, or species-level institutions? Governance must be specified before capability discussion becomes meaningful.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="glossary" class="section">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <div class="eyebrow">Glossary</div>
+            <h2>Core terms used in this framework</h2>
+          </div>
+          <p class="sub" style="max-width:560px;">
+            Shared vocabulary for readers returning to this page as sections are expanded.
+          </p>
+        </div>
+        <div class="grid cards-3">
+          <div class="card reveal">
+            <h3>BioCAD</h3>
+            <p class="sub">A theoretical operating system for programmable biology paired with a machine that assembles physical DNA from a compiled design.</p>
+          </div>
+          <div class="card reveal">
+            <h3>Print</h3>
+            <p class="sub">Sequential assembly of a real DNA strand from a compiled sequence under controlled conditions, typically over a period of hours.</p>
+          </div>
+          <div class="card reveal">
+            <h3>Immortality</h3>
+            <p class="sub">The viewpoint that indefinite healthy life is a valid genomic design goal, pursued through aging pathways, repair systems, and related controls.</p>
+          </div>
+          <div class="card reveal">
+            <h3>Hostility rewrite</h3>
+            <p class="sub">A proposed genetic change that removes or quiets biological drivers of intergroup conflict, intended to support cooperation at planetary and galactic scale.</p>
+          </div>
+          <div class="card reveal">
+            <h3>Compile</h3>
+            <p class="sub">Translation of visual or high-level edits into an ordered nucleotide sequence the machine can assemble.</p>
+          </div>
+          <div class="card reveal">
+            <h3>Replication</h3>
+            <p class="sub">Cellular copying of introduced DNA, the step by which a printed construct leaves the tube and enters living systems.</p>
+          </div>
+          <div class="card reveal">
+            <h3>Theory only</h3>
+            <p class="sub">No BioCAD software or hardware exists. This site records a vision and research agenda, not a product offering.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="cta reveal" id="contact">
+          <div class="eyebrow">Theory Only</div>
+          <h2 style="max-width: 860px;">Design. Assemble. Introduce. Verify.</h2>
+          <p class="lead" style="max-width: 820px;">
+            BioCAD is not available as software or as a DNA printer. There is no subscription and no commercial product. This page presents a theoretical framework for a design-and-print approach to programmable biology.
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container footer-row">
+      <div class="brand">
+        <span class="brand-mark"></span>
+        <span>BioCAD</span>
+      </div>
+
+      <div>© <%= new Date().getFullYear() %> BioCAD / StackDrop</div>
+    </div>
+  </footer>
+
+  <script>
+    const revealEls = document.querySelectorAll('.reveal');
+
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.12 });
+
+    revealEls.forEach(el => io.observe(el));
+  </script>
+</body>
+</html>

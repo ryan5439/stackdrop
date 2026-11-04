@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-E7Q1WH4R00', {
+      'send_page_view': true
+    });
+  </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-E7Q1WH4R00"></script>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <!-- Primary Meta Tags -->
+  <title>Stackdrop AI Agent - Autonomous Desktop Control | Stackdrop</title>
+  <meta name="title" content="Stackdrop AI Agent - Autonomous Desktop Control | Stackdrop">
+  <meta name="description" content="AI-powered remote desktop control. Connect to your Windows PCs from anywhere and automate tasks with natural language commands, computer vision, and real-time processing.">
+  <meta name="keywords" content="AI agent, remote desktop control, AI automation, desktop automation, computer vision, AI desktop control, Stackdrop AI">
+  <meta name="author" content="Stackdrop">
+  <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large">
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://stackdrop.it/tools/ai-agent" />
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://stackdrop.it/tools/ai-agent">
+  <meta property="og:title" content="Stackdrop AI Agent - Autonomous Desktop Control">
+  <meta property="og:description" content="AI-powered remote desktop control. Connect to your Windows PCs from anywhere and automate tasks with natural language commands.">
+  <meta property="og:image" content="https://stackdrop.it/images/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="Stackdrop">
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://stackdrop.it/tools/ai-agent">
+  <meta name="twitter:title" content="Stackdrop AI Agent - Autonomous Desktop Control">
+  <meta name="twitter:description" content="AI-powered remote desktop control with natural language commands and computer vision.">
+  <meta name="twitter:image" content="https://stackdrop.it/images/og-image.png">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  
+  <!-- Performance Optimizations -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+  
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Stackdrop AI Agent",
+    "description": "AI-powered remote desktop control with autonomous agents, computer vision, and natural language processing.",
+    "url": "https://stackdrop.it/tools/ai-agent",
+    "applicationCategory": "AutomationApplication",
+    "operatingSystem": "Windows",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "creator": {
+      "@type": "Organization",
+      "name": "Stackdrop",
+      "url": "https://stackdrop.it/"
+    },
+    "featureList": [
+      "Natural language commands",
+      "Computer vision",
+      "Real-time processing",
+      "Remote desktop control",
+      "Autonomous task automation"
+    ]
+  }
+  </script>
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <style>
+    :root {
+      --sd-primary: #0d6efd;
+      --sd-bg: #f6f8fb;
+      --sd-dark: #212529;
+      --sd-success: #198754;
+      --sd-danger: #dc3545;
+      --sd-warning: #ffc107;
+    }
+
+    body {
+      background: var(--sd-bg);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      padding: 10px 0;
+    }
+
+    .navbar-brand {
+      font-weight: 700;
+      color: var(--sd-primary) !important;
+      text-decoration: none;
+    }
+
+    .main-container {
+      display: flex;
+      height: calc(100vh - 60px);
+      gap: 10px;
+      padding: 10px;
+    }
+
+    .left-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 15px;
+    }
+
+    .right-panel {
+      width: 400px;
+      display: flex;
+      flex-direction: column;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 15px;
+      overflow-y: auto;
+    }
+
+    .panel-header {
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e9ecef;
+    }
+
+    .chat-box {
+      flex: 1;
+      overflow-y: auto;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      padding: 15px;
+      background: #f8f9fa;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .chat-input-container {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .chat-input {
+      flex: 1;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    .btn-send {
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .control-checkboxes {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .provider-item {
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      background: #f8f9fa;
+    }
+
+    .provider-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .provider-checkbox {
+      width: 18px;
+      height: 18px;
+    }
+
+    .provider-name {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .api-key-input {
+      width: 100%;
+      padding: 6px 10px;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: monospace;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-online {
+      background: #d1e7dd;
+      color: #0f5132;
+    }
+
+    .status-offline {
+      background: #f8d7da;
+      color: #842029;
+    }
+
+    .status-connecting {
+      background: #fff3cd;
+      color: #664d03;
+    }
+
+    .log-entry {
+      margin-bottom: 6px;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    .log-system { background: #e7f3ff; color: #0066cc; }
+    .log-user { background: #f8f9fa; color: #212529; }
+    .log-ai { background: #d1ecf1; color: #0c5460; }
+    .log-action { background: #d4edda; color: #155724; }
+    .log-error { background: #f8d7da; color: #721c24; }
+
+    .connection-info {
+      background: #e7f3ff;
+      border: 1px solid #b3d9ff;
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 15px;
+    }
+
+    .connection-code {
+      font-family: monospace;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--sd-primary);
+      text-align: center;
+      margin: 10px 0;
+    }
+
+    .btn-execute {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .actions-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .privacy-warning {
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      border-radius: 6px;
+      padding: 10px;
+      margin-bottom: 15px;
+      font-size: 12px;
+      color: #664d03;
+    }
+
+    .privacy-warning i {
+      color: #ffc107;
+    }
+
+    .mouse-position {
+      font-family: monospace;
+      font-size: 12px;
+      color: #6c757d;
+      margin-bottom: 10px;
+    }
+
+    .header-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+  <%- include('partials/site-nav') %>
+
+  <div class="main-container">
+    <!-- Left Panel: Chat & Activity -->
+    <div class="left-panel">
+      <div class="panel-header">
+        <div class="header-info">
+          <span>💬 Chat & Activity</span>
+          <span class="mouse-position" id="mousePosition">📍 Mouse: (0, 0)</span>
+        </div>
+      </div>
+      
+      <div class="chat-box" id="chatBox"></div>
+      
+      <div class="chat-input-container">
+        <textarea class="chat-input" id="userInput" rows="2" placeholder="Type your message or command..."></textarea>
+        <button class="btn btn-primary btn-send" id="sendBtn">Send</button>
+        <button class="btn btn-danger btn-send" id="stopBtn" style="display: none;">Stop</button>
+      </div>
+
+      <div class="control-checkboxes">
+        <div class="checkbox-group">
+          <input type="checkbox" id="disableActions" class="form-check-input">
+          <label for="disableActions" class="form-check-label">Disable AI control over your mouse and keyboard</label>
+        </div>
+        <div class="checkbox-group">
+          <input type="checkbox" id="autonomousMode" class="form-check-input">
+          <label for="autonomousMode" class="form-check-label">Autonomous Mode (Auto-execute AI instructions)</label>
+        </div>
+      </div>
+
+      <div class="actions-status">
+        <button class="btn btn-success btn-execute" id="executeBtn">Execute Actions</button>
+        <span class="status-badge status-online" id="actionsStatus">Actions: Enabled ✓</span>
+      </div>
+    </div>
+
+    <!-- Right Panel: AI Providers & Settings -->
+    <div class="right-panel">
+      <div class="panel-header">Select AI Provider & API Keys</div>
+
+      <div class="connection-info" id="connectionInfo" style="display: none;">
+        <div style="text-align: center; margin-bottom: 10px;">
+          <strong>Connected to PC</strong>
+        </div>
+        <div class="connection-code" id="roomCode">-</div>
+        <div style="text-align: center; font-size: 12px; color: #6c757d;">
+          Share this code with your PC client
+        </div>
+      </div>
+
+      <div class="privacy-warning" id="privacyWarning" style="display: none;">
+        <i class="fas fa-exclamation-triangle"></i>
+        <strong>Privacy Mode disabled</strong> - credentials may be sent to cloud APIs
+      </div>
+
+      <div id="providersList"></div>
+
+      <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #dee2e6;">
+        <button class="btn btn-outline-primary btn-sm w-100" id="saveKeysBtn">Save API Keys</button>
+        <button class="btn btn-outline-secondary btn-sm w-100 mt-2" id="loadKeysBtn">Load API Keys</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Initialize Supabase
+    const SUPABASE_URL = '<%= typeof supabaseUrl !== "undefined" ? supabaseUrl : "" %>';
+    const SUPABASE_ANON = '<%= typeof supabaseAnon !== "undefined" ? supabaseAnon : "" %>';
+    let supabase = null;
+    if (SUPABASE_URL && SUPABASE_ANON) {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+    }
+
+    // Socket.IO connection
+    const socket = io();
+    let currentRoomCode = null;
+    let agentsRunning = false;
+
+    // AI Providers configuration (matches agent.py)
+    const AI_PROVIDERS = [
+      { name: "OpenAI GPT-4", endpoint: "https://api.openai.com/v1/chat/completions", model: "gpt-4", enabled: true, requiresKey: true },
+      { name: "OpenAI GPT-3.5", endpoint: "https://api.openai.com/v1/chat/completions", model: "gpt-3.5-turbo", enabled: true, requiresKey: true },
+      { name: "Groq", endpoint: "https://api.groq.com/openai/v1/chat/completions", model: "llama-3.3-70b-versatile", enabled: false, requiresKey: true },
+      { name: "Mistral AI", endpoint: "https://api.mistral.ai/v1/chat/completions", model: "mistral-large-latest", enabled: false, requiresKey: true },
+      { name: "Anthropic Claude", endpoint: "https://api.anthropic.com/v1/messages", model: "claude-sonnet-4-5-20250929", enabled: false, requiresKey: true },
+      { name: "Google Gemini", endpoint: "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent", model: "gemini-pro", enabled: false, requiresKey: true },
+      { name: "Hugging Face", endpoint: "https://router.huggingface.co/v1", model: "moonshotai/Kimi-K2-Instruct-0905", enabled: false, requiresKey: true },
+      { name: "Ollama (Local)", endpoint: "http://localhost:11434/api/chat", model: "codellama:7b", enabled: true, requiresKey: false }
+    ];
+
+    // State
+    const apiKeys = {};
+    const providerStates = {};
+
+    // Initialize UI
+    function initUI() {
+      // Load saved API keys from localStorage
+      loadApiKeys();
+
+      // Render providers
+      renderProviders();
+
+      // Setup event listeners
+      document.getElementById('sendBtn').addEventListener('click', sendMessage);
+      document.getElementById('stopBtn').addEventListener('click', stopAgent);
+      document.getElementById('userInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+      document.getElementById('executeBtn').addEventListener('click', toggleActions);
+      document.getElementById('saveKeysBtn').addEventListener('click', saveApiKeys);
+      document.getElementById('loadKeysBtn').addEventListener('click', loadApiKeys);
+      document.getElementById('disableActions').addEventListener('change', (e) => {
+        updateActionsStatus();
+      });
+      document.getElementById('autonomousMode').addEventListener('change', (e) => {
+        logMessage(`Autonomous mode ${e.target.checked ? 'enabled' : 'disabled'}`, 'system');
+      });
+
+      // Update mouse position periodically
+      updateMousePosition();
+      setInterval(updateMousePosition, 1000);
+
+      // Check login status
+      checkAuth();
+    }
+
+    function renderProviders() {
+      const container = document.getElementById('providersList');
+      container.innerHTML = '';
+
+      AI_PROVIDERS.forEach(provider => {
+        const providerState = providerStates[provider.name] || { enabled: provider.enabled };
+        providerStates[provider.name] = providerState;
+
+        const item = document.createElement('div');
+        item.className = 'provider-item';
+        item.innerHTML = `
+          <div class="provider-header">
+            <input type="checkbox" class="provider-checkbox" ${providerState.enabled ? 'checked' : ''} 
+                   data-provider="${provider.name}">
+            <span class="provider-name">${provider.name}</span>
+          </div>
+          ${provider.requiresKey ? `
+            <input type="password" class="api-key-input" 
+                   placeholder="Enter API key..." 
+                   data-provider="${provider.name}"
+                   value="${apiKeys[provider.name] || ''}">
+          ` : `
+            <input type="text" class="api-key-input" 
+                   placeholder="No key required (local)" 
+                   disabled
+                   value="none">
+          `}
+        `;
+        container.appendChild(item);
+      });
+
+      // Add event listeners
+      container.querySelectorAll('.provider-checkbox').forEach(cb => {
+        cb.addEventListener('change', (e) => {
+          const providerName = e.target.dataset.provider;
+          providerStates[providerName].enabled = e.target.checked;
+        });
+      });
+
+      container.querySelectorAll('.api-key-input').forEach(input => {
+        input.addEventListener('change', (e) => {
+          const providerName = e.target.dataset.provider;
+          if (providerName) {
+            apiKeys[providerName] = e.target.value;
+          }
+        });
+      });
+    }
+
+    function getEnabledProvidersInOrder() {
+      // Cascade order: cloud providers first, Ollama last
+      const priorityOrder = [
+        "OpenAI GPT-4",
+        "OpenAI GPT-3.5",
+        "Groq",
+        "Mistral AI",
+        "Anthropic Claude",
+        "Google Gemini",
+        "Hugging Face"
+      ];
+
+      const enabled = [];
+      
+      // Add enabled cloud providers in priority order
+      for (const name of priorityOrder) {
+        const state = providerStates[name];
+        if (state && state.enabled) {
+          const provider = AI_PROVIDERS.find(p => p.name === name);
+          if (provider && (provider.requiresKey ? apiKeys[name] : true)) {
+            enabled.push(name);
+          }
+        }
+      }
+
+      // Add Ollama last
+      const ollamaState = providerStates["Ollama (Local)"];
+      if (ollamaState && ollamaState.enabled) {
+        enabled.push("Ollama (Local)");
+      }
+
+      return enabled;
+    }
+
+    function sendMessage() {
+      const userMessage = document.getElementById('userInput').value.trim();
+      if (!userMessage) return;
+
+      if (!currentRoomCode) {
+        logMessage('❌ Not connected to a PC. Please connect using a room code.', 'error');
+        return;
+      }
+
+      const enabledProviders = getEnabledProvidersInOrder();
+      if (enabledProviders.length === 0) {
+        logMessage('❌ No AI providers enabled! Please enable at least one provider.', 'error');
+        return;
+      }
+
+      logMessage(`You: ${userMessage}`, 'user');
+      document.getElementById('userInput').value = '';
+      
+      document.getElementById('sendBtn').style.display = 'none';
+      document.getElementById('stopBtn').style.display = 'inline-block';
+      agentsRunning = true;
+
+      // Send to backend with cascade configuration
+      socket.emit('start_agent', {
+        goal: userMessage,
+        providers: enabledProviders,
+        api_keys: apiKeys,
+        autonomous_mode: document.getElementById('autonomousMode').checked,
+        actions_enabled: !document.getElementById('disableActions').checked
+      });
+
+      logMessage(`🚀 Starting cascade mode with ${enabledProviders.length} provider(s)...`, 'system');
+    }
+
+    function stopAgent() {
+      socket.emit('stop_agent');
+      agentsRunning = false;
+      document.getElementById('sendBtn').style.display = 'inline-block';
+      document.getElementById('stopBtn').style.display = 'none';
+      logMessage('Agent stopped by user', 'system');
+    }
+
+    function toggleActions() {
+      const disabled = document.getElementById('disableActions').checked;
+      updateActionsStatus();
+      logMessage(`Actions ${disabled ? 'disabled' : 'enabled'}`, 'system');
+    }
+
+    function updateActionsStatus() {
+      const disabled = document.getElementById('disableActions').checked;
+      const statusEl = document.getElementById('actionsStatus');
+      statusEl.textContent = `Actions: ${disabled ? 'Disabled ✗' : 'Enabled ✓'}`;
+      statusEl.className = `status-badge ${disabled ? 'status-offline' : 'status-online'}`;
+    }
+
+    function logMessage(message, level = 'system') {
+      const chatBox = document.getElementById('chatBox');
+      const entry = document.createElement('div');
+      entry.className = `log-entry log-${level}`;
+      entry.textContent = message;
+      chatBox.appendChild(entry);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function updateMousePosition() {
+      if (currentRoomCode) {
+        socket.emit('get_mouse_position');
+      }
+    }
+
+    function saveApiKeys() {
+      // Save to localStorage
+      localStorage.setItem('stackdrop_api_keys', JSON.stringify(apiKeys));
+      localStorage.setItem('stackdrop_provider_states', JSON.stringify(providerStates));
+      logMessage('✅ API keys saved locally', 'system');
+    }
+
+    function loadApiKeys() {
+      // Load from localStorage
+      const savedKeys = localStorage.getItem('stackdrop_api_keys');
+      const savedStates = localStorage.getItem('stackdrop_provider_states');
+      
+      if (savedKeys) {
+        Object.assign(apiKeys, JSON.parse(savedKeys));
+      }
+      
+      if (savedStates) {
+        Object.assign(providerStates, JSON.parse(savedStates));
+      }
+
+      renderProviders();
+      logMessage('🔑 API keys loaded from storage', 'system');
+    }
+
+    async function checkAuth() {
+      if (!supabase) {
+        logMessage('⚠️ Authentication not configured', 'system');
+        return;
+      }
+
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        window.location.href = '/login?redirect=' + encodeURIComponent(window.location.pathname);
+        return;
+      }
+
+      logMessage('✓ Logged in as ' + session.user.email, 'system');
+    }
+
+    // Socket.IO event handlers
+    socket.on('connect', () => {
+      logMessage('✓ Connected to server', 'system');
+    });
+
+    socket.on('disconnect', () => {
+      logMessage('✗ Disconnected from server', 'error');
+    });
+
+    socket.on('room_joined', (data) => {
+      currentRoomCode = data.room_code;
+      document.getElementById('roomCode').textContent = currentRoomCode;
+      document.getElementById('connectionInfo').style.display = 'block';
+      logMessage(`✓ Connected to room: ${currentRoomCode}`, 'system');
+    });
+
+    socket.on('room_error', (data) => {
+      logMessage(`❌ Room error: ${data.message}`, 'error');
+    });
+
+    socket.on('agent_response', (data) => {
+      if (data.type === 'log') {
+        logMessage(data.message, data.level || 'system');
+      } else if (data.type === 'error') {
+        logMessage(`❌ Error: ${data.message}`, 'error');
+        agentsRunning = false;
+        document.getElementById('sendBtn').style.display = 'inline-block';
+        document.getElementById('stopBtn').style.display = 'none';
+      }
+    });
+
+    socket.on('mouse_position', (data) => {
+      document.getElementById('mousePosition').textContent = `📍 Mouse: (${data.x}, ${data.y})`;
+    });
+
+    socket.on('screenshot_taken', (data) => {
+      // Could display screenshot here if needed
+      logMessage('📸 Screenshot captured', 'system');
+    });
+
+    // Initialize on page load
+    initUI();
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <%- include('partials/social-follow') %>
+</body>
+</html>

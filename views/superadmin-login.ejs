@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-E7Q1WH4R00', {
+      'send_page_view': true
+    });
+  </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-E7Q1WH4R00"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Superadmin Access - Stackdrop</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .access-card {
+      background: white;
+      border-radius: 15px;
+      padding: 40px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="access-card">
+    <div class="text-center mb-4">
+      <h2 class="mb-1">🛡️ Superadmin Access</h2>
+      <p class="text-secondary mb-0 small">Enter the superadmin password to continue.</p>
+    </div>
+
+    <form id="saForm" autocomplete="off">
+      <div class="mb-3">
+        <label class="form-label small">Password</label>
+        <input id="saPassword" type="password" class="form-control" placeholder="Superadmin password" autofocus required>
+      </div>
+      <button id="saSubmit" type="submit" class="btn btn-primary w-100">Unlock dashboard</button>
+      <div id="saError" class="alert alert-danger mt-3 mb-0 py-2 small" style="display:none;"></div>
+    </form>
+
+    <div class="text-center mt-3">
+      <a class="small text-secondary text-decoration-none" href="/">&larr; Back to Stackdrop</a>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('saForm');
+    const pw = document.getElementById('saPassword');
+    const btn = document.getElementById('saSubmit');
+    const err = document.getElementById('saError');
+
+    function showError(msg) {
+      err.textContent = msg;
+      err.style.display = 'block';
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      err.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = 'Verifying...';
+      try {
+        const res = await fetch('/superadmin/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: pw.value })
+        });
+        if (res.ok) {
+          window.location.href = '/superadmin';
+          return;
+        }
+        let data = {};
+        try { data = await res.json(); } catch (_) {}
+        if (res.status === 429) {
+          const mins = data.retryAfterMinutes || 30;
+          showError('Too many failed attempts. Try again in about ' + mins + ' minute' + (mins === 1 ? '' : 's') + '.');
+          btn.disabled = true;
+          btn.textContent = 'Locked out';
+          return;
+        } else if (res.status === 401) {
+          const left = (typeof data.attemptsRemaining === 'number') ? data.attemptsRemaining : null;
+          showError('Incorrect password.' + (left !== null ? ' ' + left + ' attempt' + (left === 1 ? '' : 's') + ' remaining before lockout.' : ''));
+        } else {
+          showError('Something went wrong. Please try again.');
+        }
+      } catch (_) {
+        showError('Network error. Please try again.');
+      }
+      btn.disabled = false;
+      btn.textContent = 'Unlock dashboard';
+      pw.value = '';
+      pw.focus();
+    });
+  </script>
+</body>
+</html>

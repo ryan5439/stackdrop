@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-E7Q1WH4R00', {
+      'send_page_view': true
+    });
+  </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-E7Q1WH4R00"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title || 'Windows Long Filename Remover - Free Tool to Delete Long Path Files | LFR by Stackdrop' %></title>
+  <meta name="title" content="Windows Long Filename Remover - Delete Long Path Files | LFR by Stackdrop">
+  <meta name="description" content="Free Windows Long Filename Remover (LFR) to delete files with long paths and MAX_PATH errors. Scan, preview, and remove long filenames up to 32,767 characters on Windows 10/11.">
+  <meta name="keywords" content="windows long filename remover,long path file remover,delete long path files,MAX_PATH,windows path too long,fix long filename,remove long filenames,windows long path tool,LFR,delete files with long names,path too long error,filename too long windows,delete nested folders,deep directory structure,windows extended path,32767 character limit,delete locked files,long path error fix,windows 10 long path,windows 11 long filename,delete long path folders,long path cleanup tool">
+  <meta name="author" content="Stackdrop">
+  <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large">
+  <meta name="theme-color" content="#0066cc">
+  <link rel="canonical" href="https://stackdrop.it/tools/long-filename-remover">
+  <meta property="og:type" content="software">
+  <meta property="og:site_name" content="Stackdrop">
+  <meta property="og:title" content="Windows Long Filename Remover (LFR) - Delete Long Path Files">
+  <meta property="og:description" content="Free Windows tool to scan and delete files with long paths and long filenames. Supports paths up to 32,767 characters with extended path syntax.">
+  <meta property="og:url" content="https://stackdrop.it/tools/long-filename-remover">
+  <meta property="og:image" content="https://stackdrop.it/images/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Windows Long Filename Remover by Stackdrop">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@stackdrop">
+  <meta name="twitter:title" content="Windows Long Filename Remover - Delete Long Path Files">
+  <meta name="twitter:description" content="Fix Windows path too long errors. Scan and delete files with long filenames up to 32,767 characters. Free LFR tool for Windows 10/11.">
+  <meta name="twitter:image" content="https://stackdrop.it/images/og-image.png">
+  <meta name="twitter:image:alt" content="Windows Long Filename Remover by Stackdrop">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Windows Long Filename Remover (LFR)",
+    "applicationCategory": "UtilityApplication",
+    "operatingSystem": "Windows",
+    "softwareVersion": "Beta",
+    "description": "Free Windows tool to delete files with long paths and long filenames. Supports extended path syntax for paths up to 32,767 characters.",
+    "url": "https://stackdrop.it/tools/long-filename-remover",
+    "downloadUrl": "https://stackdrop.it/downloads/WindowsLongFilenameRemover.exe",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/InStock"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Stackdrop",
+      "url": "https://stackdrop.it/"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"Home","item":"https://stackdrop.it/"},
+    {"@type":"ListItem","position":2,"name":"Tools","item":"https://stackdrop.it/tools"},
+    {"@type":"ListItem","position":3,"name":"Long Filename Remover","item":"https://stackdrop.it/tools/long-filename-remover"}
+  ]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+    {"@type":"Question","name":"What is the Windows path too long error?","acceptedAnswer":{"@type":"Answer","text":"Windows Explorer often cannot delete a file when the full path is longer than 260 characters. That is the MAX_PATH limit."}},
+    {"@type":"Question","name":"How long a path can Long Filename Remover delete?","acceptedAnswer":{"@type":"Answer","text":"It uses the extended path prefix and can delete paths up to 32,767 characters, which is the Windows maximum."}},
+    {"@type":"Question","name":"Do I need administrator rights?","acceptedAnswer":{"@type":"Answer","text":"You can scan without administrator rights. Deleting files asks Windows for administrator."}}
+  ]}
+  </script>
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body{background:#fff}
+    .hero{padding:40px 0;background:#f8f9fa;border-bottom:1px solid #eee}
+    .navbar-brand{font-weight:bold;color:#0066cc !important}
+    .navbar .navbar-nav.navbar-right>li>a.nav-cta{font-weight:600;padding:12px 8px;color:#0066cc !important;margin-left:8px;border:none;border-radius:0;background:transparent;line-height:20px}
+    .navbar .navbar-nav.navbar-right>li>a.nav-cta:hover{text-decoration:underline;background:transparent}
+    .navbar .navbar-nav.navbar-right>li>a.nav-cta-pro{color:#0066cc !important;background:transparent;border:none;line-height:20px;padding:12px 8px}
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-default navbar-static-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/"><img src="/images/splash.png" alt="Stackdrop" style="height:20px;width:auto;display:inline-block;margin-right:6px;vertical-align:-2px;">Stackdrop</a>
+      </div>
+      <div id="main-navbar" class="collapse navbar-collapse js-navbar-collapse">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a class="nav-cta" href="/">Home</a></li>
+          <li><a class="nav-cta" href="/tools">Tools</a></li>
+          <li><a class="nav-cta" href="/help/">Help</a></li>
+          <li><a class="nav-cta" href="/feedback">Feedback</a></li>
+          <li><a class="nav-cta nav-cta-pro" href="/pro">Stackdrop Pro</a></li>
+          <li style="padding:6px 0 6px 10px;"><a href="/login" style="background:#0066cc;color:#fff !important;border-radius:6px;padding:8px 16px;font-weight:600;text-decoration:none;display:inline-block;line-height:1.4;">Login</a></li>        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="container hero">
+    <h1>Windows Long Filename Remover (LFR) <span class="label label-warning" style="font-size:12px;vertical-align:middle;">BETA</span></h1>
+    <p class="lead" style="font-size:18px;margin-bottom:20px;">Ever have trouble deleting files on Windows that have long paths or long filenames? We put together the perfect program for you.</p>
+    <p class="text-muted">LFR scans and deletes files with paths exceeding the 260-character limit, or you can manually select them in an easy-to-use GUI. Supports paths up to 32,767 characters with Windows extended path technology.</p>
+    <p>
+      <a href="/downloads/WindowsLongFilenameRemover.exe" class="btn btn-primary btn-lg">Download LFR for Windows (Free)</a>
+      <a href="/tools" class="btn btn-link">Back to Tools</a>
+    </p>
+  </div>
+
+  <div class="container" style="padding:24px 0;">
+    <h2>The Solution for "Path Too Long" Errors</h2>
+    <p>If you've ever encountered the frustrating "The specified path, file name, or both are too long" error on Windows, you know how impossible it can be to delete those files. Traditional Windows Explorer can't handle paths longer than 260 characters due to the legacy MAX_PATH limitation.</p>
+    <p><strong>LFR (Long Filename Remover)</strong> solves this problem by using Windows' extended path prefix (<code>\\?\</code>) which supports paths up to <strong>32,767 characters</strong> – that's 127 times longer than the standard limit!</p>
+
+    <h3>How it works</h3>
+    <ul>
+      <li><strong>Automatic Scanning:</strong> Point to any folder and LFR recursively scans for files and folders exceeding MAX_PATH (260 characters)</li>
+      <li><strong>Smart Detection:</strong> Automatically detects locked files, shows file sizes, path lengths, and directory structures</li>
+      <li><strong>Manual Selection:</strong> Browse and select specific files or folders to delete using the intuitive GUI</li>
+      <li><strong>Bulk Operations:</strong> Select all, filter results, or delete individual items – you're in complete control</li>
+      <li><strong>Deep Nesting Support:</strong> Handles extremely nested directory structures that even some advanced tools struggle with</li>
+      <li><strong>Live Feedback:</strong> Real-time scan progress, deletion status, and detailed error reporting</li>
+    </ul>
+    
+    <h3>Key Features</h3>
+    <div class="row">
+      <div class="col-md-6">
+        <ul>
+          <li>✓ <strong>Supports paths up to 32,767 characters</strong></li>
+          <li>✓ Fast recursive folder scanning with live progress</li>
+          <li>✓ View file/folder metadata (size, type, path length)</li>
+          <li>✓ Automatic locked file detection</li>
+          <li>✓ Filter and search results</li>
+          <li>✓ Export results to text file</li>
+        </ul>
+      </div>
+      <div class="col-md-6">
+        <ul>
+          <li>✓ Delete selected items or all at once</li>
+          <li>✓ One-click deletion for specific files</li>
+          <li>✓ Copy paths to clipboard</li>
+          <li>✓ Select All / Deselect All options</li>
+          <li>✓ Modern, dark-themed GUI</li>
+          <li>✓ View-only mode (scan without admin rights)</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Why Windows shows "path too long"</h3>
+    <p>Windows has historically used a 260-character limit (<code>MAX_PATH</code>) for file paths due to legacy DOS and early Windows API design. While modern Windows versions support longer paths through extended path syntax, most applications (including Windows Explorer) still enforce this limit.</p>
+    <p>LFR uses the extended path prefix (<code>\\?\</code>) which tells Windows to bypass the MAX_PATH limitation, allowing access to files and folders with paths up to <strong>32,767 characters</strong>. This works on Windows 7, 8, 10, and 11.</p>
+
+    <h3>Common Use Cases</h3>
+    <ul>
+      <li><strong>Failed Downloads:</strong> Sometimes download managers or torrents create deeply nested folder structures</li>
+      <li><strong>Development Projects:</strong> Node.js <code>node_modules</code> folders can create extremely deep nesting</li>
+      <li><strong>Backup Failures:</strong> Backup software may create paths too long to delete normally</li>
+      <li><strong>Archive Extraction:</strong> ZIP files with long internal paths can cause issues when extracted</li>
+      <li><strong>Git Repositories:</strong> Nested Git repos can exceed MAX_PATH</li>
+      <li><strong>Malware Removal:</strong> Some malware creates long paths intentionally to prevent deletion</li>
+    </ul>
+
+    <h3>System Requirements</h3>
+    <ul>
+      <li>Windows 7, 8, 10, or 11 (64-bit or 32-bit)</li>
+      <li>Administrator rights (required for deletion; view-only mode available without admin)</li>
+      <li>10 MB free disk space</li>
+    </ul>
+
+    <h3>FAQ</h3>
+    <p><strong>Q: Do I need Administrator rights?</strong><br>
+    A: Administrator rights are required to delete files and folders. However, you can run LFR in view-only mode to scan and identify long-path items without admin privileges. The program will prompt you to elevate if needed.</p>
+    
+    <p><strong>Q: Is it safe to use?</strong><br>
+    A: Yes! LFR only deletes files and folders that you explicitly select. It does not modify the Windows registry, install services, or run background processes. The tool is portable and can be deleted at any time.</p>
+    
+    <p><strong>Q: What's the maximum path length it supports?</strong><br>
+    A: LFR can handle paths up to 32,767 characters, which is the Windows maximum when using extended path syntax (<code>\\?\</code>). This is 127 times longer than the standard 260-character limit.</p>
+    
+    <p><strong>Q: Will it delete locked or in-use files?</strong><br>
+    A: LFR automatically detects locked files and shows their status with a 🔒 icon. It will attempt to delete them, but if a file is actively locked by another process, Windows will prevent deletion. You'll see a detailed error message in that case.</p>
+    
+    <p><strong>Q: Does it work with network drives (UNC paths)?</strong><br>
+    A: Yes, LFR supports UNC paths and network drives using extended UNC syntax (<code>\\?\UNC\</code>).</p>
+
+    <p><strong>Q: Can I export the list of long-path files?</strong><br>
+    A: Yes! Click the "Export List" button to save all found items to a text file with complete metadata including path lengths, file sizes, and lock status.</p>
+
+    <div style="margin-top:30px;padding:20px;background:#f8f9fa;border-left:4px solid #0066cc;">
+      <p><strong>Note:</strong> This tool is currently in BETA. We're actively developing and improving it. If you encounter any issues or have feature requests, please visit our <a href="/feedback">Feedback page</a>.</p>
+    </div>
+  </div>
+
+  <footer style="background:#f6f8fa;border-top:1px solid #e1e4e8;padding:32px 0;margin-top:40px;text-align:center;color:#586069;font-size:14px;">
+    <div class="container">
+      <p style="margin:0;">© 2026 Stackdrop · <a href="/help/" style="color:#0066cc;">Help</a> · <a href="/feedback" style="color:#0066cc;">Feedback</a> · <a href="/pro" style="color:#0066cc;">Stackdrop Pro</a></p>
+      <p style="margin-top:4px;margin-bottom:0;"><span class="text-muted" style="font-size: 12px;color:#999;">Views: <%= typeof viewCount !== 'undefined' ? viewCount : '' %></span></p>
+      <%- include('partials/social-follow') %>
+    </div>
+  </footer>
+</body>
+</html>
+

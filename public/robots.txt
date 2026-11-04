@@ -1,0 +1,53 @@
+# Stackdrop.it Robots.txt
+# https://stackdrop.it/robots.txt
+
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Disallow admin and sensitive areas
+Disallow: /admin/
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /device/
+Disallow: /login
+Disallow: /signup-payment
+Disallow: /email-confirm-close
+Disallow: /email-confirmed
+Disallow: /silentinstallers/
+Disallow: /ClientEXEforWindows/
+Disallow: /node_modules/
+Disallow: /*.log$
+Disallow: /*.pid$
+Disallow: /*.lock$
+
+# Allow important static resources
+Allow: /css/
+Allow: /js/
+Allow: /images/
+Allow: /public/
+
+# Crawl delay (be respectful)
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://stackdrop.it/sitemap.xml
+
+# Additional directives for specific bots
+User-agent: Googlebot
+Crawl-delay: 1
+
+User-agent: Bingbot
+Crawl-delay: 1
+
+User-agent: Slurp
+Crawl-delay: 2
+
+User-agent: DuckDuckBot
+Crawl-delay: 1
+
+User-agent: Baiduspider
+Crawl-delay: 2
+
+User-agent: YandexBot
+Crawl-delay: 2

@@ -1,105 +1,405 @@
 {
-  "generatedAt": "2025-08-21T15:17:15.128Z",
+  "generatedAt": "2026-11-03T03:06:41.866Z",
   "items": [
     {
-      "appId": "spotify",
-      "updatedAt": "2025-08-21T15:17:13.196Z"
+      "appId": "obsidian",
+      "updatedAt": "2026-11-03T03:06:40.042Z",
+      "version": "1.15.0"
     },
     {
-      "appId": "python311x64",
-      "updatedAt": "2025-08-21T15:17:12.814Z"
+      "appId": "potplayer",
+      "updatedAt": "2026-11-03T03:06:27.229Z",
+      "version": null
     },
     {
-      "appId": "opera64",
-      "updatedAt": "2025-08-21T15:17:12.218Z"
+      "appId": "bitwarden",
+      "updatedAt": "2026-11-03T03:06:24.443Z",
+      "version": "2026.10.3"
     },
     {
-      "appId": "imgburn",
-      "updatedAt": "2025-08-21T15:17:08.721Z"
+      "appId": "eclipse",
+      "updatedAt": "2026-11-03T03:06:20.691Z",
+      "version": null
+    },
+    {
+      "appId": "winsockfix",
+      "updatedAt": "2026-11-03T03:06:08.649Z",
+      "version": null
+    },
+    {
+      "appId": "bluestacks",
+      "updatedAt": "2026-11-03T03:06:05.757Z",
+      "version": "5.22.288.1014"
+    },
+    {
+      "appId": "steam",
+      "updatedAt": "2026-11-03T03:06:05.412Z",
+      "version": null
+    },
+    {
+      "appId": "dotnet9desktopx86",
+      "updatedAt": "2026-11-03T03:06:04.899Z",
+      "version": "9.0.22"
+    },
+    {
+      "appId": "dotnet9desktop",
+      "updatedAt": "2026-11-03T03:06:02.015Z",
+      "version": "9.0.22"
+    },
+    {
+      "appId": "dotnet9x86",
+      "updatedAt": "2026-11-03T03:05:57.044Z",
+      "version": "9.0.22"
+    },
+    {
+      "appId": "dotnet9",
+      "updatedAt": "2026-11-03T03:05:55.080Z",
+      "version": "9.0.22"
+    },
+    {
+      "appId": "onedrive",
+      "updatedAt": "2026-11-03T03:05:50.751Z",
+      "version": "26.189.0928.0009"
+    },
+    {
+      "appId": "avira",
+      "updatedAt": "2026-11-03T03:05:44.558Z",
+      "version": null
+    },
+    {
+      "appId": "mediamonkey",
+      "updatedAt": "2026-11-03T03:04:54.682Z",
+      "version": "2024.2.2.3223"
+    },
+    {
+      "appId": "audacity",
+      "updatedAt": "2026-11-03T03:04:46.529Z",
+      "version": "4.0.2"
+    },
+    {
+      "appId": "jan",
+      "updatedAt": "2026-11-03T03:04:41.399Z",
+      "version": "0.8.8"
+    },
+    {
+      "appId": "lmstudio",
+      "updatedAt": "2026-11-03T03:04:23.541Z",
+      "version": "0.4.28"
+    },
+    {
+      "appId": "winrar",
+      "updatedAt": "2026-11-03T03:02:33.028Z",
+      "version": "64-730"
+    },
+    {
+      "appId": "7zip",
+      "updatedAt": "2026-11-03T03:02:24.349Z",
+      "version": "2018-11-09"
+    },
+    {
+      "appId": "transmission",
+      "updatedAt": "2026-11-03T03:02:22.867Z",
+      "version": "4.1.4"
+    },
+    {
+      "appId": "cutepdf",
+      "updatedAt": "2026-11-03T03:02:20.427Z",
+      "version": null
+    },
+    {
+      "appId": "vscode",
+      "updatedAt": "2026-11-03T03:02:13.473Z",
+      "version": "1.144.1"
+    },
+    {
+      "appId": "obs",
+      "updatedAt": "2026-11-03T03:02:03.703Z",
+      "version": "33.0.1"
+    },
+    {
+      "appId": "superantispyware",
+      "updatedAt": "2026-11-03T03:01:53.727Z",
+      "version": null
+    },
+    {
+      "appId": "python315x86",
+      "updatedAt": "2026-11-03T03:01:50.952Z",
+      "version": "3.15.2"
+    },
+    {
+      "appId": "python315x64",
+      "updatedAt": "2026-11-03T03:01:48.274Z",
+      "version": "3.15.2"
+    },
+    {
+      "appId": "windirstat",
+      "updatedAt": "2026-11-03T03:01:41.037Z",
+      "version": "04-8427-4062"
+    },
+    {
+      "appId": "thinkorswim",
+      "updatedAt": "2026-11-03T03:01:39.996Z",
+      "version": null
     },
     {
       "appId": "ccleaner",
-      "updatedAt": "2025-08-21T15:17:07.684Z"
+      "updatedAt": "2026-11-03T03:00:09.462Z",
+      "version": null
     },
     {
-      "appId": "anydesk",
-      "updatedAt": "2025-08-21T15:17:02.946Z"
+      "appId": "krita",
+      "updatedAt": "2026-11-02T03:03:21.918Z",
+      "version": "5.2.6"
     },
     {
-      "appId": "chrome64",
-      "updatedAt": "2025-08-21T15:17:01.130Z"
+      "appId": "googledrive",
+      "updatedAt": "2026-11-02T03:03:04.963Z",
+      "version": null
     },
     {
-      "appId": "spotify",
-      "updatedAt": "2025-08-21T00:51:42.199Z"
+      "appId": "musicbee",
+      "updatedAt": "2026-11-01T03:01:55.456Z",
+      "version": "3.7"
     },
     {
-      "appId": "python311x64",
-      "updatedAt": "2025-08-21T00:51:41.642Z"
+      "appId": "zoom",
+      "updatedAt": "2026-11-01T03:00:41.797Z",
+      "version": "7.2.5.51704"
     },
     {
-      "appId": "opera64",
-      "updatedAt": "2025-08-21T00:51:40.635Z"
+      "appId": "malwarebytes",
+      "updatedAt": "2026-10-31T03:02:50.380Z",
+      "version": null
     },
     {
-      "appId": "imgburn",
-      "updatedAt": "2025-08-21T00:51:36.908Z"
+      "appId": "brave",
+      "updatedAt": "2026-10-31T03:00:51.562Z",
+      "version": null
     },
     {
-      "appId": "ccleaner",
-      "updatedAt": "2025-08-21T00:51:35.575Z"
+      "appId": "teamviewer",
+      "updatedAt": "2026-10-31T03:00:39.551Z",
+      "version": null
     },
     {
-      "appId": "anydesk",
-      "updatedAt": "2025-08-21T00:51:32.792Z"
+      "appId": "edge",
+      "updatedAt": "2026-10-31T03:00:23.715Z",
+      "version": null
     },
     {
-      "appId": "chrome64",
-      "updatedAt": "2025-08-21T00:51:31.485Z"
+      "appId": "vivaldi",
+      "updatedAt": "2026-10-30T03:03:36.845Z",
+      "version": "8.2.4133.96"
     },
     {
-      "appId": "spotify",
-      "updatedAt": "2025-08-20T23:47:49.802Z"
+      "appId": "foobar2000",
+      "updatedAt": "2026-10-30T03:02:11.771Z",
+      "version": "2.26.2"
     },
     {
-      "appId": "python311x64",
-      "updatedAt": "2025-08-20T23:47:49.378Z"
-    },
-    {
-      "appId": "opera64",
-      "updatedAt": "2025-08-20T23:47:48.987Z"
-    },
-    {
-      "appId": "imgburn",
-      "updatedAt": "2025-08-20T23:47:45.323Z"
-    },
-    {
-      "appId": "ccleaner",
-      "updatedAt": "2025-08-20T23:47:44.386Z"
-    },
-    {
-      "appId": "anydesk",
-      "updatedAt": "2025-08-20T23:47:42.040Z"
-    },
-    {
-      "appId": "chrome64",
-      "updatedAt": "2025-08-20T23:47:40.793Z"
-    },
-    {
-      "appId": "spotify",
-      "updatedAt": "2025-08-20T23:46:21.856Z"
-    },
-    {
-      "appId": "python311x64",
-      "updatedAt": "2025-08-20T23:46:21.433Z"
+      "appId": "slack",
+      "updatedAt": "2026-10-30T03:00:39.756Z",
+      "version": "4.53.276"
     },
     {
       "appId": "opera64",
-      "updatedAt": "2025-08-20T23:46:20.858Z"
+      "updatedAt": "2026-10-30T03:00:31.522Z",
+      "version": "139.0.6053.22"
     },
     {
-      "appId": "imgburn",
-      "updatedAt": "2025-08-20T23:46:17.583Z"
+      "appId": "discord",
+      "updatedAt": "2026-10-30T03:00:14.956Z",
+      "version": "1.0.9266"
+    },
+    {
+      "appId": "chrome64",
+      "updatedAt": "2026-10-30T03:00:01.037Z",
+      "version": "156.0.8078.80"
+    },
+    {
+      "appId": "joplin",
+      "updatedAt": "2026-10-29T03:06:28.126Z",
+      "version": "3.7.22"
+    },
+    {
+      "appId": "signal",
+      "updatedAt": "2026-10-29T03:06:19.899Z",
+      "version": "8.33.0"
+    },
+    {
+      "appId": "gimp",
+      "updatedAt": "2026-10-29T03:03:42.939Z",
+      "version": "3.2"
+    },
+    {
+      "appId": "inkscape",
+      "updatedAt": "2026-10-29T03:03:35.630Z",
+      "version": "1.3.2"
+    },
+    {
+      "appId": "evernote",
+      "updatedAt": "2026-10-29T03:03:26.909Z",
+      "version": null
+    },
+    {
+      "appId": "ollama",
+      "updatedAt": "2026-10-29T03:03:04.193Z",
+      "version": "2018-11-09"
+    },
+    {
+      "appId": "itunes",
+      "updatedAt": "2026-10-29T03:01:46.861Z",
+      "version": "142-28289-20261026"
+    },
+    {
+      "appId": "winmerge",
+      "updatedAt": "2026-10-28T03:06:40.256Z",
+      "version": "2.16.60"
+    },
+    {
+      "appId": "powertoys",
+      "updatedAt": "2026-10-28T03:06:35.986Z",
+      "version": "0.102.3001.0"
+    },
+    {
+      "appId": "dropbox",
+      "updatedAt": "2026-10-28T03:03:34.211Z",
+      "version": "20276.4.5325"
+    },
+    {
+      "appId": "thunderbird",
+      "updatedAt": "2026-10-28T03:01:29.426Z",
+      "version": "159.0"
+    },
+    {
+      "appId": "firefox64",
+      "updatedAt": "2026-10-28T03:00:13.169Z",
+      "version": "159.0"
+    },
+    {
+      "appId": "temurin25x64",
+      "updatedAt": "2026-10-27T01:16:46.913Z",
+      "version": "25.0.5"
+    },
+    {
+      "appId": "anydesk",
+      "updatedAt": "2026-10-27T01:11:56.508Z",
+      "version": null
+    },
+    {
+      "appId": "gitscm",
+      "updatedAt": "2026-10-26T08:05:25.335Z",
+      "version": "2.56.0.4"
+    },
+    {
+      "appId": "dotnet10desktop",
+      "updatedAt": "2026-10-26T07:04:33.644Z",
+      "version": "10.0.14"
+    },
+    {
+      "appId": "dotnet10",
+      "updatedAt": "2026-10-26T07:04:32.607Z",
+      "version": "10.0.14"
+    },
+    {
+      "appId": "paintnet",
+      "updatedAt": "2026-10-26T07:04:17.978Z",
+      "version": "5.1.12"
+    },
+    {
+      "appId": "nvaccess",
+      "updatedAt": "2026-10-26T07:02:03.839Z",
+      "version": "2026.3"
+    },
+    {
+      "appId": "cccp",
+      "updatedAt": "2026-10-25T07:15:08.932Z",
+      "version": "2015-10-18"
+    },
+    {
+      "appId": "calibre",
+      "updatedAt": "2026-10-23T07:04:10.612Z",
+      "version": "9.17.0"
+    },
+    {
+      "appId": "blender",
+      "updatedAt": "2026-10-23T07:03:22.256Z",
+      "version": "5.2"
+    },
+    {
+      "appId": "telegram",
+      "updatedAt": "2026-10-22T07:04:27.016Z",
+      "version": "7.3.3"
+    },
+    {
+      "appId": "npcap",
+      "updatedAt": "2026-10-22T07:04:23.552Z",
+      "version": "1.90"
+    },
+    {
+      "appId": "wireshark",
+      "updatedAt": "2026-10-22T07:04:16.666Z",
+      "version": null
+    },
+    {
+      "appId": "trillian",
+      "updatedAt": "2026-10-22T07:01:19.458Z",
+      "version": "6.6"
+    },
+    {
+      "appId": "tor",
+      "updatedAt": "2026-10-22T07:00:19.534Z",
+      "version": "15.0.26"
+    },
+    {
+      "appId": "vlc",
+      "updatedAt": "2026-10-21T08:01:45.612Z",
+      "version": "3.0.24"
+    },
+    {
+      "appId": "spotify",
+      "updatedAt": "2026-10-21T08:01:43.131Z",
+      "version": null
+    },
+    {
+      "appId": "qbittorrent",
+      "updatedAt": "2026-10-21T07:00:53.997Z",
+      "version": "5.3.0"
+    },
+    {
+      "appId": "jdk21x64",
+      "updatedAt": "2026-10-20T08:02:44.479Z",
+      "version": null
+    },
+    {
+      "appId": "jdk26x64",
+      "updatedAt": "2026-10-20T08:02:42.129Z",
+      "version": null
+    },
+    {
+      "appId": "greenshot",
+      "updatedAt": "2026-10-20T07:03:21.904Z",
+      "version": "1.3.328"
+    },
+    {
+      "appId": "glary",
+      "updatedAt": "2026-10-19T08:05:34.622Z",
+      "version": null
+    },
+    {
+      "appId": "mpchc",
+      "updatedAt": "2026-10-19T07:05:19.817Z",
+      "version": "2.8.4"
+    },
+    {
+      "appId": "foxitreader",
+      "updatedAt": "2026-10-19T07:05:06.002Z",
+      "version": "2026.2.1"
+    },
+    {
+      "appId": "gom",
+      "updatedAt": "2026-10-19T07:03:31.505Z",
+      "version": null
     }
   ]
 }
